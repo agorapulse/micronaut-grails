@@ -79,13 +79,18 @@ MicronautGrailsConfiguration.java
 <a name="48"><font color="#808080">48</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">.flatMap</font><font color="#000000">(</font><font color="#000000">i&nbsp;-&gt;&nbsp;i.getCustomizers</font><font color="#000000">()</font><font color="#000000">.stream</font><font color="#000000">())</font><br />
 <a name="49"><font color="#808080">49</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">.collect</font><font color="#000000">(</font><font color="#000000">Collectors.toList</font><font color="#000000">())</font><font color="#000000">;</font><br />
 <a name="50"><font color="#808080">50</font>&nbsp;</a><font color="#ffffff"></font><br />
-<a name="51"><font color="#808080">51</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000c0"><b>return&nbsp;new&nbsp;</b></font><font color="#000000">GrailsMicronautBeanProcessor</font><font color="#000000">(</font><br />
-<a name="52"><font color="#808080">52</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">qualifierMap,</font><br />
-<a name="53"><font color="#808080">53</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">customizers</font><br />
-<a name="54"><font color="#808080">54</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">)</font><font color="#000000">;</font><br />
-<a name="55"><font color="#808080">55</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
-<a name="56"><font color="#808080">56</font>&nbsp;</a><font color="#ffffff"></font><br />
-<a name="57"><font color="#808080">57</font>&nbsp;</a><font color="#000000">}</font></code>
+<a name="51"><font color="#808080">51</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">List&lt;String&gt;&nbsp;expectedMapProperties&nbsp;=&nbsp;importers</font><br />
+<a name="52"><font color="#808080">52</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">.stream</font><font color="#000000">()</font><br />
+<a name="53"><font color="#808080">53</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">.flatMap</font><font color="#000000">(</font><font color="#000000">i&nbsp;-&gt;&nbsp;i.getExpectedMapProperties</font><font color="#000000">()</font><font color="#000000">.stream</font><font color="#000000">())</font><br />
+<a name="54"><font color="#808080">54</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">.collect</font><font color="#000000">(</font><font color="#000000">Collectors.toList</font><font color="#000000">())</font><font color="#000000">;</font><br />
+<a name="55"><font color="#808080">55</font>&nbsp;</a><font color="#ffffff"></font><br />
+<a name="56"><font color="#808080">56</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000c0"><b>return&nbsp;new&nbsp;</b></font><font color="#000000">GrailsMicronautBeanProcessor</font><font color="#000000">(</font><br />
+<a name="57"><font color="#808080">57</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">qualifierMap,</font><br />
+<a name="58"><font color="#808080">58</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">customizers,</font><br />
+<a name="59"><font color="#808080">59</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">expectedMapProperties</font><font color="#000000">)</font><font color="#000000">;</font><br />
+<a name="60"><font color="#808080">60</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
+<a name="61"><font color="#808080">61</font>&nbsp;</a><font color="#ffffff"></font><br />
+<a name="62"><font color="#808080">62</font>&nbsp;</a><font color="#000000">}</font></code>
     
    </td>
   <!-- end source code -->
