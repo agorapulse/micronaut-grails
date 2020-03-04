@@ -103,16 +103,19 @@ public class GrailsMicronautBeanProcessor implements BeanFactoryPostProcessor, D
     private DefaultApplicationContext micronautContext;
     private final Map<String, TypeAndQualifier<?>> micronautBeanQualifiers;
     private final List<PropertyTranslatingCustomizer> customizers;
+    private final List<String> expectedMapProperties;
     private Environment environment;
 
     /**
-     * @param customizers properties translation customizer
      * @param qualifiers the names and qualifiers of the Micronaut beans which should be added to the
      *                   Spring application context.
+     * @param customizers properties translation customizer
+     * @param expectedMapProperties list of properties' prefixes which should be converted to map
      */
-    GrailsMicronautBeanProcessor(Map<String, TypeAndQualifier<?>> qualifiers, List<PropertyTranslatingCustomizer> customizers) {
+    GrailsMicronautBeanProcessor(Map<String, TypeAndQualifier<?>> qualifiers, List<PropertyTranslatingCustomizer> customizers, List<String> expectedMapProperties) {
         this.customizers = customizers;
         this.micronautBeanQualifiers = qualifiers;
+        this.expectedMapProperties = expectedMapProperties;
     }
 
     @Override
@@ -121,7 +124,7 @@ public class GrailsMicronautBeanProcessor implements BeanFactoryPostProcessor, D
             throw new IllegalStateException("Spring environment not set!");
         }
 
-        micronautContext = new GrailsPropertyTranslatingApplicationContext(environment, of(collapse(customizers)));
+        micronautContext = new GrailsPropertyTranslatingApplicationContext(environment, of(collapse(customizers)), expectedMapProperties);
 
         micronautContext.start();
 

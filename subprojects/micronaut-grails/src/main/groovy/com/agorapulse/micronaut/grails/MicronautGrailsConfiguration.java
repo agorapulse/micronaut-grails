@@ -48,10 +48,15 @@ public class MicronautGrailsConfiguration {
             .flatMap(i -> i.getCustomizers().stream())
             .collect(Collectors.toList());
 
+        List<String> expectedMapProperties = importers
+            .stream()
+            .flatMap(i -> i.getExpectedMapProperties().stream())
+            .collect(Collectors.toList());
+
         return new GrailsMicronautBeanProcessor(
             qualifierMap,
-            customizers
-        );
+            customizers,
+            expectedMapProperties);
     }
 
 }

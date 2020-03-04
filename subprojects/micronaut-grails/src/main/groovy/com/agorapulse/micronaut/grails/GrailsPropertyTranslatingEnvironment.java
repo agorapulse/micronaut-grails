@@ -32,7 +32,7 @@ class GrailsPropertyTranslatingEnvironment extends DefaultEnvironment {
     private final Environment environment;
     private final PropertyTranslatingCustomizer customizer;
 
-    GrailsPropertyTranslatingEnvironment(Environment environment, PropertyTranslatingCustomizer customizer) {
+    GrailsPropertyTranslatingEnvironment(Environment environment, PropertyTranslatingCustomizer customizer, List<String> expectedMapProperties) {
         super(environment.getActiveProfiles());
         this.environment = environment;
         this.customizer = customizer;
@@ -44,22 +44,37 @@ class GrailsPropertyTranslatingEnvironment extends DefaultEnvironment {
                 if (source instanceof MapPropertySource) {
                     MapPropertySource mps = (MapPropertySource) source;
                     mps.getSource().forEach((k, v) -> {
-                        String[] parts = k.split("\\.");
-                        Map<String, Object> currentLevelMap = multilayer;
-                        String prefix = "";
-                        for (int i = 0; i < parts.length - 1; i++) {
-                            String part = parts[i];
-                            Object currentOrNewMap = currentLevelMap.computeIfAbsent(part, key -> new LinkedHashMap<>());
-                            multilayer.put(prefix + part, currentOrNewMap);
-                            if (currentOrNewMap instanceof Map) {
-                                currentLevelMap = (Map<String, Object>) currentOrNewMap;
-                            } else {
-                                // conflict - cannot convert key to map of maps
-                                return;
+                        Optional<String> expectedPrefix = expectedMapProperties.stream().filter(k::startsWith).findFirst();
+                        if (expectedPrefix.isPresent()) {
+                            String[] parts = k.split("\\.");
+                            Map<String, Object> currentLevelMap = multilayer;
+                            String prefix = "";
+                            for (int i = 0; i < parts.length - 1; i++) {
+                                String part = parts[i];
+                                String currentKey = prefix + part;
+                                prefix = prefix.length() == 0 ? part  + "." : prefix + part + ".";
+
+                                if (!currentKey.startsWith(expectedPrefix.get())) {
+                                    continue;
+                                }
+
+                                Object currentOrNewMap;
+                                if (expectedPrefix.get().equals(currentKey)) {
+                                    currentOrNewMap = new LinkedHashMap<>();
+                                    multilayer.put(currentKey, currentOrNewMap);
+                                } else {
+                                    currentOrNewMap = currentLevelMap.computeIfAbsent(part, key -> new LinkedHashMap<>());
+                                }
+
+                                if (currentOrNewMap instanceof Map) {
+                                    currentLevelMap = (Map<String, Object>) currentOrNewMap;
+                                } else {
+                                    // conflict - cannot convert key to map of maps
+                                    return;
+                                }
                             }
-                            prefix = prefix.length() == 0 ? part  + "." : prefix + part + ".";
+                            currentLevelMap.put(parts[parts.length - 1], v);
                         }
-                        currentLevelMap.put(parts[parts.length - 1], v);
                     });
                 }
             }

@@ -68,6 +68,7 @@ class GrailsSimpleNotificationServiceConfig {
             .addByType(SimpleNotificationService)
             .addByType(SimpleNotificationServiceConfiguration)
             .addByQualifiers('notificationsQueueService', SimpleQueueService, Qualifiers.byName('notifications'))
+            .createMapForPropertiesStarting('aws.sqs.queues')
     }
 
 }

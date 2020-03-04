@@ -41,6 +41,7 @@ public class MicronautBeanImporter {
 
     private final Map<String, TypeAndQualifier<?>> micronautBeanQualifiers = new LinkedHashMap<>();
     private final List<PropertyTranslatingCustomizer> customizers = new ArrayList<>();
+    private final List<String> expectedMapProperties = new ArrayList<>();
 
     protected MicronautBeanImporter() {}
 
@@ -115,6 +116,15 @@ public class MicronautBeanImporter {
         return customize(customizer.build());
     }
 
+    public MicronautBeanImporter createMapForPropertiesStarting(String prefix) {
+        expectedMapProperties.add(prefix);
+        return this;
+    }
+
+    public List<String> getExpectedMapProperties() {
+        return Collections.unmodifiableList(expectedMapProperties);
+    }
+
     public Map<String, TypeAndQualifier<?>> getMicronautBeanQualifiers() {
         return Collections.unmodifiableMap(micronautBeanQualifiers);
     }
@@ -134,7 +144,7 @@ public class MicronautBeanImporter {
         } catch (IllegalStateException th) {
             GrailsMicronautBeanProcessor.LOGGER.error("Old style of importing Micronaut beans used. This will lead to having multiple Micronaut application context in the application");
         }
-        return new GrailsMicronautBeanProcessor(getMicronautBeanQualifiers(), getCustomizers());
+        return new GrailsMicronautBeanProcessor(getMicronautBeanQualifiers(), getCustomizers(), getExpectedMapProperties());
     }
 }
 
