@@ -17,8 +17,8 @@
  */
 package com.agorapulse.micronaut.grails;
 
-import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.DefaultApplicationContext;
+import io.micronaut.context.Qualifier;
 import io.micronaut.inject.BeanDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,11 +32,7 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 
 import java.net.URLClassLoader;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Function;
+import java.util.*;
 
 import static com.agorapulse.micronaut.grails.GrailsPropertyTranslatingCustomizer.collapse;
 import static com.agorapulse.micronaut.grails.PropertyTranslatingCustomizer.grails;
@@ -101,20 +97,22 @@ public class GrailsMicronautBeanProcessor implements BeanFactoryPostProcessor, D
 
     private static final String MICRONAUT_BEAN_TYPE_PROPERTY_NAME = "micronautBeanType";
     private static final String MICRONAUT_CONTEXT_PROPERTY_NAME = "micronautContext";
+    private static final String MICRONAUT_QUALIFIER_PROPERTY_NAME = "micronautQualifier";
     private static final String MICRONAUT_SINGLETON_PROPERTY_NAME = "micronautSingleton";
 
     private DefaultApplicationContext micronautContext;
-    private final Map<String, Function<ApplicationContext, Optional<BeanDefinition<?>>>> suppliers;
+    private final Map<String, TypeAndQualifier<?>> micronautBeanQualifiers;
     private final List<PropertyTranslatingCustomizer> customizers;
     private Environment environment;
 
     /**
-     * @param suppliers the functions to retrieve beans from the application context
      * @param customizers properties translation customizer
+     * @param qualifiers the names and qualifiers of the Micronaut beans which should be added to the
+     *                   Spring application context.
      */
-    GrailsMicronautBeanProcessor(Map<String, Function<ApplicationContext, Optional<BeanDefinition<?>>>> suppliers, List<PropertyTranslatingCustomizer> customizers) {
-        this.suppliers = suppliers;
+    GrailsMicronautBeanProcessor(Map<String, TypeAndQualifier<?>> qualifiers, List<PropertyTranslatingCustomizer> customizers) {
         this.customizers = customizers;
+        this.micronautBeanQualifiers = qualifiers;
     }
 
     @Override
@@ -129,23 +127,32 @@ public class GrailsMicronautBeanProcessor implements BeanFactoryPostProcessor, D
 
         NoClassDefFoundError noClassDefFoundError = null;
 
-        for (Map.Entry<String, Function<ApplicationContext, Optional<BeanDefinition<?>>>> entry : suppliers.entrySet()) {
+        for (Map.Entry<String, TypeAndQualifier<?>> entry : micronautBeanQualifiers.entrySet()) {
             String name = entry.getKey();
-            Function<ApplicationContext, Optional<BeanDefinition<?>>> supplier = entry.getValue();
+            Class type = entry.getValue().getType();
+            Qualifier micronautBeanQualifier = entry.getValue().getQualifier();
             try {
-                Optional<BeanDefinition<?>> firstBean = supplier.apply(micronautContext);
+                Collection<BeanDefinition<?>> beanDefinitions = type == null
+                    ? micronautContext.getBeanDefinitions(micronautBeanQualifier)
+                    : micronautContext.getBeanDefinitions(type, micronautBeanQualifier);
 
-                BeanDefinition<?> definition = firstBean.orElseThrow(()-> new IllegalArgumentException("There is no candidate for bean " + name + " declared in " + supplier));
+                if (beanDefinitions.size() > 1) {
+                    throw new IllegalArgumentException("There is too many candidates of type " + type + " for " + micronautBeanQualifier + "! Candidates: " + beanDefinitions);
+                }
+
+                Optional<BeanDefinition<?>> firstBean = beanDefinitions.stream().findFirst();
+                BeanDefinition<?> definition = firstBean.orElseThrow(()-> new IllegalArgumentException("There is no candidate for " + micronautBeanQualifier));
 
                 final BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder
                     .rootBeanDefinition(GrailsMicronautBeanFactory.class);
-                beanDefinitionBuilder.addPropertyValue(MICRONAUT_BEAN_TYPE_PROPERTY_NAME, definition.getBeanType());
+                beanDefinitionBuilder.addPropertyValue(MICRONAUT_BEAN_TYPE_PROPERTY_NAME, type == null ? definition.getBeanType() : type);
+                beanDefinitionBuilder.addPropertyValue(MICRONAUT_QUALIFIER_PROPERTY_NAME, micronautBeanQualifier);
                 beanDefinitionBuilder.addPropertyValue(MICRONAUT_CONTEXT_PROPERTY_NAME, micronautContext);
                 beanDefinitionBuilder.addPropertyValue(MICRONAUT_SINGLETON_PROPERTY_NAME, definition.isSingleton());
 
                 ((DefaultListableBeanFactory) beanFactory).registerBeanDefinition(name, beanDefinitionBuilder.getBeanDefinition());
             } catch (NoClassDefFoundError error) {
-                LOGGER.error("Exception loading class for supplier {}. Bean {} will not be available in the runtime", supplier, name);
+                LOGGER.error("Exception loading class for qualifier {}. Bean {} will not be available in the runtime", micronautBeanQualifier, name);
                 LOGGER.error("Current class loader: {}", printClassLoader(getClass().getClassLoader()));
                 LOGGER.error("Parent class loader: {}",  printClassLoader(getClass().getClassLoader().getParent()));
                 LOGGER.error("Current class path: {}", System.getProperty("java.class.path"));
@@ -155,7 +162,7 @@ public class GrailsMicronautBeanProcessor implements BeanFactoryPostProcessor, D
 
         if (noClassDefFoundError == null) {
             if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Successfully added following beans to the spring contest {} ", suppliers);
+                LOGGER.info("Successfully added following beans to the spring contest {} ", micronautBeanQualifiers);
                 LOGGER.info("Current class loader: {}", printClassLoader(getClass().getClassLoader()));
                 LOGGER.info("Parent class loader: {}",  printClassLoader(getClass().getClassLoader().getParent()));
                 LOGGER.info("Current class path: {}", System.getProperty("java.class.path"));

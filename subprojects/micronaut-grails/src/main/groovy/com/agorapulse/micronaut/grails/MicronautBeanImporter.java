@@ -17,15 +17,12 @@
  */
 package com.agorapulse.micronaut.grails;
 
-import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.Qualifier;
 import io.micronaut.core.naming.NameUtils;
-import io.micronaut.inject.BeanDefinition;
 import io.micronaut.inject.qualifiers.Qualifiers;
 
 import java.lang.annotation.Annotation;
 import java.util.*;
-import java.util.function.Function;
 
 /**
  * Defineds which Micronaut beans should be added into a Grails' Spring application context. The processor will then
@@ -38,129 +35,75 @@ import java.util.function.Function;
  */
 public class MicronautBeanImporter {
 
-    public static class UntypedBeanSupplier implements Function<ApplicationContext, Optional<BeanDefinition<?>>> {
-
-        private final Qualifier<?> qualifier;
-
-        public UntypedBeanSupplier(Qualifier<?> qualifier) {
-            this.qualifier = qualifier;
-        }
-
-        @Override
-        public Optional<BeanDefinition<?>> apply(ApplicationContext applicationContext) {
-            Collection<BeanDefinition<?>> beanDefinitions = applicationContext.getBeanDefinitions((Qualifier<Object>) qualifier);
-
-            if (beanDefinitions.size() > 1) {
-                throw new IllegalArgumentException("There is too many candidates for " + qualifier + "! Candidates: " + beanDefinitions);
-            }
-
-            return beanDefinitions.stream().findFirst();
-        }
-
-        @Override
-        public String toString() {
-            return "supplier using qualifier " + qualifier;
-        }
-
-    }
-
-    public static class TypedBeanSupplier<T> implements Function<ApplicationContext, Optional<BeanDefinition<T>>> {
-
-        private final Class<T> type;
-        private final Qualifier<T> qualifier;
-
-        public TypedBeanSupplier(Class<T> type, Qualifier<T> qualifier) {
-            this.type = type;
-            this.qualifier = qualifier;
-        }
-
-        @Override
-        public Optional<BeanDefinition<T>> apply(ApplicationContext applicationContext) {
-            return applicationContext.findBeanDefinition(type, qualifier);
-        }
-
-        @Override
-        public String toString() {
-            return "supplier of " + type + " using qualifier " + qualifier;
-        }
-
-    }
-
-    public static class BeanByTypeSupplier<T> implements Function<ApplicationContext, Optional<BeanDefinition<T>>> {
-
-        private final Class<T> type;
-
-        public BeanByTypeSupplier(Class<T> type) {
-            this.type = type;
-        }
-
-        @Override
-        public Optional<BeanDefinition<T>> apply(ApplicationContext applicationContext) {
-            return applicationContext.findBeanDefinition(type);
-        }
-
-        @Override
-        public String toString() {
-            return "supplier of " + type;
-        }
-
-    }
-
     public static MicronautBeanImporter create() {
         return new MicronautBeanImporter();
     }
 
-    private final Map<String, Function<ApplicationContext, Optional<BeanDefinition<?>>>> suppliers = new LinkedHashMap<>();
+    private final Map<String, TypeAndQualifier<?>> micronautBeanQualifiers = new LinkedHashMap<>();
     private final List<PropertyTranslatingCustomizer> customizers = new ArrayList<>();
 
     protected MicronautBeanImporter() {}
 
-    public MicronautBeanImporter add(String name, Function<ApplicationContext, Optional<BeanDefinition<?>>> supplier) {
-        suppliers.put(name, supplier);
-        return this;
-    }
-
     public MicronautBeanImporter addByType(Class<?> type) {
-        return add(NameUtils.decapitalize(type.getSimpleName()), new BeanByTypeSupplier(type));
+        return addByType(NameUtils.decapitalize(type.getSimpleName()), type);
     }
 
-    public MicronautBeanImporter addByType(String grailsBeanName, Class<?> first, Class<?>... types) {
+    public MicronautBeanImporter addByType(String grailsBeanName, Class<?> type, Class<?>... types) {
         if (types.length == 0) {
-            return add(NameUtils.decapitalize(grailsBeanName), new BeanByTypeSupplier(first));
+            micronautBeanQualifiers.put(grailsBeanName, new TypeAndQualifier<>(type, null));
         } else {
-            return add(NameUtils.decapitalize(grailsBeanName), new TypedBeanSupplier(first, Qualifiers.byType(types)));
+            micronautBeanQualifiers.put(grailsBeanName, new TypeAndQualifier<>(type, Qualifiers.byType(types)));
         }
-    }
-
-    public MicronautBeanImporter addByStereotype(String grailsBeanName, Class<? extends Annotation> type) {
-        return addByQualifiers(grailsBeanName, Qualifiers.byStereotype(type));
+        return this;
     }
 
     public MicronautBeanImporter addByStereotype(String grailsBeanName, Class<?> beanType, Class<? extends Annotation> type) {
         return addByQualifiers(grailsBeanName, beanType, Qualifiers.byStereotype(type));
     }
 
+    /**
+     * @deprecated use {@link #addByStereotype(String, Class, Class)} instead
+     */
+    public MicronautBeanImporter addByStereotype(String grailsBeanName, Class<? extends Annotation> type) {
+        return addByQualifiers(grailsBeanName, Qualifiers.byStereotype(type));
+    }
+
+    /**
+     * @deprecated use {@link #addByName(String, Class)} instead
+     */
     public MicronautBeanImporter addByName(String name) {
         return addByName(name, name);
     }
 
-    public MicronautBeanImporter addByName(String grailsBeanName, String micronautName) {
-        return add(grailsBeanName, new UntypedBeanSupplier(Qualifiers.byName(micronautName)));
-    }
-
-    @SafeVarargs
-    public final <T> MicronautBeanImporter addByQualifiers(String grailsBeanName, Class<T> type, Qualifier<T>... qualifiers) {
-        Qualifier<T> qualifier = Qualifiers.byQualifiers(qualifiers);
-        return add(grailsBeanName, new TypedBeanSupplier(type, qualifier));
+    public MicronautBeanImporter addByName(String name, Class<?> beanType) {
+        return addByName(name, beanType, name);
     }
 
     /**
-     * @deprecated use {@link #addByQualifiers(String, Class, Qualifier[])}
+     * @deprecated use {@link #addByName(String, Class, String)} instead
+     */
+    public MicronautBeanImporter addByName(String grailsBeanName, String micronautName) {
+        micronautBeanQualifiers.put(grailsBeanName, new TypeAndQualifier<>(null, Qualifiers.byName(micronautName)));
+        return this;
+    }
+
+    public MicronautBeanImporter addByName(String grailsBeanName, Class<?> beanType, String micronautName) {
+        micronautBeanQualifiers.put(grailsBeanName, new TypeAndQualifier<>(beanType, Qualifiers.byName(micronautName)));
+        return this;
+    }
+
+    @SafeVarargs
+    public final <T> MicronautBeanImporter addByQualifiers(String grailsBeanName, Class<T> beanType, Qualifier<T>... qualifiers) {
+        micronautBeanQualifiers.put(grailsBeanName, new TypeAndQualifier<>(beanType, Qualifiers.byQualifiers(qualifiers)));
+        return this;
+    }
+
+    /**
+     * @deprecated use {@link #addByQualifiers(String, Class, Qualifier[])} instead
      */
     @SafeVarargs
     public final <T> MicronautBeanImporter addByQualifiers(String grailsBeanName, Qualifier<T>... qualifiers) {
-        Qualifier<T> qualifier = Qualifiers.byQualifiers(qualifiers);
-        return add(grailsBeanName, new UntypedBeanSupplier(qualifier));
+        return addByQualifiers(grailsBeanName, (Class<T>) null, Qualifiers.byQualifiers(qualifiers));
     }
 
     public MicronautBeanImporter customize(PropertyTranslatingCustomizer customizer) {
@@ -172,8 +115,8 @@ public class MicronautBeanImporter {
         return customize(customizer.build());
     }
 
-    public Map<String, Function<ApplicationContext, Optional<BeanDefinition<?>>>> getSuppliers() {
-        return Collections.unmodifiableMap(suppliers);
+    public Map<String, TypeAndQualifier<?>> getMicronautBeanQualifiers() {
+        return Collections.unmodifiableMap(micronautBeanQualifiers);
     }
 
     public List<PropertyTranslatingCustomizer> getCustomizers() {
@@ -191,7 +134,7 @@ public class MicronautBeanImporter {
         } catch (IllegalStateException th) {
             GrailsMicronautBeanProcessor.LOGGER.error("Old style of importing Micronaut beans used. This will lead to having multiple Micronaut application context in the application");
         }
-        return new GrailsMicronautBeanProcessor(getSuppliers(), getCustomizers());
+        return new GrailsMicronautBeanProcessor(getMicronautBeanQualifiers(), getCustomizers());
     }
 }
 
