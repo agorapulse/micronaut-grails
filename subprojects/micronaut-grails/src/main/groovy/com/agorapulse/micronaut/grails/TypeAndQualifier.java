@@ -15,18 +15,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-apply plugin: 'groovy'
+package com.agorapulse.micronaut.grails;
 
-repositories {
-    jcenter()
-    mavenCentral()
-    maven { url 'https://plugins.gradle.org/m2/' }
-}
+import io.micronaut.context.Qualifier;
 
-dependencies {
-    compile gradleApi()
-    compile localGroovy()
+import javax.annotation.Nullable;
 
-    compile 'io.spring.gradle:dependency-management-plugin:1.0.5.RELEASE'
-    compile 'com.github.jengelman.gradle.plugins:shadow:2.0.4'
+public class TypeAndQualifier<T> {
+
+    private final Class<T> type;
+    private final Qualifier<T> qualifier;
+
+    public TypeAndQualifier(@Nullable Class<T> type, @Nullable Qualifier<T> qualifier) {
+        this.type = type;
+        this.qualifier = qualifier;
+    }
+
+    public Class<T> getType() {
+        return type;
+    }
+
+    public Qualifier<T> getQualifier() {
+        return qualifier;
+    }
 }
