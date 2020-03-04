@@ -19,11 +19,13 @@ package com.agorapulse.micronaut.grails;
 
 import io.micronaut.context.env.DefaultEnvironment;
 import io.micronaut.core.convert.ArgumentConversionContext;
+import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.MapPropertySource;
+import org.springframework.core.env.PropertySource;
 
 import javax.annotation.Nullable;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 class GrailsPropertyTranslatingEnvironment extends DefaultEnvironment {
 
@@ -34,6 +36,35 @@ class GrailsPropertyTranslatingEnvironment extends DefaultEnvironment {
         super(environment.getActiveProfiles());
         this.environment = environment;
         this.customizer = customizer;
+
+        if (environment instanceof AbstractEnvironment) {
+            Map<String, Object> multilayer = new LinkedHashMap<>();
+            AbstractEnvironment abEnv = (AbstractEnvironment) environment;
+            for (PropertySource<?> source : abEnv.getPropertySources()) {
+                if (source instanceof MapPropertySource) {
+                    MapPropertySource mps = (MapPropertySource) source;
+                    mps.getSource().forEach((k, v) -> {
+                        String[] parts = k.split("\\.");
+                        Map<String, Object> currentLevelMap = multilayer;
+                        String prefix = "";
+                        for (int i = 0; i < parts.length - 1; i++) {
+                            String part = parts[i];
+                            Object currentOrNewMap = currentLevelMap.computeIfAbsent(part, key -> new LinkedHashMap<>());
+                            multilayer.put(prefix + part, currentOrNewMap);
+                            if (currentOrNewMap instanceof Map) {
+                                currentLevelMap = (Map<String, Object>) currentOrNewMap;
+                            } else {
+                                // conflict - cannot convert key to map of maps
+                                return;
+                            }
+                            prefix = prefix.length() == 0 ? part  + "." : prefix + part + ".";
+                        }
+                        currentLevelMap.put(parts[parts.length - 1], v);
+                    });
+                }
+            }
+            abEnv.getPropertySources().addLast(new MapPropertySource("multilayer", multilayer));
+        }
     }
 
     @Override
