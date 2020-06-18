@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2019 Vladimir Orany.
+ * Copyright 2020 Vladimir Orany.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
  */
 package com.agorapulse.micronaut.grails;
 
-import io.micronaut.context.DefaultBeanContext;
+import io.micronaut.context.DefaultApplicationContext;
 import io.micronaut.context.Qualifier;
 import io.micronaut.inject.BeanDefinition;
 import org.slf4j.Logger;
@@ -35,7 +35,8 @@ import java.net.URLClassLoader;
 import java.util.*;
 
 import static com.agorapulse.micronaut.grails.GrailsPropertyTranslatingCustomizer.collapse;
-import static com.agorapulse.micronaut.grails.PropertyTranslatingCustomizer.*;
+import static com.agorapulse.micronaut.grails.PropertyTranslatingCustomizer.grails;
+import static com.agorapulse.micronaut.grails.PropertyTranslatingCustomizer.of;
 
 /**
  * Adds Micronaut beans to a Grails' Spring application context.  This processor will
@@ -99,19 +100,22 @@ public class GrailsMicronautBeanProcessor implements BeanFactoryPostProcessor, D
     private static final String MICRONAUT_QUALIFIER_PROPERTY_NAME = "micronautQualifier";
     private static final String MICRONAUT_SINGLETON_PROPERTY_NAME = "micronautSingleton";
 
-    private DefaultBeanContext micronautContext;
-    private final Map<String, Qualifier<?>> micronautBeanQualifiers;
+    private DefaultApplicationContext micronautContext;
+    private final Map<String, TypeAndQualifier<?>> micronautBeanQualifiers;
     private final List<PropertyTranslatingCustomizer> customizers;
+    private final List<String> expectedMapProperties;
     private Environment environment;
 
     /**
-     * @param customizers properties translation customizer
      * @param qualifiers the names and qualifiers of the Micronaut beans which should be added to the
      *                   Spring application context.
+     * @param customizers properties translation customizer
+     * @param expectedMapProperties list of properties' prefixes which should be converted to map
      */
-    GrailsMicronautBeanProcessor(Map<String, Qualifier<?>> qualifiers, List<PropertyTranslatingCustomizer> customizers) {
+    GrailsMicronautBeanProcessor(Map<String, TypeAndQualifier<?>> qualifiers, List<PropertyTranslatingCustomizer> customizers, List<String> expectedMapProperties) {
         this.customizers = customizers;
         this.micronautBeanQualifiers = qualifiers;
+        this.expectedMapProperties = expectedMapProperties;
     }
 
     @Override
@@ -120,20 +124,23 @@ public class GrailsMicronautBeanProcessor implements BeanFactoryPostProcessor, D
             throw new IllegalStateException("Spring environment not set!");
         }
 
-        micronautContext = new GrailsPropertyTranslatingApplicationContext(environment, of(collapse(customizers)));
+        micronautContext = new GrailsPropertyTranslatingApplicationContext(environment, of(collapse(customizers)), expectedMapProperties);
 
         micronautContext.start();
 
         NoClassDefFoundError noClassDefFoundError = null;
 
-        for (Map.Entry<String, Qualifier<?>> entry : micronautBeanQualifiers.entrySet()) {
+        for (Map.Entry<String, TypeAndQualifier<?>> entry : micronautBeanQualifiers.entrySet()) {
             String name = entry.getKey();
-            Qualifier<?> micronautBeanQualifier = entry.getValue();
+            Class type = entry.getValue().getType();
+            Qualifier micronautBeanQualifier = entry.getValue().getQualifier();
             try {
-                Collection<BeanDefinition<?>> beanDefinitions = micronautContext.getBeanDefinitions((Qualifier<Object>) micronautBeanQualifier);
+                Collection<BeanDefinition<?>> beanDefinitions = type == null
+                    ? micronautContext.getBeanDefinitions(micronautBeanQualifier)
+                    : micronautContext.getBeanDefinitions(type, micronautBeanQualifier);
 
                 if (beanDefinitions.size() > 1) {
-                    throw new IllegalArgumentException("There is too many candidates for " + micronautBeanQualifier + "! Candidates: " + beanDefinitions);
+                    throw new IllegalArgumentException("There is too many candidates of type " + type + " for " + micronautBeanQualifier + "! Candidates: " + beanDefinitions);
                 }
 
                 Optional<BeanDefinition<?>> firstBean = beanDefinitions.stream().findFirst();
@@ -141,7 +148,7 @@ public class GrailsMicronautBeanProcessor implements BeanFactoryPostProcessor, D
 
                 final BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder
                     .rootBeanDefinition(GrailsMicronautBeanFactory.class);
-                beanDefinitionBuilder.addPropertyValue(MICRONAUT_BEAN_TYPE_PROPERTY_NAME, definition.getBeanType());
+                beanDefinitionBuilder.addPropertyValue(MICRONAUT_BEAN_TYPE_PROPERTY_NAME, type == null ? definition.getBeanType() : type);
                 beanDefinitionBuilder.addPropertyValue(MICRONAUT_QUALIFIER_PROPERTY_NAME, micronautBeanQualifier);
                 beanDefinitionBuilder.addPropertyValue(MICRONAUT_CONTEXT_PROPERTY_NAME, micronautContext);
                 beanDefinitionBuilder.addPropertyValue(MICRONAUT_SINGLETON_PROPERTY_NAME, definition.isSingleton());

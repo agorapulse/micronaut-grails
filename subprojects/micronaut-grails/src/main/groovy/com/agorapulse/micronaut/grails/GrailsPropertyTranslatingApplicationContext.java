@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2019 Vladimir Orany.
+ * Copyright 2020 Vladimir Orany.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,15 @@ package com.agorapulse.micronaut.grails;
 import io.micronaut.context.DefaultApplicationContext;
 import io.micronaut.context.env.Environment;
 
+import java.util.List;
+
 class GrailsPropertyTranslatingApplicationContext extends DefaultApplicationContext {
 
     private final Environment environment;
 
-    GrailsPropertyTranslatingApplicationContext(org.springframework.core.env.Environment environment, PropertyTranslatingCustomizer customizer) {
+    GrailsPropertyTranslatingApplicationContext(org.springframework.core.env.Environment environment, PropertyTranslatingCustomizer customizer, List<String> expectedMapProperties) {
         super(environment.getActiveProfiles());
-        this.environment = new GrailsPropertyTranslatingEnvironment(environment, customizer);
+        this.environment = new GrailsPropertyTranslatingEnvironment(environment, customizer, expectedMapProperties);
         this.environment.addPropertySource(new EnvVarLikeSystemPropertiesPropertySource());
     }
 

@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2019 Vladimir Orany.
+ * Copyright 2020 Vladimir Orany.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,21 +19,67 @@ package com.agorapulse.micronaut.grails;
 
 import io.micronaut.context.env.DefaultEnvironment;
 import io.micronaut.core.convert.ArgumentConversionContext;
+import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.MapPropertySource;
+import org.springframework.core.env.PropertySource;
 
 import javax.annotation.Nullable;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 class GrailsPropertyTranslatingEnvironment extends DefaultEnvironment {
 
     private final Environment environment;
     private final PropertyTranslatingCustomizer customizer;
 
-    GrailsPropertyTranslatingEnvironment(Environment environment, PropertyTranslatingCustomizer customizer) {
+    GrailsPropertyTranslatingEnvironment(Environment environment, PropertyTranslatingCustomizer customizer, List<String> expectedMapProperties) {
         super(environment.getActiveProfiles());
         this.environment = environment;
         this.customizer = customizer;
+
+        if (environment instanceof AbstractEnvironment) {
+            Map<String, Object> multilayer = new LinkedHashMap<>();
+            AbstractEnvironment abEnv = (AbstractEnvironment) environment;
+            for (PropertySource<?> source : abEnv.getPropertySources()) {
+                if (source instanceof MapPropertySource) {
+                    MapPropertySource mps = (MapPropertySource) source;
+                    mps.getSource().forEach((k, v) -> {
+                        Optional<String> expectedPrefix = expectedMapProperties.stream().filter(k::startsWith).findFirst();
+                        if (expectedPrefix.isPresent()) {
+                            String[] parts = k.split("\\.");
+                            Map<String, Object> currentLevelMap = multilayer;
+                            String prefix = "";
+                            for (int i = 0; i < parts.length - 1; i++) {
+                                String part = parts[i];
+                                String currentKey = prefix + part;
+                                prefix = prefix.length() == 0 ? part  + "." : prefix + part + ".";
+
+                                if (!currentKey.startsWith(expectedPrefix.get())) {
+                                    continue;
+                                }
+
+                                Object currentOrNewMap;
+                                if (expectedPrefix.get().equals(currentKey)) {
+                                    currentOrNewMap = new LinkedHashMap<>();
+                                    multilayer.put(currentKey, currentOrNewMap);
+                                } else {
+                                    currentOrNewMap = currentLevelMap.computeIfAbsent(part, key -> new LinkedHashMap<>());
+                                }
+
+                                if (currentOrNewMap instanceof Map) {
+                                    currentLevelMap = (Map<String, Object>) currentOrNewMap;
+                                } else {
+                                    // conflict - cannot convert key to map of maps
+                                    return;
+                                }
+                            }
+                            currentLevelMap.put(parts[parts.length - 1], v);
+                        }
+                    });
+                }
+            }
+            abEnv.getPropertySources().addLast(new MapPropertySource("multilayer", multilayer));
+        }
     }
 
     @Override

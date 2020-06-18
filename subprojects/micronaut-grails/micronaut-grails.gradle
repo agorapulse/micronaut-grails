@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2019 Vladimir Orany.
+ * Copyright 2020 Vladimir Orany.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,6 @@ dependencies {
     testCompile("org.spockframework:spock-spring:$spockVersion") {
         exclude group: "org.codehaus.groovy", module: "groovy-all"
     }
-    testCompile group: 'com.agorapulse', name: 'micronaut-aws-sdk', version: '1.2.7'
-    testCompile group: 'com.amazonaws', name: 'aws-java-sdk-sns', version: '1.11.692'
+    testCompile group: 'com.agorapulse', name: 'micronaut-aws-sdk-sns', version: '1.2.10.2'
+    testCompile group: 'com.agorapulse', name: 'micronaut-aws-sdk-sqs', version: '1.2.10.2'
 }

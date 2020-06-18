@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2019 Vladimir Orany.
+ * Copyright 2020 Vladimir Orany.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,37 +39,72 @@ public class MicronautBeanImporter {
         return new MicronautBeanImporter();
     }
 
-    private final Map<String, Qualifier<?>> micronautBeanQualifiers = new LinkedHashMap<>();
+    private final Map<String, TypeAndQualifier<?>> micronautBeanQualifiers = new LinkedHashMap<>();
     private final List<PropertyTranslatingCustomizer> customizers = new ArrayList<>();
+    private final List<String> expectedMapProperties = new ArrayList<>();
 
     protected MicronautBeanImporter() {}
 
     public MicronautBeanImporter addByType(Class<?> type) {
-        return addByQualifiers(NameUtils.decapitalize(type.getSimpleName()), Qualifiers.byType(type));
+        return addByType(NameUtils.decapitalize(type.getSimpleName()), type);
     }
 
-    public MicronautBeanImporter addByType(String grailsBeanName, Class<?>... types) {
-        micronautBeanQualifiers.put(grailsBeanName, Qualifiers.byType(types));
+    public MicronautBeanImporter addByType(String grailsBeanName, Class<?> type, Class<?>... types) {
+        if (types.length == 0) {
+            micronautBeanQualifiers.put(grailsBeanName, new TypeAndQualifier<>(type, null));
+        } else {
+            micronautBeanQualifiers.put(grailsBeanName, new TypeAndQualifier<>(type, Qualifiers.byType(types)));
+        }
         return this;
     }
 
+    public MicronautBeanImporter addByStereotype(String grailsBeanName, Class<?> beanType, Class<? extends Annotation> type) {
+        return addByQualifiers(grailsBeanName, beanType, Qualifiers.byStereotype(type));
+    }
+
+    /**
+     * @deprecated use {@link #addByStereotype(String, Class, Class)} instead
+     */
     public MicronautBeanImporter addByStereotype(String grailsBeanName, Class<? extends Annotation> type) {
         return addByQualifiers(grailsBeanName, Qualifiers.byStereotype(type));
     }
 
+    /**
+     * @deprecated use {@link #addByName(String, Class)} instead
+     */
     public MicronautBeanImporter addByName(String name) {
         return addByName(name, name);
     }
 
+    public MicronautBeanImporter addByName(String name, Class<?> beanType) {
+        return addByName(name, beanType, name);
+    }
+
+    /**
+     * @deprecated use {@link #addByName(String, Class, String)} instead
+     */
     public MicronautBeanImporter addByName(String grailsBeanName, String micronautName) {
-        micronautBeanQualifiers.put(grailsBeanName, Qualifiers.byName(micronautName));
+        micronautBeanQualifiers.put(grailsBeanName, new TypeAndQualifier<>(null, Qualifiers.byName(micronautName)));
+        return this;
+    }
+
+    public MicronautBeanImporter addByName(String grailsBeanName, Class<?> beanType, String micronautName) {
+        micronautBeanQualifiers.put(grailsBeanName, new TypeAndQualifier<>(beanType, Qualifiers.byName(micronautName)));
         return this;
     }
 
     @SafeVarargs
-    public final <T> MicronautBeanImporter addByQualifiers(String grailsBeanName, Qualifier<T>... qualifiers) {
-        micronautBeanQualifiers.put(grailsBeanName, Qualifiers.byQualifiers(qualifiers));
+    public final <T> MicronautBeanImporter addByQualifiers(String grailsBeanName, Class<T> beanType, Qualifier<T>... qualifiers) {
+        micronautBeanQualifiers.put(grailsBeanName, new TypeAndQualifier<>(beanType, Qualifiers.byQualifiers(qualifiers)));
         return this;
+    }
+
+    /**
+     * @deprecated use {@link #addByQualifiers(String, Class, Qualifier[])} instead
+     */
+    @SafeVarargs
+    public final <T> MicronautBeanImporter addByQualifiers(String grailsBeanName, Qualifier<T>... qualifiers) {
+        return addByQualifiers(grailsBeanName, (Class<T>) null, Qualifiers.byQualifiers(qualifiers));
     }
 
     public MicronautBeanImporter customize(PropertyTranslatingCustomizer customizer) {
@@ -81,7 +116,16 @@ public class MicronautBeanImporter {
         return customize(customizer.build());
     }
 
-    public Map<String, Qualifier<?>> getMicronautBeanQualifiers() {
+    public MicronautBeanImporter createMapForPropertiesStarting(String prefix) {
+        expectedMapProperties.add(prefix);
+        return this;
+    }
+
+    public List<String> getExpectedMapProperties() {
+        return Collections.unmodifiableList(expectedMapProperties);
+    }
+
+    public Map<String, TypeAndQualifier<?>> getMicronautBeanQualifiers() {
         return Collections.unmodifiableMap(micronautBeanQualifiers);
     }
 
@@ -100,7 +144,7 @@ public class MicronautBeanImporter {
         } catch (IllegalStateException th) {
             GrailsMicronautBeanProcessor.LOGGER.error("Old style of importing Micronaut beans used. This will lead to having multiple Micronaut application context in the application");
         }
-        return new GrailsMicronautBeanProcessor(getMicronautBeanQualifiers(), getCustomizers());
+        return new GrailsMicronautBeanProcessor(getMicronautBeanQualifiers(), getCustomizers(), getExpectedMapProperties());
     }
 }
 

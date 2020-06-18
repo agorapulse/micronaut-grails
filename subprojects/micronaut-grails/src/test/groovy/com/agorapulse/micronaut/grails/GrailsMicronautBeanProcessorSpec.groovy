@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2019 Vladimir Orany.
+ * Copyright 2020 Vladimir Orany.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,7 +91,8 @@ class GrailsMicronautBeanProcessorSpec extends Specification {
         when:
             GrailsPropertyTranslatingEnvironment translatingEnvironment = new GrailsPropertyTranslatingEnvironment(
                 environment,
-                PropertyTranslatingCustomizer.none()
+                PropertyTranslatingCustomizer.none(),
+                Collections.emptyList()
             )
         then:
             !translatingEnvironment.containsProperty('redis.host')

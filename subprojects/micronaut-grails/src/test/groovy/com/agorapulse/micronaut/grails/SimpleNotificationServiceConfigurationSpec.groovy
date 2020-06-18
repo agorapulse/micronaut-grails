@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2019 Vladimir Orany.
+ * Copyright 2020 Vladimir Orany.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,9 @@ package com.agorapulse.micronaut.grails
 
 import com.agorapulse.micronaut.aws.sns.SimpleNotificationService
 import com.agorapulse.micronaut.aws.sns.SimpleNotificationServiceConfiguration
+import com.agorapulse.micronaut.aws.sqs.SimpleQueueService
 import groovy.transform.CompileStatic
+import io.micronaut.inject.qualifiers.Qualifiers
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
@@ -42,7 +44,7 @@ class SimpleNotificationServiceConfigurationSpec extends Specification {
 
     void 'test sns configuration'() {
         expect:
-            ctx.containsBean('simpleNotificationServiceConfiguration')
+            ctx.containsBean('simpleNotificationService')
         when:
             SimpleNotificationServiceConfiguration configuration = ctx.getBean(SimpleNotificationServiceConfiguration)
         then:
@@ -65,6 +67,8 @@ class GrailsSimpleNotificationServiceConfig {
             )
             .addByType(SimpleNotificationService)
             .addByType(SimpleNotificationServiceConfiguration)
+            .addByQualifiers('notificationsQueueService', SimpleQueueService, Qualifiers.byName('notifications'))
+            .createMapForPropertiesStarting('aws.sqs.queues')
     }
 
 }
