@@ -19,6 +19,7 @@ package com.agorapulse.micronaut.grails;
 
 import io.micronaut.context.env.DefaultEnvironment;
 import io.micronaut.core.convert.ArgumentConversionContext;
+import io.micronaut.core.convert.ConversionService;
 import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MapPropertySource;
@@ -114,9 +115,10 @@ class GrailsPropertyTranslatingEnvironment extends DefaultEnvironment {
     @Override
     public <T> Optional<T> getProperty(@Nullable String name, ArgumentConversionContext<T> conversionContext) {
         Class<T> type = conversionContext.getArgument().getType();
-        T value = environment.getProperty(name, type);
-        if (value != null) {
-            return Optional.of(value);
+        Object property = environment.getProperty(name, Object.class);
+        Optional<T> value = ConversionService.SHARED.convert(property, type, conversionContext);
+        if (value.isPresent()) {
+            return value;
         }
 
         Set<String> alternativeNames = customizer.getAlternativeNames(name);
@@ -125,9 +127,10 @@ class GrailsPropertyTranslatingEnvironment extends DefaultEnvironment {
         }
 
         for (String alternativeName : alternativeNames) {
-            T alternativeValue = environment.getProperty(alternativeName, type);
-            if (alternativeValue != null) {
-                return Optional.of(alternativeValue);
+            Object altProperty = environment.getProperty(alternativeName, Object.class);
+            Optional<T> alternativeValue = ConversionService.SHARED.convert(altProperty, type, conversionContext);
+            if (alternativeValue.isPresent()) {
+                return alternativeValue;
             }
         }
 
