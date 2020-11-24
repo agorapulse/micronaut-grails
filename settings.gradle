@@ -46,7 +46,7 @@ buildscript {
 apply plugin: 'org.kordamp.gradle.settings'
 
 projects {
-    directories = ['subprojects', 'docs']
+    directories = ['subprojects', 'docs', 'examples']
 }
 
 rootProject.name = 'micronaut-libraries'

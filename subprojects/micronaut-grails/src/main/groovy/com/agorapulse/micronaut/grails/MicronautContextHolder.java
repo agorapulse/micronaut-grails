@@ -15,22 +15,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-config {
-    bintray {
-        enabled = true
+package com.agorapulse.micronaut.grails;
+
+import io.micronaut.context.ApplicationContext;
+
+import javax.inject.Singleton;
+
+@Singleton
+public class MicronautContextHolder {
+
+    private final ApplicationContext context;
+
+    public MicronautContextHolder(ApplicationContext context) {
+        this.context = context;
     }
-}
 
-dependencies {
-    implementation 'io.micronaut:micronaut-spring'
-    implementation 'org.grails:grails-core'
-    implementation "space.jasan:groovy-closure-support:$groovyClosureSupportVersion"
-
-    testImplementation 'org.springframework:spring-test:5.0.8.RELEASE'
-    testImplementation("org.spockframework:spock-spring:$spockVersion") {
-        exclude group: "org.codehaus.groovy", module: "groovy-all"
+    public ApplicationContext getContext() {
+        return context;
     }
 
-    testImplementation group: 'com.agorapulse', name: 'micronaut-aws-sdk-sns', version: '1.2.10.2'
-    testImplementation group: 'com.agorapulse', name: 'micronaut-aws-sdk-sqs', version: '1.2.10.2'
 }

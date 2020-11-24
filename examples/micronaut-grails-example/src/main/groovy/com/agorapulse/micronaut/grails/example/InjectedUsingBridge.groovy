@@ -15,22 +15,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-config {
-    bintray {
-        enabled = true
+package com.agorapulse.micronaut.grails.example
+
+import groovy.transform.CompileStatic
+import io.micronaut.context.ApplicationContext
+
+import javax.inject.Singleton
+
+@Singleton
+@CompileStatic
+class InjectedUsingBridge {
+
+    private final ApplicationContext micronautContext
+
+    InjectedUsingBridge(ApplicationContext micronautContext) {
+        this.micronautContext = micronautContext
     }
-}
 
-dependencies {
-    implementation 'io.micronaut:micronaut-spring'
-    implementation 'org.grails:grails-core'
-    implementation "space.jasan:groovy-closure-support:$groovyClosureSupportVersion"
-
-    testImplementation 'org.springframework:spring-test:5.0.8.RELEASE'
-    testImplementation("org.spockframework:spock-spring:$spockVersion") {
-        exclude group: "org.codehaus.groovy", module: "groovy-all"
+    ApplicationContext getMicronautContext() {
+        return micronautContext
     }
 
-    testImplementation group: 'com.agorapulse', name: 'micronaut-aws-sdk-sns', version: '1.2.10.2'
-    testImplementation group: 'com.agorapulse', name: 'micronaut-aws-sdk-sqs', version: '1.2.10.2'
+    @Override
+    public String toString() {
+        return "InjectedUsingBridge";
+    }
+
 }

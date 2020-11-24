@@ -115,6 +115,7 @@ subprojects { Project subproject ->
     dependencyManagement {
         imports {
             mavenBom "io.micronaut:micronaut-bom:$micronautVersion"
+            mavenBom "org.grails:grails-bom:${grailsVersion}"
         }
     }
 

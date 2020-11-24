@@ -15,22 +15,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-config {
-    bintray {
-        enabled = true
+apply plugin:"groovy"
+
+sourceSets {
+    main {
+        groovy {
+            srcDir 'grails-app/domain'
+        }
     }
 }
 
 dependencies {
-    implementation 'io.micronaut:micronaut-spring'
-    implementation 'org.grails:grails-core'
-    implementation "space.jasan:groovy-closure-support:$groovyClosureSupportVersion"
+    compile 'org.grails:grails-datastore-gorm-hibernate5'
 
-    testImplementation 'org.springframework:spring-test:5.0.8.RELEASE'
-    testImplementation("org.spockframework:spock-spring:$spockVersion") {
-        exclude group: "org.codehaus.groovy", module: "groovy-all"
-    }
+    compileOnly "io.micronaut:micronaut-inject-groovy"
 
-    testImplementation group: 'com.agorapulse', name: 'micronaut-aws-sdk-sns', version: '1.2.10.2'
-    testImplementation group: 'com.agorapulse', name: 'micronaut-aws-sdk-sqs', version: '1.2.10.2'
+    compile 'io.micronaut.configuration:micronaut-hibernate-gorm'
+
+    compileOnly "org.grails:grails-core:$grailsVersion"
+
+    compile "org.grails:grails-bootstrap:$grailsVersion"
+
+    annotationProcessor "io.micronaut:micronaut-inject-java"
+    compile "io.micronaut:micronaut-runtime-groovy"
+    compile "io.micronaut:micronaut-validation"
 }

@@ -15,22 +15,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-config {
-    bintray {
-        enabled = true
-    }
-}
+import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.chrome.ChromeOptions
+import org.openqa.selenium.firefox.FirefoxDriver
 
-dependencies {
-    implementation 'io.micronaut:micronaut-spring'
-    implementation 'org.grails:grails-core'
-    implementation "space.jasan:groovy-closure-support:$groovyClosureSupportVersion"
+environments {
 
-    testImplementation 'org.springframework:spring-test:5.0.8.RELEASE'
-    testImplementation("org.spockframework:spock-spring:$spockVersion") {
-        exclude group: "org.codehaus.groovy", module: "groovy-all"
+    // run via “./gradlew -Dgeb.env=chrome iT”
+    chrome {
+        driver = { new ChromeDriver() }
     }
 
-    testImplementation group: 'com.agorapulse', name: 'micronaut-aws-sdk-sns', version: '1.2.10.2'
-    testImplementation group: 'com.agorapulse', name: 'micronaut-aws-sdk-sqs', version: '1.2.10.2'
+    // run via “./gradlew -Dgeb.env=chromeHeadless iT”
+    chromeHeadless {
+        driver = {
+            ChromeOptions o = new ChromeOptions()
+            o.addArguments('headless')
+            new ChromeDriver(o)
+        }
+    }
+
+    // run via “./gradlew -Dgeb.env=firefox iT”
+    firefox {
+        driver = { new FirefoxDriver() }
+    }
 }
