@@ -40,16 +40,23 @@ class ServicesController {
 
     def index() {
         render([
-            someDirectlyInjected: someDirectlyInjected?.toString(),
+            someDirectlyInjected     : someDirectlyInjected?.toString(),
             someInjectedWithQualifier: someInjectedWithQualifier.toString(),
-            injectedUsingBridge: injectedUsingBridge.toString(),
-            otherInjected: otherInjected.toString()
+            injectedUsingBridge      : injectedUsingBridge.toString(),
+            otherInjected            : otherInjected.toString()
         ] as JSON)
     }
 
     def identical() {
         render([
             identical: someDirectlyInjected.micronautContext == injectedUsingBridge.micronautContext
+        ] as JSON)
+    }
+
+    def values() {
+        render([
+            valueWithMicronautPrefix: someDirectlyInjected.valueWithMicronautPrefix,
+            valueWithoutPrefix      : someDirectlyInjected.valueWithoutPrefix
         ] as JSON)
     }
 

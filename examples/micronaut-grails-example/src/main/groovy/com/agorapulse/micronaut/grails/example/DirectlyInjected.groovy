@@ -20,7 +20,9 @@ package com.agorapulse.micronaut.grails.example
 import com.agorapulse.micronaut.grails.domain.ManagerService
 import groovy.transform.CompileStatic
 import io.micronaut.context.ApplicationContext
+import io.micronaut.context.annotation.Value
 
+import javax.annotation.Nullable
 import javax.inject.Singleton
 
 @Singleton
@@ -29,8 +31,17 @@ class DirectlyInjected {
 
     private final ManagerService managerService
     private final ApplicationContext micronautContext
+    private final String valueWithMicronautPrefix
+    private final String valueWithoutPrefix
 
-    DirectlyInjected(ManagerService managerService, ApplicationContext micronautContext) {
+    DirectlyInjected(
+        ManagerService managerService,
+        ApplicationContext micronautContext,
+        @Nullable @Value('${micronaut.foo.bar}') String valueWithMicronautPrefix,
+        @Nullable @Value('${bar.foo}') String valueWithoutPrefix
+    ) {
+        this.valueWithoutPrefix = valueWithoutPrefix
+        this.valueWithMicronautPrefix = valueWithMicronautPrefix
         this.managerService = managerService
         this.micronautContext = micronautContext
     }
@@ -44,4 +55,11 @@ class DirectlyInjected {
         return micronautContext
     }
 
+    String getValueWithMicronautPrefix() {
+        return valueWithMicronautPrefix
+    }
+
+    String getValueWithoutPrefix() {
+        return valueWithoutPrefix
+    }
 }

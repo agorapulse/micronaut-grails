@@ -24,7 +24,7 @@ import org.springframework.context.ConfigurableApplicationContext
 import spock.lang.Shared
 import spock.lang.Specification
 
-class ApplicationSpec extends Specification {
+class LegacyApplicationSpec extends Specification {
 
     @Shared ConfigurableApplicationContext context
 
@@ -34,14 +34,14 @@ class ApplicationSpec extends Specification {
         Throwable th = null
         Thread.start {
             try {
-                Application.main()
+                LegacyApplication.main()
             } catch (Throwable e) {
                 th = e
             }
         }
 
         for (i in 0..<1000) {
-            if (Application.context != null) {
+            if (LegacyApplication.context != null) {
                 break;
             }
             if (th != null) {
@@ -49,23 +49,22 @@ class ApplicationSpec extends Specification {
             }
             Thread.sleep(100)
         }
-        assert Application.context, "application context is set"
+        assert LegacyApplication.context, "application context is set"
 
-        context = Application.context
+        context = LegacyApplication.context
     }
 
     void cleanupSpec() {
-        if (Application.context.isActive()) {
+        if (LegacyApplication.context.isActive()) {
             try {
-                Application.context.stop()
+                LegacyApplication.context.stop()
             } catch (IllegalStateException ise) {
                 if (!ise.message.contains('has been closed already')) {
-                    throw ise;
+                    throw ise
                 }
             }
         }
     }
-
 
     void 'application context is set'() {
         expect:
@@ -90,6 +89,21 @@ class ApplicationSpec extends Specification {
                     json identical: true
                 }
             }
+    }
+
+    void 'check property exclusion works'() {
+        expect:
+            gru.test {
+                get '/services/values'
+                expect {
+                    json valueWithMicronautPrefix: 'foobar', valueWithoutPrefix: 'barfoo'
+                }
+            }
+    }
+
+    void 'check property translation works'() {
+        expect:
+            false
     }
 
 }

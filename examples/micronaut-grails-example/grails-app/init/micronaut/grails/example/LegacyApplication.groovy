@@ -25,13 +25,17 @@ import groovy.transform.CompileStatic
 import org.springframework.context.ConfigurableApplicationContext
 
 @CompileStatic
-class Application extends GrailsAutoConfiguration {
+class LegacyApplication extends GrailsAutoConfiguration {
 
     static ConfigurableApplicationContext context
 
     static void main(String[] args) {
-        context = MicronautGrailsApp.run(Application, args) {
-            addPackage Manager.package.name
+        context = MicronautGrailsApp.run {
+            source LegacyApplication
+            arguments args
+            environment {
+                addPackage Manager.package
+            }
         }
     }
 

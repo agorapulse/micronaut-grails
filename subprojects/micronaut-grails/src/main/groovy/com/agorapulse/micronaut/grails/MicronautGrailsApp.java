@@ -35,7 +35,6 @@ import org.grails.core.util.BeanCreationProfilingPostProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
-import org.springframework.boot.Banner;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import space.jasan.support.groovy.closure.ConsumerWithDelegate;
@@ -50,22 +49,139 @@ import java.util.function.Consumer;
 
 public class MicronautGrailsApp extends GrailsApp {
 
+    public enum Compatibility {
+        /**
+         * Runs the application in the legacy mode.
+         *
+         * <ul>
+         *     <li>Two Micronaut contexts are created - one by Grails App and another one by Micronaut Grails for beans imported using {@link MicronautBeanImporter}</li>
+         *     <li>Micronaut beans declared using {@link MicronautBeanImporter} can be injected by name without <code>@Inject</code> annotation</li>
+         *     <li>Property prefixes are stripped by beans imported using {@link MicronautBeanImporter} according to existing {@link PropertyTranslatingCustomizer} beans</li>
+         *     <li>Properties are ignored by beans imported using {@link MicronautBeanImporter} according to existing {@link PropertyTranslatingCustomizer} beans</li>
+         * </ul>
+         */
+        @Deprecated
+        LEGACY("micronaut-grails-legacy"),
+
+        /**
+         * Runs the application in the bridge mode.
+         *
+         * <ul>
+         *     <li>Only one Micronaut context is created - the one by Grails App</li>
+         *     <li>Micronaut beans declared using {@link MicronautBeanImporter} can be injected by name without <code>@Inject</code> annotation</li>
+         *     <li>Property prefixes are <em>no longer stripped</em> by beans imported using {@link MicronautBeanImporter} according to existing {@link PropertyTranslatingCustomizer} beans</li>
+         *     <li>Properties are <em>no longer ignored</em> by beans imported using {@link MicronautBeanImporter} according to existing {@link PropertyTranslatingCustomizer} beans</li>
+         * </ul>
+         */
+        BRIDGE("micronaut-grails-bridge"),
+
+        /**
+         * Runs the application in the bridge mode.
+         *
+         * <ul>
+         *     <li>Only one Micronaut context is created - the one by Grails App</li>
+         *     <li>All Micronaut beans must use <code>@Inject</code> annotation to be injected</li>
+         *     <li>Property prefixes are <em>no longer stripped</em> by beans imported using {@link MicronautBeanImporter} according to existing {@link PropertyTranslatingCustomizer} beans</li>
+         *     <li>Properties are <em>no longer ignored</em> by beans imported using {@link MicronautBeanImporter} according to existing {@link PropertyTranslatingCustomizer} beans</li>
+         * </ul>
+         */
+        STRICT("micronaut-grails-strict");
+
+        private final String environment;
+
+        Compatibility(String environment) {
+            this.environment = environment;
+        }
+
+        public String getEnvironment() {
+            return environment;
+        }
+
+    }
+
+    public static class Configuration {
+        private final List<Class<?>> sources = new ArrayList<>();
+        private final List<String> args = new ArrayList<>();
+
+        private Compatibility compatibility = Compatibility.LEGACY;
+        private Consumer<Environment> environment = e -> { };
+
+        public Configuration source(Class<?> source) {
+            this.sources.add(source);
+            return this;
+        }
+
+        public Configuration sources(List<Class<?>> sources) {
+            this.sources.addAll(sources);
+            return this;
+        }
+
+        public Configuration sources(Class<?>... sources) {
+            this.sources.addAll(Arrays.asList(sources));
+            return this;
+        }
+
+        public Configuration arguments(String... args) {
+            this.args.addAll(Arrays.asList(args));
+            return this;
+        }
+
+        public Configuration compatibility(Compatibility compatibility) {
+            this.compatibility = compatibility;
+            return this;
+        }
+
+        public Configuration environment(Consumer<Environment> micronaut) {
+            this.environment = micronaut;
+            return this;
+        }
+
+       public  Configuration environment(
+            @DelegatesTo(value = Environment.class, strategy = Closure.DELEGATE_FIRST)
+            @ClosureParams(value = SimpleType.class, options = "io.micronaut.context.env.Environment")
+            Closure<Environment> micronaut
+        ) {
+            this.environment = this.environment.andThen(ConsumerWithDelegate.create(micronaut));
+            return this;
+        }
+
+    }
+
+    public static final String ENVIRONMENT = "micronaut-grails";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MicronautGrailsApp.class);
 
-    private final Consumer<Environment> configureMicronautEnvironment;
+    private final Configuration configuration;
 
     // copy pasted
 
     /**
-     * Static helper that can be used to run a {@link GrailsApp} from the
+     * Static helper that can be used to run a {@link MicronautGrailsApp} from the
      * specified source using default settings.
-     * @param source the source to load
-     * @param args the application arguments (usually passed from a Java main method)
+     *
+     * @param configuration application configuration
      * @return the running {@link org.springframework.context.ApplicationContext}
      */
-    public static ConfigurableApplicationContext run(Class<?> source, String... args) {
-        return run(source, args, ConsumerWithDelegate.create(Closure.IDENTITY));
+    public static ConfigurableApplicationContext run(Consumer<Configuration> configuration) {
+        Configuration c = initConfiguration(configuration);
+        return new MicronautGrailsApp(c).run(c.args.toArray(new String[0]));
     }
+
+    /**
+     * Static helper that can be used to run a {@link MicronautGrailsApp} from the
+     * specified source using default settings.
+     *
+     * @param configuration application configuration
+     * @return the running {@link org.springframework.context.ApplicationContext}
+     */
+    public static ConfigurableApplicationContext run(
+        @DelegatesTo(value = Configuration.class, strategy = Closure.DELEGATE_FIRST)
+        @ClosureParams(value = SimpleType.class, options = "com.agorapulse.micronaut.grails.MicronautGrailsApp.Configuration")
+        Closure<Configuration> configuration
+    ) {
+        return run(ConsumerWithDelegate.create(configuration));
+    }
+
 
     /**
      * Static helper that can be used to run a {@link GrailsApp} from the
@@ -73,85 +189,29 @@ public class MicronautGrailsApp extends GrailsApp {
      * @param sources the sources to load
      * @param args the application arguments (usually passed from a Java main method)
      * @return the running {@link org.springframework.context.ApplicationContext}
+     * @deprecated use {@link #run(Consumer)}
      */
     public static ConfigurableApplicationContext run(Class[] sources, String... args) {
-        return run(sources, args, ConsumerWithDelegate.create(Closure.IDENTITY));
+        return run(c -> c.sources(sources).arguments(args));
     }
 
     /**
-     * Static helper that can be used to run a {@link GrailsApp} from the
-     * specified source using default settings.
+     * Static helper that can be used to run a {@link MicronautGrailsApp} from the
+     * specified source using default settings and user supplied arguments.
      *
-     * @param source the source to load
-     * @param args   the application arguments (usually passed from a Java main method)
-     * @return the running {@link org.springframework.context.ApplicationContext}
-     */
-    public static ConfigurableApplicationContext run(
-        Class<?> source,
-        String[] args,
-        @DelegatesTo(value = Environment.class, strategy = Closure.DELEGATE_FIRST)
-        @ClosureParams(value = SimpleType.class, options = "io.micronaut.context.env.Environment")
-            Closure<Environment> configureMicronautEnvironment
-    ) {
-        return run(new Class[]{source}, args, configureMicronautEnvironment);
-    }
-
-    /**
-     * Static helper that can be used to run a {@link GrailsApp} from the
-     * specified source using default settings.
-     *
-     * @param source the source to load
-     * @param args   the application arguments (usually passed from a Java main method)
-     * @return the running {@link org.springframework.context.ApplicationContext}
-     */
-    public static ConfigurableApplicationContext run(
-        Class<?> source,
-        String[] args,
-        Consumer<Environment> configureMicronautEnvironment
-    ) {
-        return run(new Class[]{source}, args, configureMicronautEnvironment);
-    }
-
-
-    /**
-     * Static helper that can be used to run a {@link GrailsApp} from the
-     * specified sources using default settings and user supplied arguments.
-     *
-     * @param sources the sources to load
+     * @param source  the source to load
      * @param args    the application arguments (usually passed from a Java main method)
      * @return the running {@link org.springframework.context.ApplicationContext}
+     * @deprecated use {@link #run(Consumer)}
      */
-    public static ConfigurableApplicationContext run(
-        Class<?>[] sources,
-        String[] args,
-        @DelegatesTo(value = Environment.class, strategy = Closure.DELEGATE_FIRST)
-        @ClosureParams(value = SimpleType.class, options = "io.micronaut.context.env.Environment")
-            Closure<Environment> configureMicronautEnvironment
-    ) {
-        return run(sources, args, ConsumerWithDelegate.create(configureMicronautEnvironment));
+    public static ConfigurableApplicationContext run(Class<?> source, String[] args) {
+        return run(c -> c.source(source).arguments(args));
     }
 
-    /**
-     * Static helper that can be used to run a {@link GrailsApp} from the
-     * specified sources using default settings and user supplied arguments.
-     *
-     * @param sources the sources to load
-     * @param args    the application arguments (usually passed from a Java main method)
-     * @return the running {@link org.springframework.context.ApplicationContext}
-     */
-    public static ConfigurableApplicationContext run(
-        Class<?>[] sources,
-        String[] args,
-        Consumer<Environment> configureMicronautEnvironment
-    ) {
-        MicronautGrailsApp grailsApp = new MicronautGrailsApp(configureMicronautEnvironment, sources);
-        grailsApp.setBannerMode(Banner.Mode.OFF);
-        return grailsApp.run(args);
-    }
 
-    private MicronautGrailsApp(Consumer<Environment> configureMicronautEnvironment, Class<?>... sources) {
-        super(sources);
-        this.configureMicronautEnvironment = configureMicronautEnvironment;
+    private MicronautGrailsApp(Configuration configuration) {
+        super(configuration.sources.toArray(new Class[0]));
+        this.configuration = configuration;
     }
 
 
@@ -183,6 +243,15 @@ public class MicronautGrailsApp extends GrailsApp {
     }
 
     @Override
+    protected Object printRunStatus(ConfigurableApplicationContext applicationContext) {
+        System.out.println(
+            "The application is running in Micronaut Grails compatibility mode with the the following environments active: "
+            + Arrays.toString(getConfiguredEnvironment().getActiveProfiles())
+        );
+        return null;
+    }
+
+    @Override
     protected ConfigurableApplicationContext createApplicationContext() {
         setAllowBeanDefinitionOverriding(true);
         ConfigurableApplicationContext applicationContext = createSpringApplicationContext();
@@ -192,11 +261,12 @@ public class MicronautGrailsApp extends GrailsApp {
         ApplicationContextConfiguration micronautConfiguration = new ApplicationContextConfiguration() {
             @Override @Nonnull
             public List<String> getEnvironments() {
+                List<String> environments = new ArrayList<>();
+                environments.add(ENVIRONMENT);
                 if (getConfiguredEnvironment() != null) {
-                    return Arrays.asList(getConfiguredEnvironment().getActiveProfiles());
-                } else {
-                    return Collections.emptyList();
+                    environments.addAll(Arrays.asList(getConfiguredEnvironment().getActiveProfiles()));
                 }
+                return environments;
             }
 
             @Override
@@ -219,9 +289,9 @@ public class MicronautGrailsApp extends GrailsApp {
         ApplicationContext micronautContext = new DefaultApplicationContext(micronautConfiguration) {
 
             @Override @Nonnull
-            protected DefaultEnvironment createEnvironment(@Nonnull ApplicationContextConfiguration configuration) {
-                DefaultEnvironment environment = super.createEnvironment(configuration);
-                configureMicronautEnvironment.accept(environment);
+            protected DefaultEnvironment createEnvironment(@Nonnull ApplicationContextConfiguration c) {
+                DefaultEnvironment environment = super.createEnvironment(c);
+                configuration.environment.accept(environment);
                 return environment;
             }
 
@@ -246,6 +316,10 @@ public class MicronautGrailsApp extends GrailsApp {
         return applicationContext;
     }
 
-
+    private static Configuration initConfiguration(Consumer<Configuration> configurationConsumer) {
+        Configuration configuration = new Configuration();
+        configurationConsumer.accept(configuration);
+        return configuration;
+    }
 
 }
