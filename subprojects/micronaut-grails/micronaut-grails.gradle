@@ -22,7 +22,7 @@ config {
 }
 
 dependencies {
-    implementation 'io.micronaut:micronaut-spring'
+    api 'io.micronaut:micronaut-spring'
     implementation 'org.grails:grails-core'
     implementation "space.jasan:groovy-closure-support:$groovyClosureSupportVersion"
 
