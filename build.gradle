@@ -109,6 +109,7 @@ subprojects { Project subproject ->
     if (subproject.name == 'guide') return
 
     apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'java-library'
     apply plugin: 'groovy'
     apply plugin: 'checkstyle'
     apply plugin: 'codenarc'
