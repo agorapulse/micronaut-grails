@@ -2,98 +2,22 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta name="generator" content="Asciidoctor 2.0.10">
 <meta name="author" content="Vladimir Orany">
 <title>Grails Integration for Micronaut</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <link rel="stylesheet" href="./asciidoctor.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="css/docs.css?v=1.2.11.1" />
-<style>
-.hidden {
-    display: none;
-}
-
-.switch {
-    border-width: 1px 1px 0 1px;
-    border-style: solid;
-    border-color: #7a2518;
-    display: inline-block;
-}
-
-.switch--item {
-    padding: 10px;
-    background-color: #ffffff;
-    color: #7a2518;
-    display: inline-block;
-    cursor: pointer;
-}
-
-.switch--item.selected {
-    background-color: #7a2519;
-    color: #ffffff;
-}
-
-</style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
-<script type="text/javascript">
-function addBlockSwitches() {
-    $('.primary').each(function() {
-        primary = $(this);
-        createSwitchItem(primary, createBlockSwitch(primary)).item.addClass("selected");
-        primary.children('.title').remove();
-    });
-    $('.secondary').each(function(idx, node) {
-        secondary = $(node);
-        primary = findPrimary(secondary);
-        switchItem = createSwitchItem(secondary, primary.children('.switch'));
-        switchItem.content.addClass('hidden');
-        findPrimary(secondary).append(switchItem.content);
-        secondary.remove();
-    });
-}
-
-function createBlockSwitch(primary) {
-    blockSwitch = $('<div class="switch"></div>');
-    primary.prepend(blockSwitch);
-    return blockSwitch;
-}
-
-function findPrimary(secondary) {
-    candidate = secondary.prev();
-    while (!candidate.is('.primary')) {
-        candidate = candidate.prev();
-    }
-    return candidate;
-}
-
-function createSwitchItem(block, blockSwitch) {
-    blockName = block.children('.title').text();
-    content = block.children('.content').first().append(block.next('.colist'));
-    item = $('<div class="switch--item">' + blockName + '</div>');
-    item.on('click', '', content, function(e) {
-        $(this).addClass('selected');
-        $(this).siblings().removeClass('selected');
-        e.data.siblings('.content').addClass('hidden');
-        e.data.removeClass('hidden');
-    });
-    blockSwitch.append(item);
-    return {'item': item, 'content': content};
-}
-
-$(addBlockSwitches);
-
-</script>
-
+<link rel="stylesheet" href="css/docs.css?v=2.0.0" />
 </head>
 <body class="book toc2 toc-left">
 <div id="header">
 <h1>Grails Integration for Micronaut</h1>
 <div class="details">
 <span id="author" class="author">Vladimir Orany</span><br>
-<span id="revnumber">version 1.2.11.1</span>
+<span id="revnumber">version 2.0.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -101,7 +25,16 @@ $(addBlockSwitches);
 <li><a href="#_micronaut_grails">1. Micronaut Grails</a>
 <ul class="sectlevel2">
 <li><a href="#_installation">1.1. Installation</a></li>
-<li><a href="#_usage">1.2. Usage</a></li>
+<li><a href="#_usage">1.2. Usage</a>
+<ul class="sectlevel3">
+<li><a href="#_grails_4">1.2.1. Grails 4</a>
+<ul class="sectlevel4">
+<li><a href="#_compatibility_modes">Compatibility Modes</a></li>
+</ul>
+</li>
+<li><a href="#_grails_3">1.2.2. Grails 3</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#_links">2. Links</a></li>
@@ -141,26 +74,12 @@ $(addBlockSwitches);
 <div class="sect1">
 <h2 id="_micronaut_grails"><a class="anchor" href="#_micronaut_grails"></a>1. Micronaut Grails</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>Micronaut Grails package helps using Micronaut beans in the Grails application or any other Spring application.
-There are two additional features which cannot be found the official <a href="https://docs.micronaut.io/latest/guide/index.html#springBeans">Spring support for Micronaut</a>:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Micronaut beans' names defaults to lower-cased simple name of the class as expected by Grails</p>
-</li>
-<li>
-<p>Ability to reuse existing properties declared by Grails - e.g. <code>grails.redis.port</code> can be injected as <code>@Value('${redis.port}')</code></p>
-</li>
-</ol>
-</div>
 <div class="sect2">
 <h3 id="_installation"><a class="anchor" href="#_installation"></a>1.1. Installation</h3>
 <div class="listingblock primary">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="prettyprint highlight"><code>compileOnly 'com.agorapulse:micronaut-grails:1.2.11.1'</code></pre>
+<pre class="prettyprint highlight"><code>compileOnly 'com.agorapulse:micronaut-grails:2.0.0'</code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -178,14 +97,155 @@ If you plan to reuse same library for Micronaut and Grails, you can declare the 
 </div>
 <div class="sect2">
 <h3 id="_usage"><a class="anchor" href="#_usage"></a>1.2. Usage</h3>
+<div class="sect3">
+<h4 id="_grails_4"><a class="anchor" href="#_grails_4"></a>1.2.1. Grails 4</h4>
 <div class="paragraph">
-<p>The integration is handle by bean processor which needs to be injected into Spring application context. The easiest
+<p>Micronaut Grails library helps to use Micronaut beans in the Grails 4 application or any other Spring application.
+The main additional feature is the ability to do more customisation to the Micronaut context such as adding a package for scanning.</p>
+</div>
+<div class="paragraph">
+<p>Replace the body of the <code>main</code> method inside <code>grails-app/init/&#8230;&#8203;/Application.groovy</code> with the following code.</p>
+</div>
+<div class="listingblock">
+<div class="title">Grails 4 Usage</div>
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="groovy">import com.agorapulse.micronaut.grails.EnvVarLikeSystemPropertiesPropertySource
+import com.agorapulse.micronaut.grails.MicronautGrailsApp
+import com.agorapulse.micronaut.grails.domain.Manager
+import grails.boot.config.GrailsAutoConfiguration
+import groovy.transform.CompileStatic
+import org.springframework.context.ConfigurableApplicationContext
+
+@CompileStatic
+class Application extends GrailsAutoConfiguration {
+
+    static ConfigurableApplicationContext context
+
+    static void main(String[] args) {
+        context = MicronautGrailsApp.run {                                              <i class="conum" data-value="1"></i><b>(1)</b>
+            compatibility MicronautGrailsApp.Compatibility.STRICT                       <i class="conum" data-value="2"></i><b>(2)</b>
+            source Application                                                          <i class="conum" data-value="3"></i><b>(3)</b>
+            arguments args                                                              <i class="conum" data-value="4"></i><b>(4)</b>
+            environment {                                                               <i class="conum" data-value="5"></i><b>(5)</b>
+                addPackage Manager.package                                              <i class="conum" data-value="6"></i><b>(6)</b>
+                addPropertySource(new EnvVarLikeSystemPropertiesPropertySource())       <i class="conum" data-value="7"></i><b>(7)</b>
+            }
+        }
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use <code>MicronautGrailsApp</code> instead of <code>GrailsApp</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Set the compatibility mode (see below - defaults to <code>STRICT</code>)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Set the source to current class</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Forward the arguments</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>customise the environment</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>For example, customise the packages to be scanned</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Allow system properties to be all-upper-case (useful for AWS Beanstalk Tomcat environment)</td>
+</tr>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_compatibility_modes"><a class="anchor" href="#_compatibility_modes"></a>Compatibility Modes</h5>
+<div class="paragraph">
+<p>The compatibility mode signals what is the level of compatibility with the legacy features mentioned in Grails 3 section.
+The default is <code>STRICT</code> which means no features are enabled and Grails 4 Micronaut out-of-box integration is used.
+If you are migrating from Grails 3 then you should select <code>LEGACY</code> and enable <code>com.agorapulse.micronaut.grails</code> logging
+to <code>INFO</code> to see the deprecation details.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Mode</th>
+<th class="tableblock halign-left valign-top">LEGACY</th>
+<th class="tableblock halign-left valign-top">BRIDGE</th>
+<th class="tableblock halign-left valign-top">STRICT</th>
+<th class="tableblock halign-left valign-top"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Single Application Context</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If <em>No</em> then two application contexts are created - one for beans using <code>@Inject</code> and another one for beans injected by name.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Injection by Name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If <em>No</em> then the beans require <code>@Inject</code> annotation at the injection point, and they can be no longer injected by name.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Property Translation</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If <em>No</em> then Spring beans of type <code>PropertyTranslatingcustomiser</code> are ignored prefix replacements no longer work. Otherwise, the customization applies to all beans injected by name (not using <code>@Inject</code>).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_grails_3"><a class="anchor" href="#_grails_3"></a>1.2.2. Grails 3</h4>
+<div class="paragraph">
+<p>Micronaut Grails library helps to use Micronaut beans in the Grails 3 application or any other Spring application.
+There are three additional features which cannot be found the official <a href="https://micronaut-projects.github.io/micronaut-spring/latest/guide/">Spring support for Micronaut</a>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Ability to modify Micronaut environment (e.g. add packages for scanning)</p>
+</li>
+<li>
+<p>Micronaut beans' names defaults to lower-cased simple name of the class as expected by Grails</p>
+</li>
+<li>
+<p>Ability to reuse existing properties declared by Grails - e.g. <code>grails.redis.port</code> can be injected as <code>@Value('${redis.port}')</code></p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The integration is handled by bean processor which needs to be injected into Spring application context. The easiest
 thing is to create Spring configuration placed next to your Micronaut classes. The Spring configuration class will
 create <code>MicronautBeanImporter</code> which will be later processed by the processor bean:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight nowrap"><code class="language-groovy" data-lang="groovy">@CompileStatic
+<pre class="prettyprint highlight nowrap"><code data-lang="groovy">@CompileStatic
 @Configuration                                                                          <i class="conum" data-value="1"></i><b>(1)</b>
 class GrailsConfig {
 
@@ -224,7 +284,7 @@ class GrailsConfig {
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>You can provide different name</td>
+<td>You can provide a different name</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
@@ -247,7 +307,7 @@ class GrailsConfig {
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-If more then one bean qualifies the criteria then an exception will be thrown.
+If more than one bean qualifies the criteria then an exception will be thrown.
 </td>
 </tr>
 </table>
@@ -260,6 +320,7 @@ which will automatically load the configuration once the JAR is on classpath.</p
 <div class="title">META-INF/spring.factories</div>
 <div class="content">
 <pre>org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.agorapulse.micronaut.grails.example.GrailsConfig</pre>
+</div>
 </div>
 </div>
 </div>
@@ -279,12 +340,11 @@ which will automatically load the configuration once the JAR is on classpath.</p
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.2.11.1<br>
-Last updated 2020-08-24 12:56:58 UTC
+Version 2.0.0<br>
+Last updated 2020-11-25 15:24:46 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.js"></script>
-<script>prettyPrint()</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/run_prettify.min.js"></script>
 </body>
 </html>
