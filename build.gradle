@@ -18,7 +18,6 @@
 plugins {
     id 'org.kordamp.gradle.groovy-project'
     id 'org.kordamp.gradle.bintray'
-    id 'com.github.kt3k.coveralls'
 }
 
 if (!project.hasProperty('bintrayUsername')) ext.bintrayUsername = '**UNDEFINED**'
@@ -178,19 +177,4 @@ subprojects { Project subproject ->
             name = subproject.name
         }
     }
-}
-
-gradle.taskGraph.whenReady {
-    coveralls {
-        sourceDirs = subprojects.findAll { it.plugins.hasPlugin('java') } sourceSets.main.allSource.srcDirs.flatten()
-        jacocoReportPath = "${buildDir}/reports/jacoco/root/jacocoTestReport.xml"
-    }
-}
-
-tasks.coveralls {
-    group = 'Coverage reports'
-    description = 'Uploads the aggregated coverage report to Coveralls'
-
-    dependsOn jacocoRootReport
-    onlyIf { System.env.CI || System.env.GITHUB_ACTIONS }
 }
