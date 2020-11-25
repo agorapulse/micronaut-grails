@@ -1,0 +1,6 @@
+{
+    "someDirectlyInjected": "DirectlyInjected",
+    "someInjectedWithQualifier": "InjectedWithQualifier",
+    "injectedUsingBridge": null,
+    "otherInjected": null
+}

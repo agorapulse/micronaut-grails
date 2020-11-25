@@ -22,12 +22,15 @@ config {
 }
 
 dependencies {
-    compile "io.micronaut:micronaut-spring"
+    implementation 'io.micronaut:micronaut-spring'
+    implementation 'org.grails:grails-core'
+    implementation "space.jasan:groovy-closure-support:$groovyClosureSupportVersion"
 
-    testCompile 'org.springframework:spring-test:5.0.8.RELEASE'
-    testCompile("org.spockframework:spock-spring:$spockVersion") {
+    testImplementation 'org.springframework:spring-test:5.0.8.RELEASE'
+    testImplementation("org.spockframework:spock-spring:$spockVersion") {
         exclude group: "org.codehaus.groovy", module: "groovy-all"
     }
-    testCompile group: 'com.agorapulse', name: 'micronaut-aws-sdk-sns', version: '1.2.10.2'
-    testCompile group: 'com.agorapulse', name: 'micronaut-aws-sdk-sqs', version: '1.2.10.2'
+
+    testImplementation group: 'com.agorapulse', name: 'micronaut-aws-sdk-sns', version: '1.2.10.2'
+    testImplementation group: 'com.agorapulse', name: 'micronaut-aws-sdk-sqs', version: '1.2.10.2'
 }

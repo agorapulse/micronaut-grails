@@ -19,13 +19,6 @@ image::https://coveralls.io/repos/github/{project-slug}/badge.svg?branch=master[
 
 = Micronaut Grails
 
-Micronaut Grails package helps using Micronaut beans in the Grails application or any other Spring application.
-There are two additional features which cannot be found the official https://docs.micronaut.io/latest/guide/index.html#springBeans[Spring support for Micronaut]:
-
-  1. Micronaut beans' names defaults to lower-cased simple name of the class as expected by Grails
-  2. Ability to reuse existing properties declared by Grails - e.g. `grails.redis.port` can be injected as `@Value('${redis.port}')`
-
-
 == Installation
 
 [source,indent=0,role="primary",subs='verbatim,attributes']
@@ -38,7 +31,66 @@ TIP: If you plan to reuse same library for Micronaut and Grails, you can declare
 
 == Usage
 
-The integration is handle by bean processor which needs to be injected into Spring application context. The easiest
+=== Grails 4
+
+Micronaut Grails library helps to use Micronaut beans in the Grails 4 application or any other Spring application.
+The main additional feature is the ability to do more customisation to the Micronaut context such as adding a package for scanning.
+
+Replace the body of the `main` method inside `grails-app/init/.../Application.groovy` with the following code.
+
+[source,groovy]
+.Grails 4 Usage
+----
+include::{root-dir}/examples/micronaut-grails-example/grails-app/init/micronaut/grails/example/Application.groovy[lines=20..-1]
+----
+<1> Use `MicronautGrailsApp` instead of `GrailsApp`
+<2> Set the compatibility mode (see below - defaults to `STRICT`)
+<3> Set the source to current class
+<4> Forward the arguments
+<5> customise the environment
+<6> For example, customise the packages to be scanned
+<7> Allow system properties to be all-upper-case (useful for AWS Beanstalk Tomcat environment)
+
+==== Compatibility Modes
+
+The compatibility mode signals what is the level of compatibility with the legacy features mentioned in Grails 3 section.
+The default is `STRICT` which means no features are enabled and Grails 4 Micronaut out-of-box integration is used.
+If you are migrating from Grails 3 then you should select `LEGACY` and enable `com.agorapulse.micronaut.grails` logging
+to `INFO` to see the deprecation details.
+
+|===
+|Mode |LEGACY |BRIDGE |STRICT|
+
+|Single Application Context
+|No
+|Yes
+|Yes
+|If _No_ then two application contexts are created - one for beans using `@Inject` and another one for beans injected by name.
+
+|Injection by Name
+|Yes
+|Yes
+|No
+|If _No_ then the beans require `@Inject` annotation at the injection point, and they can be no longer injected by name.
+
+|Property Translation
+|Yes
+|No
+|No
+|If _No_ then Spring beans of type `PropertyTranslatingcustomiser` are ignored prefix replacements no longer work. Otherwise, the customization applies to all beans injected by name (not using `@Inject`).
+|===
+
+
+=== Grails 3
+
+Micronaut Grails library helps to use Micronaut beans in the Grails 3 application or any other Spring application.
+There are three additional features which cannot be found the official https://micronaut-projects.github.io/micronaut-spring/latest/guide/[Spring support for Micronaut]:
+
+1. Ability to modify Micronaut environment (e.g. add packages for scanning)
+2. Micronaut beans' names defaults to lower-cased simple name of the class as expected by Grails
+3. Ability to reuse existing properties declared by Grails - e.g. `grails.redis.port` can be injected as `@Value('${redis.port}')`
+
+The integration is handled by bean processor which needs to be injected into Spring application context. The easiest
 thing is to create Spring configuration placed next to your Micronaut classes. The Spring configuration class will
 create `MicronautBeanImporter` which will be later processed by the processor bean:
 
@@ -49,13 +101,13 @@ include::{root-dir}/subprojects/micronaut-grails/src/test/groovy/com/agorapulse/
 <1> Define class as Spring `@Configuration`
 <2> Declare method which returns bean processor `@Bean`
 <3> The name of the Spring bean defaults to the _property name_ of the class, e.g. `widget`
-<4> You can provide different name
+<4> You can provide a different name
 <5> You can qualify using a stereotype (annotation)
 <6> You can qualify using the name of the bean which will be the same in the Spring application
 <7> You can combine any qualifiers possible to narrow the search to single bean which needs to be available from the Spring application context
 
 
-WARNING: If more then one bean qualifies the criteria then an exception will be thrown.
+WARNING: If more than one bean qualifies the criteria then an exception will be thrown.
 
 Once you have your configuration class ready then you can create `META-INF/spring.factories` descriptor in resources folder
 which will automatically load the configuration once the JAR is on classpath.

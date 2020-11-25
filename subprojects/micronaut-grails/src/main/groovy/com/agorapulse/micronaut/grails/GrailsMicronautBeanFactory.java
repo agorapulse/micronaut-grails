@@ -68,6 +68,10 @@ class GrailsMicronautBeanFactory implements FactoryBean {
 
     @Override
     public Object getObject() throws Exception {
+        if (GrailsMicronautBeanProcessor.LOGGER.isWarnEnabled() && micronautContext.getEnvironment().getActiveNames().contains(MicronautGrailsApp.ENVIRONMENT)) {
+            GrailsMicronautBeanProcessor.LOGGER.warn("Bean " + (micronautQualifier == null ? "" : micronautQualifier) + micronautBeanType.getName() + " has been created using GrailsMicronautBeanProcessor. Consider annotating the injection point with @Inject switching the compatibility mode to MicronautGrailsApp.Compatibility.STRICT");
+        }
+
         Optional bean = micronautContext.findBean(micronautBeanType, micronautQualifier);
         if (bean.isPresent()) {
             return bean.get();
