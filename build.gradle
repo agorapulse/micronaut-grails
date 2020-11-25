@@ -80,6 +80,14 @@ config {
         repo       = 'libs'
         name       = rootProject.name
     }
+
+    docs {
+        groovydoc {
+            aggregate {
+                enabled = false
+            }
+        }
+    }
 }
 
 allprojects {
