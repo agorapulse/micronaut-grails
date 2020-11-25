@@ -18,6 +18,7 @@
 package com.agorapulse.micronaut.grails.example
 
 import com.agorapulse.micronaut.grails.MicronautBeanImporter
+import com.agorapulse.micronaut.grails.PropertyTranslatingCustomizer
 import groovy.transform.CompileStatic
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -32,6 +33,7 @@ class ExampleConfiguration {
             .create()
             .addByType(InjectedUsingBridge)
             .addByType('otherInjected', InjectedUsingBridgeWithDifferentName)
+            .customize(PropertyTranslatingCustomizer.builder().ignore("ex.foo.bar").build())
     }
 
 }

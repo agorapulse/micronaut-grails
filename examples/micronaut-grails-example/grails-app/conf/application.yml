@@ -5,8 +5,11 @@ server:
 grails:
   foo:
     bar: foobar
-  bar:
-    foo: barfoo
+  ex:
+    foo:
+      bar: 42
+bar:
+  foo: barfoo
 ---
 grails:
     profile: web

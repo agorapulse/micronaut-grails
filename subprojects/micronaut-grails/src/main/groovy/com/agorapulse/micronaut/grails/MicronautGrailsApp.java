@@ -49,6 +49,11 @@ import java.util.function.Consumer;
 
 public class MicronautGrailsApp extends GrailsApp {
 
+    public static final String ENVIRONMENT_STRICT = "micronaut-grails-strict";
+    public static final String ENVIRONMENT_BRIDGE = "micronaut-grails-bridge";
+    public static final String ENVIRONMENT_LEGACY = "micronaut-grails-legacy";
+    public static final String ENVIRONMENT = "micronaut-grails";
+
     public enum Compatibility {
         /**
          * Runs the application in the legacy mode.
@@ -61,7 +66,7 @@ public class MicronautGrailsApp extends GrailsApp {
          * </ul>
          */
         @Deprecated
-        LEGACY("micronaut-grails-legacy"),
+        LEGACY(ENVIRONMENT_LEGACY),
 
         /**
          * Runs the application in the bridge mode.
@@ -73,7 +78,7 @@ public class MicronautGrailsApp extends GrailsApp {
          *     <li>Properties are <em>no longer ignored</em> by beans imported using {@link MicronautBeanImporter} according to existing {@link PropertyTranslatingCustomizer} beans</li>
          * </ul>
          */
-        BRIDGE("micronaut-grails-bridge"),
+        BRIDGE(ENVIRONMENT_BRIDGE),
 
         /**
          * Runs the application in the bridge mode.
@@ -85,7 +90,7 @@ public class MicronautGrailsApp extends GrailsApp {
          *     <li>Properties are <em>no longer ignored</em> by beans imported using {@link MicronautBeanImporter} according to existing {@link PropertyTranslatingCustomizer} beans</li>
          * </ul>
          */
-        STRICT("micronaut-grails-strict");
+        STRICT(ENVIRONMENT_STRICT);
 
         private final String environment;
 
@@ -147,7 +152,51 @@ public class MicronautGrailsApp extends GrailsApp {
 
     }
 
-    public static final String ENVIRONMENT = "micronaut-grails";
+    private class MicronautGrailsAppContextConfiguration implements ApplicationContextConfiguration {
+        private final ClassLoader applicationClassLoader;
+
+        public MicronautGrailsAppContextConfiguration(
+            ClassLoader applicationClassLoader
+        ) {
+            this.applicationClassLoader = applicationClassLoader;
+        }
+
+        @Override @Nonnull
+        public List<String> getEnvironments() {
+            List<String> environments = new ArrayList<>();
+            environments.add(ENVIRONMENT);
+            environments.add(configuration.compatibility.environment);
+            if (getConfiguredEnvironment() != null) {
+                environments.addAll(Arrays.asList(getConfiguredEnvironment().getActiveProfiles()));
+            }
+            return environments;
+        }
+
+        @Override
+        public Optional<Boolean> getDeduceEnvironments() {
+            return Optional.of(false);
+        }
+
+        @Override @Nonnull
+        public ClassLoader getClassLoader() {
+            return applicationClassLoader;
+        }
+    }
+
+    private class MicronautGrailsAppContext extends DefaultApplicationContext {
+
+        public MicronautGrailsAppContext(ApplicationContextConfiguration micronautConfiguration) {
+            super(micronautConfiguration);
+        }
+
+        @Override @Nonnull
+        protected DefaultEnvironment createEnvironment(@Nonnull ApplicationContextConfiguration c) {
+            DefaultEnvironment environment = super.createEnvironment(c);
+            configuration.environment.accept(environment);
+            return environment;
+        }
+
+    }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MicronautGrailsApp.class);
 
@@ -258,27 +307,7 @@ public class MicronautGrailsApp extends GrailsApp {
         long now = System.currentTimeMillis();
 
         ClassLoader applicationClassLoader = GrailsApp.class.getClassLoader();
-        ApplicationContextConfiguration micronautConfiguration = new ApplicationContextConfiguration() {
-            @Override @Nonnull
-            public List<String> getEnvironments() {
-                List<String> environments = new ArrayList<>();
-                environments.add(ENVIRONMENT);
-                if (getConfiguredEnvironment() != null) {
-                    environments.addAll(Arrays.asList(getConfiguredEnvironment().getActiveProfiles()));
-                }
-                return environments;
-            }
-
-            @Override
-            public Optional<Boolean> getDeduceEnvironments() {
-                return Optional.of(false);
-            }
-
-            @Override @Nonnull
-            public ClassLoader getClassLoader() {
-                return applicationClassLoader;
-            }
-        };
+        ApplicationContextConfiguration micronautConfiguration = new MicronautGrailsAppContextConfiguration(applicationClassLoader);
 
         List<Class<?>> beanExcludes = new ArrayList<>();
         beanExcludes.add(ConversionService.class);
@@ -286,16 +315,7 @@ public class MicronautGrailsApp extends GrailsApp {
         beanExcludes.add(PropertyResolver.class);
         beanExcludes.add(ConfigurableEnvironment.class);
         ClassUtils.forName("com.fasterxml.jackson.databind.ObjectMapper", getClassLoader()).ifPresent(beanExcludes::add);
-        ApplicationContext micronautContext = new DefaultApplicationContext(micronautConfiguration) {
-
-            @Override @Nonnull
-            protected DefaultEnvironment createEnvironment(@Nonnull ApplicationContextConfiguration c) {
-                DefaultEnvironment environment = super.createEnvironment(c);
-                configuration.environment.accept(environment);
-                return environment;
-            }
-
-        };
+        ApplicationContext micronautContext = new MicronautGrailsAppContext(micronautConfiguration);
 
         micronautContext.getEnvironment()
             .addPropertySource("grails-config", Collections.singletonMap(MicronautBeanFactoryConfiguration.PREFIX + ".bean-excludes", beanExcludes));

@@ -55,7 +55,7 @@ class LegacyApplicationSpec extends Specification {
     }
 
     void cleanupSpec() {
-        if (LegacyApplication.context.isActive()) {
+        if (LegacyApplication.context?.isActive()) {
             try {
                 LegacyApplication.context.stop()
             } catch (IllegalStateException ise) {
@@ -74,7 +74,7 @@ class LegacyApplicationSpec extends Specification {
     void 'fetch services'() {
         expect:
             gru.test {
-                get '/services/index'
+                get '/legacy/index'
                 expect {
                     json 'services.json'
                 }
@@ -84,26 +84,21 @@ class LegacyApplicationSpec extends Specification {
     void 'only one context is created'() {
         expect:
             gru.test {
-                get '/services/identical'
+                get '/legacy/contexts'
                 expect {
-                    json identical: true
+                    json 'contexts.json'
                 }
             }
     }
 
-    void 'check property exclusion works'() {
+    void 'check property translation and exclusion works'() {
         expect:
             gru.test {
-                get '/services/values'
+                get '/legacy/values'
                 expect {
-                    json valueWithMicronautPrefix: 'foobar', valueWithoutPrefix: 'barfoo'
+                    json 'values.json'
                 }
             }
-    }
-
-    void 'check property translation works'() {
-        expect:
-            false
     }
 
 }

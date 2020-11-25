@@ -33,13 +33,16 @@ class DirectlyInjected {
     private final ApplicationContext micronautContext
     private final String valueWithMicronautPrefix
     private final String valueWithoutPrefix
+    private final String ignoredValue
 
     DirectlyInjected(
         ManagerService managerService,
         ApplicationContext micronautContext,
         @Nullable @Value('${micronaut.foo.bar}') String valueWithMicronautPrefix,
-        @Nullable @Value('${bar.foo}') String valueWithoutPrefix
+        @Nullable @Value('${bar.foo}') String valueWithoutPrefix,
+        @Nullable @Value('${ex.foo.bar}') String ignoredValue
     ) {
+        this.ignoredValue = ignoredValue
         this.valueWithoutPrefix = valueWithoutPrefix
         this.valueWithMicronautPrefix = valueWithMicronautPrefix
         this.managerService = managerService
@@ -57,6 +60,10 @@ class DirectlyInjected {
 
     String getValueWithMicronautPrefix() {
         return valueWithMicronautPrefix
+    }
+
+    String getIgnoredValue() {
+        return ignoredValue
     }
 
     String getValueWithoutPrefix() {

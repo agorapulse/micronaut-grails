@@ -28,7 +28,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 @CompileStatic
-class ServicesController {
+class LegacyController {
 
     // micronaut beans requires @Inject but can have any name
     @Inject DirectlyInjected someDirectlyInjected
@@ -47,16 +47,25 @@ class ServicesController {
         ] as JSON)
     }
 
-    def identical() {
+    def contexts() {
         render([
-            identical: someDirectlyInjected.micronautContext == injectedUsingBridge.micronautContext
+            someDirectlyInjected: someDirectlyInjected.micronautContext.class.name,
+            injectedUsingBridge : injectedUsingBridge.micronautContext.class.name,
         ] as JSON)
     }
 
     def values() {
         render([
-            valueWithMicronautPrefix: someDirectlyInjected.valueWithMicronautPrefix,
-            valueWithoutPrefix      : someDirectlyInjected.valueWithoutPrefix
+            someDirectlyInjected: [
+                valueWithMicronautPrefix: someDirectlyInjected.valueWithMicronautPrefix,
+                valueWithoutPrefix      : someDirectlyInjected.valueWithoutPrefix,
+                ignoredValue            : someDirectlyInjected.ignoredValue,
+            ],
+            injectedUsingBridge : [
+                valueWithMicronautPrefix: injectedUsingBridge.valueWithMicronautPrefix,
+                valueWithoutPrefix      : injectedUsingBridge.valueWithoutPrefix,
+                ignoredValue            : injectedUsingBridge.ignoredValue,
+            ],
         ] as JSON)
     }
 

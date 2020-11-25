@@ -19,7 +19,9 @@ package com.agorapulse.micronaut.grails.example
 
 import groovy.transform.CompileStatic
 import io.micronaut.context.ApplicationContext
+import io.micronaut.context.annotation.Value
 
+import javax.annotation.Nullable
 import javax.inject.Singleton
 
 @Singleton
@@ -27,13 +29,37 @@ import javax.inject.Singleton
 class InjectedUsingBridge {
 
     private final ApplicationContext micronautContext
+    private final String valueWithMicronautPrefix
+    private final String valueWithoutPrefix
+    private final String ignoredvalue
 
-    InjectedUsingBridge(ApplicationContext micronautContext) {
+    InjectedUsingBridge(
+        ApplicationContext micronautContext,
+        @Nullable @Value('${micronaut.foo.bar}') String valueWithMicronautPrefix,
+        @Nullable @Value('${bar.foo}') String valueWithoutPrefix,
+        @Nullable @Value('${ex.foo.bar}') String ignoredvalue
+
+    ) {
         this.micronautContext = micronautContext
+        this.valueWithMicronautPrefix = valueWithMicronautPrefix
+        this.valueWithoutPrefix = valueWithoutPrefix
+        this.ignoredvalue = ignoredvalue
     }
 
     ApplicationContext getMicronautContext() {
         return micronautContext
+    }
+
+    String getValueWithMicronautPrefix() {
+        return valueWithMicronautPrefix
+    }
+
+    String getValueWithoutPrefix() {
+        return valueWithoutPrefix
+    }
+
+    String getIgnoredValue() {
+        return ignoredvalue
     }
 
     @Override

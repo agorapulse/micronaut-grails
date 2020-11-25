@@ -31,6 +31,7 @@ class LegacyApplication extends GrailsAutoConfiguration {
 
     static void main(String[] args) {
         context = MicronautGrailsApp.run {
+            compatibility MicronautGrailsApp.Compatibility.LEGACY
             source LegacyApplication
             arguments args
             environment {
