@@ -17,11 +17,11 @@
  */
 package micronaut.grails.example
 
-class StrictApplicationSpec extends AbstractApplicationSpec {
+class ApplicationSpec extends AbstractApplicationSpec {
 
     @Override
     Class<?> getApplicationClass() {
-        return StrictApplication
+        return Application
     }
 
 }

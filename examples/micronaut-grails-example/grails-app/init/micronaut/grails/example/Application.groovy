@@ -17,6 +17,7 @@
  */
 package micronaut.grails.example
 
+import com.agorapulse.micronaut.grails.EnvVarLikeSystemPropertiesPropertySource
 import com.agorapulse.micronaut.grails.MicronautGrailsApp
 import com.agorapulse.micronaut.grails.domain.Manager
 import grails.boot.config.GrailsAutoConfiguration
@@ -24,17 +25,18 @@ import groovy.transform.CompileStatic
 import org.springframework.context.ConfigurableApplicationContext
 
 @CompileStatic
-class StrictApplication extends GrailsAutoConfiguration {
+class Application extends GrailsAutoConfiguration {
 
     static ConfigurableApplicationContext context
 
     static void main(String[] args) {
-        context = MicronautGrailsApp.run {
-            compatibility MicronautGrailsApp.Compatibility.STRICT
-            source StrictApplication
-            arguments args
-            environment {
-                addPackage Manager.package
+        context = MicronautGrailsApp.run {                                              // <1>
+            compatibility MicronautGrailsApp.Compatibility.STRICT                       // <2>
+            source Application                                                          // <3>
+            arguments args                                                              // <4>
+            environment {                                                               // <5>
+                addPackage Manager.package                                              // <6>
+                addPropertySource(new EnvVarLikeSystemPropertiesPropertySource())       // <7>
             }
         }
     }

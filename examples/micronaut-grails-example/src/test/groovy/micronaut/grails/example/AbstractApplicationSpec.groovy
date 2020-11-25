@@ -19,6 +19,9 @@ package micronaut.grails.example
 
 import com.agorapulse.gru.Gru
 import com.agorapulse.gru.http.Http
+import com.agorapulse.micronaut.grails.domain.ManagerService
+import com.agorapulse.micronaut.grails.example.DirectlyInjected
+import com.agorapulse.micronaut.grails.example.InjectedUsingBridge
 import org.junit.Rule
 import org.springframework.context.ConfigurableApplicationContext
 import spock.lang.Shared
@@ -71,6 +74,12 @@ abstract class AbstractApplicationSpec extends Specification {
     void 'application context is set'() {
         expect:
             context
+    }
+
+    void 'package is applied'() {
+        expect:
+            context.getBean(DirectlyInjected).micronautContext.environment.packages.contains(ManagerService.package.name)
+            context.getBean(InjectedUsingBridge).micronautContext.environment.packages.contains(ManagerService.package.name)
     }
 
     void 'fetch services'() {

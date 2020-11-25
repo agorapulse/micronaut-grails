@@ -106,8 +106,8 @@ public class MicronautGrailsApp extends GrailsApp {
 
     public static class Configuration {
         private final List<Class<?>> sources = new ArrayList<>();
-        private final List<String> args = new ArrayList<>();
 
+        private String[] args;
         private Compatibility compatibility = Compatibility.LEGACY;
         private Consumer<Environment> environment = e -> { };
 
@@ -127,7 +127,7 @@ public class MicronautGrailsApp extends GrailsApp {
         }
 
         public Configuration arguments(String... args) {
-            this.args.addAll(Arrays.asList(args));
+            this.args = args;
             return this;
         }
 
@@ -141,7 +141,7 @@ public class MicronautGrailsApp extends GrailsApp {
             return this;
         }
 
-       public  Configuration environment(
+       public Configuration environment(
             @DelegatesTo(value = Environment.class, strategy = Closure.DELEGATE_FIRST)
             @ClosureParams(value = SimpleType.class, options = "io.micronaut.context.env.Environment")
             Closure<Environment> micronaut
@@ -150,6 +150,21 @@ public class MicronautGrailsApp extends GrailsApp {
             return this;
         }
 
+        protected Environment applyToEnvironment(Environment env) {
+            this.environment.accept(env);
+            return env;
+        }
+
+        public Configuration verify() {
+            if (sources.isEmpty()) {
+                throw new IllegalStateException("At least one class must be set using the 'source' method!");
+            }
+
+            if (args == null) {
+                throw new IllegalStateException("Arguments were not set using 'arguments' method!");
+            }
+            return this;
+        }
     }
 
     private class MicronautGrailsAppContextConfiguration implements ApplicationContextConfiguration {
@@ -213,7 +228,7 @@ public class MicronautGrailsApp extends GrailsApp {
      */
     public static ConfigurableApplicationContext run(Consumer<Configuration> configuration) {
         Configuration c = initConfiguration(configuration);
-        return new MicronautGrailsApp(c).run(c.args.toArray(new String[0]));
+        return new MicronautGrailsApp(c).run(c.args);
     }
 
     /**
@@ -259,7 +274,7 @@ public class MicronautGrailsApp extends GrailsApp {
 
 
     private MicronautGrailsApp(Configuration configuration) {
-        super(configuration.sources.toArray(new Class[0]));
+        super(configuration.verify().sources.toArray(new Class[0]));
         this.configuration = configuration;
     }
 
@@ -317,8 +332,8 @@ public class MicronautGrailsApp extends GrailsApp {
         ClassUtils.forName("com.fasterxml.jackson.databind.ObjectMapper", getClassLoader()).ifPresent(beanExcludes::add);
         ApplicationContext micronautContext = new MicronautGrailsAppContext(micronautConfiguration);
 
-        micronautContext.getEnvironment()
-            .addPropertySource("grails-config", Collections.singletonMap(MicronautBeanFactoryConfiguration.PREFIX + ".bean-excludes", beanExcludes));
+        micronautContext.getEnvironment().addPropertySource("grails-config", Collections.singletonMap(MicronautBeanFactoryConfiguration.PREFIX + ".bean-excludes", beanExcludes));
+        micronautContext.registerSingleton(Configuration.class, configuration);
 
         micronautContext.start();
 
