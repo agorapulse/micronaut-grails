@@ -183,7 +183,6 @@ subprojects { Project subproject ->
 
     config {
         bintray {
-            enabled = true
             name = subproject.name
         }
     }
