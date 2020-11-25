@@ -136,6 +136,11 @@ public class GrailsMicronautBeanProcessor implements BeanFactoryPostProcessor, D
             micronautContext.start();
         }
 
+        if (micronautContext.getEnvironment().getActiveNames().contains(MicronautGrailsApp.ENVIRONMENT_STRICT)) {
+            // GrailsMicronautBeanProcessor ignored for strict environment
+            return;
+        }
+
         NoClassDefFoundError noClassDefFoundError = null;
 
         for (Map.Entry<String, TypeAndQualifier<?>> entry : micronautBeanQualifiers.entrySet()) {

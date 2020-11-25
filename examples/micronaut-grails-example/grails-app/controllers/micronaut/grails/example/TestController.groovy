@@ -28,7 +28,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 @CompileStatic
-class LegacyController {
+class TestController {
 
     // micronaut beans requires @Inject but can have any name
     @Inject DirectlyInjected someDirectlyInjected
@@ -41,30 +41,30 @@ class LegacyController {
     def index() {
         render([
             someDirectlyInjected     : someDirectlyInjected?.toString(),
-            someInjectedWithQualifier: someInjectedWithQualifier.toString(),
-            injectedUsingBridge      : injectedUsingBridge.toString(),
-            otherInjected            : otherInjected.toString()
+            someInjectedWithQualifier: someInjectedWithQualifier?.toString(),
+            injectedUsingBridge      : injectedUsingBridge?.toString(),
+            otherInjected            : otherInjected?.toString()
         ] as JSON)
     }
 
     def contexts() {
         render([
-            someDirectlyInjected: someDirectlyInjected.micronautContext.class.name,
-            injectedUsingBridge : injectedUsingBridge.micronautContext.class.name,
+            someDirectlyInjected: someDirectlyInjected?.micronautContext?.class?.name,
+            injectedUsingBridge : injectedUsingBridge?.micronautContext?.class?.name,
         ] as JSON)
     }
 
     def values() {
         render([
             someDirectlyInjected: [
-                valueWithMicronautPrefix: someDirectlyInjected.valueWithMicronautPrefix,
-                valueWithoutPrefix      : someDirectlyInjected.valueWithoutPrefix,
-                ignoredValue            : someDirectlyInjected.ignoredValue,
+                valueWithMicronautPrefix: someDirectlyInjected?.valueWithMicronautPrefix,
+                valueWithoutPrefix      : someDirectlyInjected?.valueWithoutPrefix,
+                ignoredValue            : someDirectlyInjected?.ignoredValue,
             ],
             injectedUsingBridge : [
-                valueWithMicronautPrefix: injectedUsingBridge.valueWithMicronautPrefix,
-                valueWithoutPrefix      : injectedUsingBridge.valueWithoutPrefix,
-                ignoredValue            : injectedUsingBridge.ignoredValue,
+                valueWithMicronautPrefix: injectedUsingBridge?.valueWithMicronautPrefix,
+                valueWithoutPrefix      : injectedUsingBridge?.valueWithoutPrefix,
+                ignoredValue            : injectedUsingBridge?.ignoredValue,
             ],
         ] as JSON)
     }

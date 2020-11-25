@@ -1,0 +1,4 @@
+{
+    "someDirectlyInjected": "com.agorapulse.micronaut.grails.MicronautGrailsApp$MicronautGrailsAppContext",
+    "injectedUsingBridge": null
+}

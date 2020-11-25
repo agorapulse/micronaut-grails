@@ -92,7 +92,7 @@ class GrailsMicronautBeanProcessorSpec extends Specification {
             GrailsPropertyTranslatingEnvironment translatingEnvironment = new GrailsPropertyTranslatingEnvironment(
                     environment,
                     PropertyTranslatingCustomizer.none(),
-                    Collections.emptyList(), micronautEnvironment
+                    Collections.emptyList()
             )
         then:
             !translatingEnvironment.containsProperty('redis.host')
