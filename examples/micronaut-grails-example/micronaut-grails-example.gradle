@@ -50,6 +50,13 @@ repositories {
     maven { url "https://repo.grails.org/grails/core" }
 }
 
+dependencyManagement {
+    imports {
+        mavenBom "io.micronaut:micronaut-bom:$micronautVersion"
+        mavenBom "org.grails:grails-bom:${grailsVersion}"
+    }
+}
+
 configurations {
     developmentOnly
     runtimeClasspath {

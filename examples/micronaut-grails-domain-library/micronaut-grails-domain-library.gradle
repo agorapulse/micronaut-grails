@@ -17,6 +17,13 @@
  */
 apply plugin:"groovy"
 
+dependencyManagement {
+    imports {
+        mavenBom "io.micronaut:micronaut-bom:$micronautVersion"
+        mavenBom "org.grails:grails-bom:${grailsVersion}"
+    }
+}
+
 sourceSets {
     main {
         groovy {
