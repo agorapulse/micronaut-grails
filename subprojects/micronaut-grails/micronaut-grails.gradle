@@ -23,8 +23,9 @@ config {
 
 dependencies {
     api 'io.micronaut:micronaut-spring'
-    implementation 'org.grails:grails-core'
     implementation "space.jasan:groovy-closure-support:$groovyClosureSupportVersion"
+
+    compileOnly "org.grails:grails-core:$grailsVersion"
 
     testImplementation 'org.springframework:spring-test:5.0.8.RELEASE'
     testImplementation("org.spockframework:spock-spring:$spockVersion") {
