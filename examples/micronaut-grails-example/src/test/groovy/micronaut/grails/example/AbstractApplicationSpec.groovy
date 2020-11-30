@@ -112,4 +112,14 @@ abstract class AbstractApplicationSpec extends Specification {
             }
     }
 
+    void 'check managers are loaded and can be fetched'() {
+        expect:
+            gru.test {
+                get '/test/managers'
+                expect {
+                    json 'managers.json'
+                }
+            }
+    }
+
 }

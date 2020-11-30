@@ -35,9 +35,6 @@ config {
     }
 }
 
-version "0.1"
-group "micronaut.grails.example"
-
 apply plugin:"eclipse"
 apply plugin:"idea"
 apply plugin:"war"

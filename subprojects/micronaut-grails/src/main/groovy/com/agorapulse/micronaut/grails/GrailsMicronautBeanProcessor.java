@@ -129,11 +129,17 @@ public class GrailsMicronautBeanProcessor implements BeanFactoryPostProcessor, D
         }
 
         MicronautGrailsApp.Configuration configuration = null;
+        Set<String> packages = new LinkedHashSet<>();
 
         try {
             MicronautContextHolder holder = springContext.getBean(MicronautContextHolder.class);
             io.micronaut.context.ApplicationContext context = holder.getContext();
-            if (!context.getEnvironment().getActiveNames().contains(MicronautGrailsApp.ENVIRONMENT_LEGACY)) {
+            packages.addAll(context.getEnvironment().getPackages());
+            if (
+                    context.getEnvironment().getActiveNames().contains(MicronautGrailsApp.ENVIRONMENT)
+                &&
+                    !context.getEnvironment().getActiveNames().contains(MicronautGrailsApp.ENVIRONMENT_LEGACY)
+            ) {
                 LOGGER.info("Reusing existing application context. Property customizations and exclusions are disabled.");
                 micronautContext = context;
             } else {
@@ -146,6 +152,8 @@ public class GrailsMicronautBeanProcessor implements BeanFactoryPostProcessor, D
 
         if (micronautContext == null) {
             micronautContext = new GrailsPropertyTranslatingApplicationContext(environment, of(collapse(customizers)), expectedMapProperties);
+
+            packages.forEach(micronautContext.getEnvironment()::addPackage);
 
             if (configuration != null) {
                 configuration.applyToEnvironment(micronautContext.getEnvironment());

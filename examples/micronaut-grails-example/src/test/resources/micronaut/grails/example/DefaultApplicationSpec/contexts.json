@@ -1,0 +1,4 @@
+{
+    "someDirectlyInjected": "micronaut.grails.example.DefaultApplication$CustomGrailsApp$2",
+    "injectedUsingBridge": "com.agorapulse.micronaut.grails.GrailsPropertyTranslatingApplicationContext"
+}

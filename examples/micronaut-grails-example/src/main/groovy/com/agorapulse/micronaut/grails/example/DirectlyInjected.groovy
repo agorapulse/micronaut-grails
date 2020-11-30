@@ -18,6 +18,7 @@
 package com.agorapulse.micronaut.grails.example
 
 import com.agorapulse.micronaut.grails.domain.ManagerService
+import grails.gorm.transactions.ReadOnly
 import groovy.transform.CompileStatic
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.annotation.Value
@@ -52,6 +53,11 @@ class DirectlyInjected {
     @Override
     String toString() {
         return "DirectlyInjected"
+    }
+
+    @ReadOnly
+    Number getManagerCount() {
+        return managerService?.count()
     }
 
     ApplicationContext getMicronautContext() {

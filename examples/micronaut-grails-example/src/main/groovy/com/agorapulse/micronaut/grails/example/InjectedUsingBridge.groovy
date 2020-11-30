@@ -17,6 +17,7 @@
  */
 package com.agorapulse.micronaut.grails.example
 
+import com.agorapulse.micronaut.grails.domain.ManagerService
 import groovy.transform.CompileStatic
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.annotation.Value
@@ -28,22 +29,29 @@ import javax.inject.Singleton
 @CompileStatic
 class InjectedUsingBridge {
 
+    private final ManagerService managerService
     private final ApplicationContext micronautContext
     private final String valueWithMicronautPrefix
     private final String valueWithoutPrefix
     private final String ignoredvalue
 
     InjectedUsingBridge(
+        ManagerService managerService,
         ApplicationContext micronautContext,
         @Nullable @Value('${micronaut.foo.bar}') String valueWithMicronautPrefix,
         @Nullable @Value('${bar.foo}') String valueWithoutPrefix,
         @Nullable @Value('${ex.foo.bar}') String ignoredvalue
 
     ) {
+        this.managerService = managerService
         this.micronautContext = micronautContext
         this.valueWithMicronautPrefix = valueWithMicronautPrefix
         this.valueWithoutPrefix = valueWithoutPrefix
         this.ignoredvalue = ignoredvalue
+    }
+
+    Number getManagerCount() {
+        return managerService?.count()
     }
 
     ApplicationContext getMicronautContext() {

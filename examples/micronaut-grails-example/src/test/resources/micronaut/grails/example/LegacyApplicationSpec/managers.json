@@ -1,0 +1,4 @@
+{
+    "someDirectlyInjected": 1,
+    "injectedUsingBridge": 1
+}
