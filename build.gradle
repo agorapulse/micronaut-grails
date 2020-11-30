@@ -79,6 +79,7 @@ config {
         userOrg    = 'agorapulse'
         repo       = 'libs'
         name       = rootProject.name
+        publish    = true
     }
 
     docs {
