@@ -34,7 +34,7 @@ class DefaultApplication extends GrailsAutoConfiguration {
     }
 
     static void main(String[] args) {
-        context = CustomGrailsApp.run(Application, args) { env ->
+        context = CustomGrailsApp.run(DefaultApplication, args) { env ->
             env.addPackage(Manager.package)
         }
     }

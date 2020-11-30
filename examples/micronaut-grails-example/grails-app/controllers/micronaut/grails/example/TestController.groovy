@@ -71,8 +71,8 @@ class TestController {
 
     def managers() {
         render([
-            someDirectlyInjected: someDirectlyInjected?.managers,
-            injectedUsingBridge : injectedUsingBridge?.managers,
+            someDirectlyInjected: someDirectlyInjected?.managerCount,
+            injectedUsingBridge : injectedUsingBridge?.managerCount,
         ] as JSON)
     }
 

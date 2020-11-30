@@ -17,9 +17,7 @@
  */
 package com.agorapulse.micronaut.grails.example
 
-import com.agorapulse.micronaut.grails.domain.Manager
 import com.agorapulse.micronaut.grails.domain.ManagerService
-import grails.gorm.transactions.ReadOnly
 import groovy.transform.CompileStatic
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.annotation.Value
@@ -52,9 +50,8 @@ class InjectedUsingBridge {
         this.ignoredvalue = ignoredvalue
     }
 
-    @ReadOnly
-    List<Manager> getManagers() {
-        return managerService?.list()
+    Number getManagerCount() {
+        return managerService?.count()
     }
 
     ApplicationContext getMicronautContext() {

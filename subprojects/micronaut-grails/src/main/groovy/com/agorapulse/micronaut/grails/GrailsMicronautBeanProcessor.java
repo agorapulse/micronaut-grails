@@ -17,6 +17,7 @@
  */
 package com.agorapulse.micronaut.grails;
 
+import grails.boot.config.GrailsAutoConfiguration;
 import io.micronaut.context.Qualifier;
 import io.micronaut.inject.BeanDefinition;
 import org.slf4j.Logger;
@@ -146,6 +147,15 @@ public class GrailsMicronautBeanProcessor implements BeanFactoryPostProcessor, D
 
         if (micronautContext == null) {
             micronautContext = new GrailsPropertyTranslatingApplicationContext(environment, of(collapse(customizers)), expectedMapProperties);
+
+            try {
+                GrailsAutoConfiguration application = springContext.getBean(GrailsAutoConfiguration.class);
+                Set<String> packages = new LinkedHashSet<>(application.packageNames());
+                application.packages().forEach(p -> packages.add(p.getName()));
+                packages.forEach(micronautContext.getEnvironment()::addPackage);
+            } catch (NoSuchBeanDefinitionException e) {
+                LOGGER.info("Application class is not GrailsAutoConfiguration", e);
+            }
 
             if (configuration != null) {
                 configuration.applyToEnvironment(micronautContext.getEnvironment());
