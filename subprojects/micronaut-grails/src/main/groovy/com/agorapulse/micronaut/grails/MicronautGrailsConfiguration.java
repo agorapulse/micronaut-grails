@@ -17,8 +17,11 @@
  */
 package com.agorapulse.micronaut.grails;
 
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 
 import java.util.List;
 import java.util.Map;
@@ -37,7 +40,8 @@ public class MicronautGrailsConfiguration {
     }
 
     @Bean
-    GrailsMicronautBeanProcessor defaultGrailsMicronautBeanProcessor(List<MicronautBeanImporter> importers) {
+    @Profile("!micronaut-grails-strict & !micronaut-grails-bridge")
+    BeanFactoryPostProcessor defaultGrailsMicronautBeanProcessor(List<MicronautBeanImporter> importers, Environment env) {
         Map<String, TypeAndQualifier<?>> qualifierMap = importers
             .stream()
             .flatMap(i -> i.getMicronautBeanQualifiers().entrySet().stream())
@@ -57,6 +61,19 @@ public class MicronautGrailsConfiguration {
             qualifierMap,
             customizers,
             expectedMapProperties);
+    }
+
+    @Bean
+    @Profile("micronaut-grails-bridge")
+    BeanFactoryPostProcessor forwardingGrailsMicronautBeanProcessor(List<MicronautBeanImporter> importers, Environment env) {
+        Map<String, TypeAndQualifier<?>> qualifierMap = importers
+            .stream()
+            .flatMap(i -> i.getMicronautBeanQualifiers().entrySet().stream())
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        return new DefaultGrailsMicronautBeanProcessor(
+            qualifierMap
+        );
     }
 
 }

@@ -316,9 +316,18 @@ public class MicronautGrailsApp extends GrailsApp {
     }
 
     @Override
+    protected void configureEnvironment(ConfigurableEnvironment environment, String[] args) {
+        super.configureEnvironment(environment, args);
+        environment.addActiveProfile(ENVIRONMENT);
+        environment.addActiveProfile(configuration.compatibility.environment);
+    }
+
+    @Override
     protected ConfigurableApplicationContext createApplicationContext() {
         setAllowBeanDefinitionOverriding(true);
+
         ConfigurableApplicationContext applicationContext = createSpringApplicationContext();
+
         long now = System.currentTimeMillis();
 
         ClassLoader applicationClassLoader = GrailsApp.class.getClassLoader();

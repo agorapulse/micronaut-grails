@@ -1,0 +1,9 @@
+{
+    "someDirectlyInjected": [
+        "test"
+    ],
+    "injectedUsingBridge": [
+        "test",
+        "web"
+    ]
+}

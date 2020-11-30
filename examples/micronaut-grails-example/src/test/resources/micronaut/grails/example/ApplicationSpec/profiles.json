@@ -1,0 +1,8 @@
+{
+    "someDirectlyInjected": [
+        "micronaut-grails",
+        "micronaut-grails-strict",
+        "test"
+    ],
+    "injectedUsingBridge": null
+}

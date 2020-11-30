@@ -17,25 +17,16 @@
  */
 package com.agorapulse.micronaut.grails;
 
-import io.micronaut.context.Qualifier;
-import io.micronaut.inject.BeanDefinition;
+import io.micronaut.context.ApplicationContext;
+import io.micronaut.context.DefaultApplicationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 
 import javax.annotation.Nonnull;
-import java.net.URLClassLoader;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 import static com.agorapulse.micronaut.grails.GrailsPropertyTranslatingCustomizer.collapse;
 import static com.agorapulse.micronaut.grails.PropertyTranslatingCustomizer.grails;
@@ -49,8 +40,10 @@ import static com.agorapulse.micronaut.grails.PropertyTranslatingCustomizer.of;
  * The Grails properties can be translated to Micronaut properties if required.
  *
  * @since 1.0
+ *
+ * @deprecated this class creates yet another {@link io.micronaut.context.ApplicationContext}, use the bridge or strict mode instead
  */
-public class GrailsMicronautBeanProcessor implements BeanFactoryPostProcessor, DisposableBean, EnvironmentAware, ApplicationContextAware {
+public class GrailsMicronautBeanProcessor extends DefaultGrailsMicronautBeanProcessor implements EnvironmentAware {
 
     static final Logger LOGGER = LoggerFactory.getLogger(GrailsMicronautBeanProcessor.class);
 
@@ -98,14 +91,6 @@ public class GrailsMicronautBeanProcessor implements BeanFactoryPostProcessor, D
         return new Builder(customizer);
     }
 
-    private static final String MICRONAUT_BEAN_TYPE_PROPERTY_NAME = "micronautBeanType";
-    private static final String MICRONAUT_CONTEXT_PROPERTY_NAME = "micronautContext";
-    private static final String MICRONAUT_QUALIFIER_PROPERTY_NAME = "micronautQualifier";
-    private static final String MICRONAUT_SINGLETON_PROPERTY_NAME = "micronautSingleton";
-
-    private io.micronaut.context.ApplicationContext micronautContext;
-    private ApplicationContext springContext;
-    private final Map<String, TypeAndQualifier<?>> micronautBeanQualifiers;
     private final List<PropertyTranslatingCustomizer> customizers;
     private final List<String> expectedMapProperties;
     private Environment environment;
@@ -117,119 +102,20 @@ public class GrailsMicronautBeanProcessor implements BeanFactoryPostProcessor, D
      * @param expectedMapProperties list of properties' prefixes which should be converted to map
      */
     GrailsMicronautBeanProcessor(Map<String, TypeAndQualifier<?>> qualifiers, List<PropertyTranslatingCustomizer> customizers, List<String> expectedMapProperties) {
+        super(qualifiers);
         this.customizers = customizers;
-        this.micronautBeanQualifiers = qualifiers;
         this.expectedMapProperties = expectedMapProperties;
     }
 
     @Override
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+    protected ApplicationContext initializeMicronautContext() {
         if (environment == null) {
             throw new IllegalStateException("Spring environment not set!");
         }
 
-        MicronautGrailsApp.Configuration configuration = null;
-        Set<String> packages = new LinkedHashSet<>();
+        DefaultApplicationContext micronautContext = new GrailsPropertyTranslatingApplicationContext(environment, of(collapse(customizers)), expectedMapProperties);
 
-        try {
-            MicronautContextHolder holder = springContext.getBean(MicronautContextHolder.class);
-            io.micronaut.context.ApplicationContext context = holder.getContext();
-            packages.addAll(context.getEnvironment().getPackages());
-            if (
-                    context.getEnvironment().getActiveNames().contains(MicronautGrailsApp.ENVIRONMENT)
-                &&
-                    !context.getEnvironment().getActiveNames().contains(MicronautGrailsApp.ENVIRONMENT_LEGACY)
-            ) {
-                LOGGER.info("Reusing existing application context. Property customizations and exclusions are disabled.");
-                micronautContext = context;
-            } else {
-                LOGGER.info("Running in the bridge or the legacy mode - two Micronaut context will be present");
-            }
-            configuration = context.findBean(MicronautGrailsApp.Configuration.class).orElse(null);
-        } catch (NoSuchBeanDefinitionException ignored) {
-            LOGGER.info("Running using GrailsApp instead of MicronautGrailsApp - two Micronaut context will be present");
-        }
-
-        if (micronautContext == null) {
-            micronautContext = new GrailsPropertyTranslatingApplicationContext(environment, of(collapse(customizers)), expectedMapProperties);
-
-            packages.forEach(micronautContext.getEnvironment()::addPackage);
-
-            if (configuration != null) {
-                configuration.applyToEnvironment(micronautContext.getEnvironment());
-            }
-
-            micronautContext.start();
-        }
-
-        if (micronautContext.getEnvironment().getActiveNames().contains(MicronautGrailsApp.ENVIRONMENT_STRICT)) {
-            LOGGER.info("Running in the strict mode. You must use @Inject for all Micronaut beans. Property customizations and exclusiong are disabled.");
-            return;
-        }
-
-        NoClassDefFoundError noClassDefFoundError = null;
-
-        for (Map.Entry<String, TypeAndQualifier<?>> entry : micronautBeanQualifiers.entrySet()) {
-            String name = entry.getKey();
-            Class type = entry.getValue().getType();
-            Qualifier micronautBeanQualifier = entry.getValue().getQualifier();
-            try {
-                Collection<BeanDefinition<?>> beanDefinitions = type == null
-                    ? micronautContext.getBeanDefinitions(micronautBeanQualifier)
-                    : micronautContext.getBeanDefinitions(type, micronautBeanQualifier);
-
-                if (beanDefinitions.size() > 1) {
-                    throw new IllegalArgumentException("There is too many candidates of type " + type + " for " + micronautBeanQualifier + "! Candidates: " + beanDefinitions);
-                }
-
-                Optional<BeanDefinition<?>> firstBean = beanDefinitions.stream().findFirst();
-                BeanDefinition<?> definition = firstBean.orElseThrow(()-> new IllegalArgumentException("There is no candidate for " + micronautBeanQualifier));
-
-                final BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder
-                    .rootBeanDefinition(GrailsMicronautBeanFactory.class);
-                beanDefinitionBuilder.addPropertyValue(MICRONAUT_BEAN_TYPE_PROPERTY_NAME, type == null ? definition.getBeanType() : type);
-                beanDefinitionBuilder.addPropertyValue(MICRONAUT_QUALIFIER_PROPERTY_NAME, micronautBeanQualifier);
-                beanDefinitionBuilder.addPropertyValue(MICRONAUT_CONTEXT_PROPERTY_NAME, micronautContext);
-                beanDefinitionBuilder.addPropertyValue(MICRONAUT_SINGLETON_PROPERTY_NAME, definition.isSingleton());
-
-                ((DefaultListableBeanFactory) beanFactory).registerBeanDefinition(name, beanDefinitionBuilder.getBeanDefinition());
-            } catch (NoClassDefFoundError error) {
-                LOGGER.error("Exception loading class for qualifier {}. Bean {} will not be available in the runtime", micronautBeanQualifier, name);
-                LOGGER.error("Current class loader: {}", printClassLoader(getClass().getClassLoader()));
-                LOGGER.error("Parent class loader: {}",  printClassLoader(getClass().getClassLoader().getParent()));
-                LOGGER.error("Current class path: {}", System.getProperty("java.class.path"));
-                noClassDefFoundError = error;
-            }
-        }
-
-        if (noClassDefFoundError == null) {
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Successfully added following beans to the spring contest {} ", micronautBeanQualifiers);
-                LOGGER.info("Current class loader: {}", printClassLoader(getClass().getClassLoader()));
-                LOGGER.info("Parent class loader: {}",  printClassLoader(getClass().getClassLoader().getParent()));
-                LOGGER.info("Current class path: {}", System.getProperty("java.class.path"));
-            }
-            return;
-        }
-
-        throw noClassDefFoundError;
-    }
-
-    private static String printClassLoader(ClassLoader classLoader) {
-        if (classLoader instanceof URLClassLoader) {
-            return "URLClassLoader for URLS:" + Arrays.toString(((URLClassLoader) classLoader).getURLs());
-        }
-        if (classLoader == null) {
-            return null;
-        }
-        return classLoader.toString();
-    }
-
-    @Override
-    public void destroy() {
-        if (micronautContext != null) {
-            micronautContext.close();
-        }
+        return micronautContext.start();
     }
 
     @Override
@@ -237,9 +123,5 @@ public class GrailsMicronautBeanProcessor implements BeanFactoryPostProcessor, D
         this.environment = environment;
     }
 
-    @Override
-    public void setApplicationContext(@Nonnull ApplicationContext applicationContext) throws BeansException {
-        this.springContext = applicationContext;
-    }
 }
 
