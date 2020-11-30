@@ -17,9 +17,24 @@
  */
 package micronaut.grails.example
 
+import com.agorapulse.micronaut.grails.domain.Manager
+import com.agorapulse.micronaut.grails.domain.ManagerService
+
 class BootStrap {
 
+    ManagerService managerService
+
     def init = { servletContext ->
+        try {
+            Manager.withTransaction {
+                if (managerService.count() == 0) {
+                    managerService.save(new Manager(name: 'Superuser'))
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error preloading Managers", e)
+        }
+
     }
     def destroy = {
     }

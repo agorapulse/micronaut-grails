@@ -1,0 +1,9 @@
+{
+    "someDirectlyInjected": [
+        {
+            "id": 1,
+            "name": "Superuser"
+        }
+    ],
+    "injectedUsingBridge": null
+}

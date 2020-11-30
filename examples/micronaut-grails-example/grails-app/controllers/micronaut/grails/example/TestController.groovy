@@ -21,13 +21,13 @@ import com.agorapulse.micronaut.grails.example.DirectlyInjected
 import com.agorapulse.micronaut.grails.example.InjectedUsingBridge
 import com.agorapulse.micronaut.grails.example.InjectedUsingBridgeWithDifferentName
 import com.agorapulse.micronaut.grails.example.InjectedWithQualifier
+import grails.compiler.GrailsCompileStatic
 import grails.converters.JSON
-import groovy.transform.CompileStatic
 
 import javax.inject.Inject
 import javax.inject.Named
 
-@CompileStatic
+@GrailsCompileStatic
 class TestController {
 
     // micronaut beans requires @Inject but can have any name
@@ -66,6 +66,13 @@ class TestController {
                 valueWithoutPrefix      : injectedUsingBridge?.valueWithoutPrefix,
                 ignoredValue            : injectedUsingBridge?.ignoredValue,
             ],
+        ] as JSON)
+    }
+
+    def managers() {
+        render([
+            someDirectlyInjected: someDirectlyInjected?.managers,
+            injectedUsingBridge : injectedUsingBridge?.managers,
         ] as JSON)
     }
 

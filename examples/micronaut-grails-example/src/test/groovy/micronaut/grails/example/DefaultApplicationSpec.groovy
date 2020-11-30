@@ -15,22 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.agorapulse.micronaut.grails.domain
+package micronaut.grails.example
 
-import grails.gorm.services.Service
-import groovy.transform.CompileStatic
+class DefaultApplicationSpec extends AbstractApplicationSpec {
 
-/**
- * Test data service.
- */
-@CompileStatic
-@Service(Manager)
-abstract class ManagerService {
-
-    abstract Manager get(Long id)
-    abstract Number count()
-    abstract Manager save(Manager manager)
-    abstract List<Manager> list()
-    abstract List<Manager> findAllByName(String name)
+    @Override
+    Class<?> getApplicationClass() {
+        return DefaultApplication
+    }
 
 }

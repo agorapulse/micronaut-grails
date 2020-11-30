@@ -1,0 +1,14 @@
+{
+    "someDirectlyInjected": [
+        {
+            "id": 1,
+            "name": "Superuser"
+        }
+    ],
+    "injectedUsingBridge": [
+        {
+            "id": 1,
+            "name": "Superuser"
+        }
+    ]
+}
