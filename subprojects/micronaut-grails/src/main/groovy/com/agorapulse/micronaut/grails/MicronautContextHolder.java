@@ -18,13 +18,11 @@
 package com.agorapulse.micronaut.grails;
 
 import io.micronaut.context.ApplicationContext;
-import io.micronaut.context.annotation.Requires;
 
 import javax.annotation.Nonnull;
 import javax.inject.Singleton;
 
 @Singleton
-@Requires(env = MicronautGrailsApp.ENVIRONMENT)
 public class MicronautContextHolder {
 
     private final ApplicationContext context;
