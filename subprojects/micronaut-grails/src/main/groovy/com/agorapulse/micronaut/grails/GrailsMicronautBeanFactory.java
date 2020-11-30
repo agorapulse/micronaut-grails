@@ -52,7 +52,6 @@ class GrailsMicronautBeanFactory implements FactoryBean {
     }
 
     /**
-     *
      * @param isMicronautSingleton indicates if the Micronaut bean is a singleton
      */
     public void setMicronautSingleton(boolean isMicronautSingleton) {
@@ -68,8 +67,13 @@ class GrailsMicronautBeanFactory implements FactoryBean {
 
     @Override
     public Object getObject() throws Exception {
-        if (GrailsMicronautBeanProcessor.LOGGER.isWarnEnabled() && micronautContext.getEnvironment().getActiveNames().contains(MicronautGrailsApp.ENVIRONMENT)) {
-            GrailsMicronautBeanProcessor.LOGGER.warn("Bean " + (micronautQualifier == null ? "" : micronautQualifier) + micronautBeanType.getName() + " has been created using GrailsMicronautBeanProcessor. Consider annotating the injection point with @Inject switching the compatibility mode to MicronautGrailsApp.Compatibility.STRICT");
+        if (GrailsMicronautBeanProcessor.LOGGER.isWarnEnabled()) {
+            GrailsMicronautBeanProcessor.LOGGER.warn(
+                "Bean " + (micronautQualifier == null ? "" : micronautQualifier + " ") + micronautBeanType.getName()
+                    + " has been created using GrailsMicronautBeanProcessor in a separate Micronaut ApplicationContext."
+                    + " Please, consider annotating the injection point with @Inject and switching the compatibility mode to MicronautGrailsApp.Compatibility.STRICT.\n"
+                    + " See https://agorapulse.github.io/micronaut-grails/#_grails_4 for more details!"
+            );
         }
 
         Optional bean = micronautContext.findBean(micronautBeanType, micronautQualifier);

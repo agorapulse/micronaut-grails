@@ -36,6 +36,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Adds Micronaut beans to a Grails' Spring application context.  This processor will
@@ -83,11 +84,16 @@ public class DefaultGrailsMicronautBeanProcessor implements BeanFactoryPostProce
                     : micronautContext.getBeanDefinitions(type, micronautBeanQualifier);
 
                 if (beanDefinitions.size() > 1) {
-                    throw new IllegalArgumentException("There is too many candidates of type " + type + " for " + micronautBeanQualifier + "! Candidates: " + beanDefinitions);
+                    throw new IllegalArgumentException("There is too many candidates of type '" + type + "' for qualifier '" + micronautBeanQualifier + "'! Candidates: " + beanDefinitions);
                 }
 
                 Optional<BeanDefinition<?>> firstBean = beanDefinitions.stream().findFirst();
-                BeanDefinition<?> definition = firstBean.orElseThrow(()-> new IllegalArgumentException("There is no candidate for " + micronautBeanQualifier));
+                BeanDefinition<?> definition = firstBean.orElseThrow(()-> {
+                        String message = "There is no candidate for type " + type + " and qualifier " + micronautBeanQualifier + "\n"
+                            + "Known beans:\n" + micronautContext.getAllBeanDefinitions().stream().map(d -> d.getBeanType().getName() + " " + d.getName()).collect(Collectors.joining("\n  "));
+
+                        return new IllegalArgumentException(message);
+                });
 
                 final BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder
                     .rootBeanDefinition(GrailsMicronautBeanFactory.class);

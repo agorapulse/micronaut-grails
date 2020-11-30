@@ -20,6 +20,8 @@ package com.agorapulse.micronaut.grails;
 import io.micronaut.context.env.DefaultEnvironment;
 import io.micronaut.core.convert.ArgumentConversionContext;
 import io.micronaut.core.convert.ConversionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MapPropertySource;
@@ -29,6 +31,8 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 class GrailsPropertyTranslatingEnvironment extends DefaultEnvironment {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GrailsPropertyTranslatingEnvironment.class);
 
     private final Environment environment;
     private final PropertyTranslatingCustomizer customizer;
@@ -47,6 +51,10 @@ class GrailsPropertyTranslatingEnvironment extends DefaultEnvironment {
                     mps.getSource().forEach((k, v) -> {
                         Optional<String> expectedPrefix = expectedMapProperties.stream().filter(k::startsWith).findFirst();
                         if (expectedPrefix.isPresent()) {
+                            if (LOGGER.isWarnEnabled()) {
+                                LOGGER.warn("Prefix " + expectedPrefix + " is mapped to map property."
+                                    + " This only works in LEGACY compatibility mode but it might work natively in different modes.");
+                            }
                             String[] parts = k.split("\\.");
                             Map<String, Object> currentLevelMap = multilayer;
                             String prefix = "";
@@ -104,7 +112,15 @@ class GrailsPropertyTranslatingEnvironment extends DefaultEnvironment {
             return false;
         }
 
-        return alternativeNames.stream().anyMatch(environment::containsProperty);
+        Optional<String> alternative = alternativeNames.stream().filter(environment::containsProperty).findFirst();
+        if (alternative.isPresent()) {
+            if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn("Using alternative property name '" + alternative.get() + "' instead of '" + name + "'!"
+                    + " This is only supported in LEGACY mode. Please declare the property directly as '" + name + "'.");
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -130,6 +146,10 @@ class GrailsPropertyTranslatingEnvironment extends DefaultEnvironment {
             Object altProperty = environment.getProperty(alternativeName, Object.class);
             Optional<T> alternativeValue = ConversionService.SHARED.convert(altProperty, type, conversionContext);
             if (alternativeValue.isPresent()) {
+                if (LOGGER.isWarnEnabled()) {
+                    LOGGER.warn("Property '" + name + "' has been loaded using the value of '" + alternativeName + "' property!"
+                        + " This is only supported in LEGACY mode. Please declare the property directly as '" + name + "'.");
+                }
                 return alternativeValue;
             }
         }
