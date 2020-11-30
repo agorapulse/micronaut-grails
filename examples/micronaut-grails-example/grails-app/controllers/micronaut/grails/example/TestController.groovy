@@ -34,6 +34,7 @@ class TestController {
     @Inject DirectlyInjected someDirectlyInjected
     @Inject @Named("test") InjectedWithQualifier someInjectedWithQualifier
 
+
     // beans using MicronautImporter can be injected without @Inject but requires a matching name
     InjectedUsingBridge injectedUsingBridge
     InjectedUsingBridgeWithDifferentName otherInjected
@@ -73,6 +74,13 @@ class TestController {
         render([
             someDirectlyInjected: someDirectlyInjected?.managerCount,
             injectedUsingBridge : injectedUsingBridge?.managerCount,
+        ] as JSON)
+    }
+
+    def profiles() {
+        render([
+            someDirectlyInjected: someDirectlyInjected?.micronautContext?.environment?.activeNames,
+            injectedUsingBridge: injectedUsingBridge?.micronautContext?.environment?.activeNames
         ] as JSON)
     }
 

@@ -24,4 +24,9 @@ class LegacyApplicationSpec extends AbstractApplicationSpec {
         return LegacyApplication
     }
 
+    @Override
+    boolean getMicronautBridgePackageApplied() {
+        return false
+    }
+
 }
