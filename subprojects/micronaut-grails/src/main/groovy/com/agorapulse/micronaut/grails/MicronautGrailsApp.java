@@ -341,6 +341,8 @@ public class MicronautGrailsApp extends GrailsApp {
         ClassUtils.forName("com.fasterxml.jackson.databind.ObjectMapper", getClassLoader()).ifPresent(beanExcludes::add);
         ApplicationContext micronautContext = new MicronautGrailsAppContext(micronautConfiguration);
 
+        configuration.applyToEnvironment(micronautContext.getEnvironment());
+
         micronautContext.getEnvironment().addPropertySource("grails-config", Collections.singletonMap(MicronautBeanFactoryConfiguration.PREFIX + ".bean-excludes", beanExcludes));
         micronautContext.registerSingleton(Configuration.class, configuration);
 
