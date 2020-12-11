@@ -35,10 +35,6 @@ abstract class AbstractApplicationSpec extends Specification {
 
     abstract Class<?> getApplicationClass()
 
-    boolean getMicronautBridgePackageApplied() {
-        return true
-    }
-
     void setupSpec() {
         Throwable th = null
         Thread.start {
@@ -83,7 +79,7 @@ abstract class AbstractApplicationSpec extends Specification {
     void 'package is applied'() {
         expect:
             context.getBean(DirectlyInjected).micronautContext.environment.packages.contains(ManagerService.package.name)
-            context.getBean(InjectedUsingBridge).micronautContext.environment.packages.contains(ManagerService.package.name) == micronautBridgePackageApplied
+            context.getBean(InjectedUsingBridge).micronautContext.environment.packages.contains(ManagerService.package.name)
     }
 
     void 'fetch services'() {
