@@ -35,13 +35,13 @@ public class MicronautGrailsConfiguration {
      * @return empty importer
      */
     @Bean
-    MicronautBeanImporter grailsTranslatorImporter() {
+    static MicronautBeanImporter grailsTranslatorImporter() {
         return MicronautBeanImporter.create().customize(PropertyTranslatingCustomizer.grails());
     }
 
     @Bean
     @Profile("!micronaut-grails-strict & !micronaut-grails-bridge")
-    BeanFactoryPostProcessor defaultGrailsMicronautBeanProcessor(List<MicronautBeanImporter> importers, Environment env) {
+    static BeanFactoryPostProcessor defaultGrailsMicronautBeanProcessor(List<MicronautBeanImporter> importers, Environment env) {
         Map<String, TypeAndQualifier<?>> qualifierMap = importers
             .stream()
             .flatMap(i -> i.getMicronautBeanQualifiers().entrySet().stream())
@@ -65,7 +65,7 @@ public class MicronautGrailsConfiguration {
 
     @Bean
     @Profile("micronaut-grails-bridge")
-    BeanFactoryPostProcessor forwardingGrailsMicronautBeanProcessor(List<MicronautBeanImporter> importers, Environment env) {
+    static BeanFactoryPostProcessor forwardingGrailsMicronautBeanProcessor(List<MicronautBeanImporter> importers, Environment env) {
         Map<String, TypeAndQualifier<?>> qualifierMap = importers
             .stream()
             .flatMap(i -> i.getMicronautBeanQualifiers().entrySet().stream())

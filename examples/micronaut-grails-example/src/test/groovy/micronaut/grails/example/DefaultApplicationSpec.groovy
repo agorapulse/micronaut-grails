@@ -24,8 +24,4 @@ class DefaultApplicationSpec extends AbstractApplicationSpec {
         return DefaultApplication
     }
 
-    @Override
-    boolean getMicronautBridgePackageApplied() {
-        return false
-    }
 }
