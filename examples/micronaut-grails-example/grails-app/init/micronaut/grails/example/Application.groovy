@@ -17,28 +17,32 @@
  */
 package micronaut.grails.example
 
+import com.agorapulse.micronaut.grails.CompatibilityMode
 import com.agorapulse.micronaut.grails.EnvVarLikeSystemPropertiesPropertySource
 import com.agorapulse.micronaut.grails.MicronautGrailsApp
+import com.agorapulse.micronaut.grails.MicronautGrailsAutoConfiguration
 import com.agorapulse.micronaut.grails.domain.Manager
-import grails.boot.config.GrailsAutoConfiguration
 import groovy.transform.CompileStatic
+import io.micronaut.context.env.Environment
 import org.springframework.context.ConfigurableApplicationContext
 
 @CompileStatic
-class Application extends GrailsAutoConfiguration {
+class Application extends MicronautGrailsAutoConfiguration {                            // <1>
 
     static ConfigurableApplicationContext context
 
     static void main(String[] args) {
-        context = MicronautGrailsApp.run {                                              // <1>
-            compatibility MicronautGrailsApp.Compatibility.STRICT                       // <2>
-            source Application                                                          // <3>
-            arguments args                                                              // <4>
-            environment {                                                               // <5>
-                addPackage Manager.package                                              // <6>
-                addPropertySource(new EnvVarLikeSystemPropertiesPropertySource())       // <7>
-            }
-        }
+        context = MicronautGrailsApp.run(Application, args)                             // <2>
+    }
+
+    final CompatibilityMode compatibilityMode = CompatibilityMode.STRICT                // <3>
+    final Collection<Package> packages = [                                              // <4>
+        Manager.package,
+    ]
+
+    @Override
+    protected void doWithMicronautEnvironment(Environment env) {
+        env.addPropertySource(new EnvVarLikeSystemPropertiesPropertySource())           // <5>
     }
 
 }

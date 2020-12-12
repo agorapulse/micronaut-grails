@@ -63,6 +63,7 @@ configurations {
 
 dependencies {
     compile project(':micronaut-grails')
+    compile project(':micronaut-grails-web-boot')
     compile project(':micronaut-grails-domain-library')
 
     testCompile 'com.agorapulse:gru-http:0.8.4'
@@ -73,7 +74,8 @@ dependencies {
     compile "org.grails:grails-core"
     compile "org.springframework.boot:spring-boot-starter-actuator"
     compile "org.springframework.boot:spring-boot-starter-tomcat"
-    compile "org.grails:grails-web-boot"
+    // this needs to be disabled
+    // compile "org.grails:grails-web-boot"
     compile "org.grails:grails-logging"
     compile "org.grails:grails-plugin-rest"
     compile "org.grails:grails-plugin-databinding"

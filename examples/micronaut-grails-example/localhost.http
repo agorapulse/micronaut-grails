@@ -1,0 +1,14 @@
+GET http://localhost:8080/test/index
+Accept: application/json
+
+###
+GET http://localhost:8080/test/context
+Accept: application/json
+
+###
+GET http://localhost:8080/test/values
+Accept: application/json
+
+###
+GET http://localhost:8080/test/managers
+Accept: application/json
