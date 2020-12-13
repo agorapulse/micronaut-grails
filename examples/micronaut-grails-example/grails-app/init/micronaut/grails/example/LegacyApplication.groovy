@@ -17,27 +17,26 @@
  */
 package micronaut.grails.example
 
+import com.agorapulse.micronaut.grails.CompatibilityMode
 import com.agorapulse.micronaut.grails.MicronautGrailsApp
+import com.agorapulse.micronaut.grails.MicronautGrailsAutoConfiguration
 import com.agorapulse.micronaut.grails.domain.Manager
-import grails.boot.config.GrailsAutoConfiguration
 
 import groovy.transform.CompileStatic
 import org.springframework.context.ConfigurableApplicationContext
 
 @CompileStatic
-class LegacyApplication extends GrailsAutoConfiguration {
+class LegacyApplication extends MicronautGrailsAutoConfiguration {
 
     static ConfigurableApplicationContext context
 
+    final CompatibilityMode compatibilityMode = CompatibilityMode.LEGACY
+    final List<Package> packages = [
+        Manager.package
+    ]
+
     static void main(String[] args) {
-        context = MicronautGrailsApp.run {
-            compatibility MicronautGrailsApp.Compatibility.LEGACY
-            source LegacyApplication
-            arguments args
-            environment {
-                addPackage Manager.package
-            }
-        }
+        context = MicronautGrailsApp.run(LegacyApplication, args)
     }
 
 }

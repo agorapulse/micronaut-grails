@@ -17,26 +17,25 @@
  */
 package micronaut.grails.example
 
+import com.agorapulse.micronaut.grails.CompatibilityMode
 import com.agorapulse.micronaut.grails.MicronautGrailsApp
+import com.agorapulse.micronaut.grails.MicronautGrailsAutoConfiguration
 import com.agorapulse.micronaut.grails.domain.Manager
-import grails.boot.config.GrailsAutoConfiguration
 import groovy.transform.CompileStatic
 import org.springframework.context.ConfigurableApplicationContext
 
 @CompileStatic
-class BridgeApplication extends GrailsAutoConfiguration {
+class BridgeApplication extends MicronautGrailsAutoConfiguration {
 
     static ConfigurableApplicationContext context
 
+    final CompatibilityMode compatibilityMode = CompatibilityMode.BRIDGE
+    final List<Package> packages = [
+        Manager.package
+    ]
+
     static void main(String[] args) {
-        context = MicronautGrailsApp.run {
-            compatibility MicronautGrailsApp.Compatibility.BRIDGE
-            source BridgeApplication
-            arguments args
-            environment {
-                addPackage Manager.package
-            }
-        }
+        context = MicronautGrailsApp.run(BridgeApplication, args)
     }
 
 }

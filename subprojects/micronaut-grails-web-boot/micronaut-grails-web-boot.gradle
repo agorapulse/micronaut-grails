@@ -22,15 +22,11 @@ config {
 }
 
 dependencies {
-    api 'io.micronaut:micronaut-spring'
+    api project(':micronaut-grails')
+    api "org.grails:grails-core:$grailsVersion"
 
-    compileOnly "org.grails:grails-core:$grailsVersion"
+    compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
+    compileOnly 'org.springframework:spring-webmvc:5.2.12.RELEASE'
+    compileOnly 'org.springframework.boot:spring-boot:2.4.1'
 
-    testImplementation 'org.springframework:spring-test:5.0.8.RELEASE'
-    testImplementation("org.spockframework:spock-spring:$spockVersion") {
-        exclude group: "org.codehaus.groovy", module: "groovy-all"
-    }
-
-    testImplementation group: 'com.agorapulse', name: 'micronaut-aws-sdk-sns', version: '1.2.10.2'
-    testImplementation group: 'com.agorapulse', name: 'micronaut-aws-sdk-sqs', version: '1.2.10.2'
 }

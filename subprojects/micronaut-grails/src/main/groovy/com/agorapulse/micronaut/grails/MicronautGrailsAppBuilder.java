@@ -15,22 +15,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-config {
-    bintray {
-        enabled = true
-    }
-}
+package com.agorapulse.micronaut.grails;
 
-dependencies {
-    api 'io.micronaut:micronaut-spring'
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 
-    compileOnly "org.grails:grails-core:$grailsVersion"
+public class MicronautGrailsAppBuilder extends SpringApplicationBuilder {
 
-    testImplementation 'org.springframework:spring-test:5.0.8.RELEASE'
-    testImplementation("org.spockframework:spock-spring:$spockVersion") {
-        exclude group: "org.codehaus.groovy", module: "groovy-all"
+    public MicronautGrailsAppBuilder(Class<?>... sources) {
+        super(sources);
     }
 
-    testImplementation group: 'com.agorapulse', name: 'micronaut-aws-sdk-sns', version: '1.2.10.2'
-    testImplementation group: 'com.agorapulse', name: 'micronaut-aws-sdk-sqs', version: '1.2.10.2'
+    @Override
+    protected SpringApplication createSpringApplication(Class<?>... sources) {
+        return new MicronautGrailsApp(sources);
+    }
+
 }

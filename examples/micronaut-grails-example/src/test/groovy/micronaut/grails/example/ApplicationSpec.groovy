@@ -17,11 +17,25 @@
  */
 package micronaut.grails.example
 
+import com.agorapulse.micronaut.grails.web.boot.MicronautGrailsAppServletInitializer
+import org.springframework.boot.builder.SpringApplicationBuilder
+
 class ApplicationSpec extends AbstractApplicationSpec {
+
+    SpringApplicationBuilder builder = Mock()
 
     @Override
     Class<?> getApplicationClass() {
         return Application
+    }
+
+    void 'loader class is created'() {
+        when:
+            MicronautGrailsAppServletInitializer loader = Application.classLoader.loadClass("${Application.name}Loader").newInstance() as MicronautGrailsAppServletInitializer
+            loader.configure(builder)
+        then:
+
+            1 * builder.sources(Application)
     }
 
 }

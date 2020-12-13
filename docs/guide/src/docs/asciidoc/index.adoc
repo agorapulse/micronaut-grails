@@ -43,13 +43,11 @@ Replace the body of the `main` method inside `grails-app/init/.../Application.gr
 ----
 include::{root-dir}/examples/micronaut-grails-example/grails-app/init/micronaut/grails/example/Application.groovy[lines=20..-1]
 ----
-<1> Use `MicronautGrailsApp` instead of `GrailsApp`
-<2> Set the compatibility mode (see below - defaults to `STRICT`)
-<3> Set the source to current class
-<4> Forward the arguments
-<5> customise the environment
-<6> For example, customise the packages to be scanned
-<7> Allow system properties to be all-upper-case (useful for AWS Beanstalk Tomcat environment)
+<1> Your `Application` class must extend `MicronautGrailsAutoConfiguration` class
+<2> Use `MicronautGrailsApp` instead of `GrailsApp`
+<3> You can set the compatibility mode (see below - defaults to `STRICT`)
+<4> You can customize the packages for scanning
+<5> You can customize the Micronaut environment
 
 ==== Compatibility Modes
 
