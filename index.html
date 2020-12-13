@@ -10,14 +10,14 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <link rel="stylesheet" href="./asciidoctor.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="css/docs.css?v=2.0.7" />
+<link rel="stylesheet" href="css/docs.css?v=3.0.0" />
 </head>
 <body class="book toc2 toc-left">
 <div id="header">
 <h1>Grails Integration for Micronaut</h1>
 <div class="details">
 <span id="author" class="author">Vladimir Orany</span><br>
-<span id="revnumber">version 2.0.7</span>
+<span id="revnumber">version 3.0.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -79,7 +79,7 @@
 <div class="listingblock primary">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="prettyprint highlight"><code>compileOnly 'com.agorapulse:micronaut-grails:2.0.7'</code></pre>
+<pre class="prettyprint highlight"><code>compileOnly 'com.agorapulse:micronaut-grails:3.0.0'</code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -109,28 +109,32 @@ The main additional feature is the ability to do more customisation to the Micro
 <div class="listingblock">
 <div class="title">Grails 4 Usage</div>
 <div class="content">
-<pre class="prettyprint highlight"><code data-lang="groovy">import com.agorapulse.micronaut.grails.EnvVarLikeSystemPropertiesPropertySource
+<pre class="prettyprint highlight"><code data-lang="groovy">import com.agorapulse.micronaut.grails.CompatibilityMode
+import com.agorapulse.micronaut.grails.EnvVarLikeSystemPropertiesPropertySource
 import com.agorapulse.micronaut.grails.MicronautGrailsApp
+import com.agorapulse.micronaut.grails.MicronautGrailsAutoConfiguration
 import com.agorapulse.micronaut.grails.domain.Manager
-import grails.boot.config.GrailsAutoConfiguration
 import groovy.transform.CompileStatic
+import io.micronaut.context.env.Environment
 import org.springframework.context.ConfigurableApplicationContext
 
 @CompileStatic
-class Application extends GrailsAutoConfiguration {
+class Application extends MicronautGrailsAutoConfiguration {                            <i class="conum" data-value="1"></i><b>(1)</b>
 
     static ConfigurableApplicationContext context
 
     static void main(String[] args) {
-        context = MicronautGrailsApp.run {                                              <i class="conum" data-value="1"></i><b>(1)</b>
-            compatibility MicronautGrailsApp.Compatibility.STRICT                       <i class="conum" data-value="2"></i><b>(2)</b>
-            source Application                                                          <i class="conum" data-value="3"></i><b>(3)</b>
-            arguments args                                                              <i class="conum" data-value="4"></i><b>(4)</b>
-            environment {                                                               <i class="conum" data-value="5"></i><b>(5)</b>
-                addPackage Manager.package                                              <i class="conum" data-value="6"></i><b>(6)</b>
-                addPropertySource(new EnvVarLikeSystemPropertiesPropertySource())       <i class="conum" data-value="7"></i><b>(7)</b>
-            }
-        }
+        context = MicronautGrailsApp.run(Application, args)                             <i class="conum" data-value="2"></i><b>(2)</b>
+    }
+
+    final CompatibilityMode compatibilityMode = CompatibilityMode.STRICT                <i class="conum" data-value="3"></i><b>(3)</b>
+    final Collection&lt;Package&gt; packages = [                                              <i class="conum" data-value="4"></i><b>(4)</b>
+        Manager.package,
+    ]
+
+    @Override
+    protected void doWithMicronautEnvironment(Environment env) {
+        env.addPropertySource(new EnvVarLikeSystemPropertiesPropertySource())           <i class="conum" data-value="5"></i><b>(5)</b>
     }
 
 }</code></pre>
@@ -140,31 +144,23 @@ class Application extends GrailsAutoConfiguration {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Use <code>MicronautGrailsApp</code> instead of <code>GrailsApp</code></td>
+<td>Your <code>Application</code> class must extend <code>MicronautGrailsAutoConfiguration</code> class</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Set the compatibility mode (see below - defaults to <code>STRICT</code>)</td>
+<td>Use <code>MicronautGrailsApp</code> instead of <code>GrailsApp</code></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Set the source to current class</td>
+<td>You can set the compatibility mode (see below - defaults to <code>STRICT</code>)</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Forward the arguments</td>
+<td>You can customize the packages for scanning</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>customise the environment</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>For example, customise the packages to be scanned</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>Allow system properties to be all-upper-case (useful for AWS Beanstalk Tomcat environment)</td>
+<td>You can customize the Micronaut environment</td>
 </tr>
 </table>
 </div>
@@ -340,8 +336,8 @@ which will automatically load the configuration once the JAR is on classpath.</p
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 2.0.7<br>
-Last updated 2020-12-11 17:06:14 UTC
+Version 3.0.0<br>
+Last updated 2020-12-13 11:36:06 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
