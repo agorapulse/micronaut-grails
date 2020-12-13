@@ -23,7 +23,7 @@ config {
 
 dependencies {
     api project(':micronaut-grails')
-    api "org.grails:grails-core:$grailsVersion"
+    implementation "org.grails:grails-core:$grailsVersion"
 
     compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
     compileOnly 'org.springframework:spring-webmvc:5.2.12.RELEASE'
