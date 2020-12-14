@@ -19,19 +19,24 @@ image::https://coveralls.io/repos/github/{project-slug}/badge.svg?branch=master[
 
 = Micronaut Grails
 
-== Installation
+== Grails 4
+
+=== Installation
 
 [source,indent=0,role="primary",subs='verbatim,attributes']
 .Gradle
 ----
-compileOnly 'com.agorapulse:micronaut-grails:{project-version}'
+compile 'com.agorapulse:micronaut-grails:{project-version}'
+
+// for Tomcat deployment replace
+// compile 'org.grails:grails-web-boot'
+// with
+compile 'com.agorapulse:micronaut-grails-web-boot:{project-version}'
 ----
 
 TIP: If you plan to reuse same library for Micronaut and Grails, you can declare the dependency as  `compileOnly`.
 
-== Usage
-
-=== Grails 4
+=== Usage
 
 Micronaut Grails library helps to use Micronaut beans in the Grails 4 application or any other Spring application.
 The main additional feature is the ability to do more customisation to the Micronaut context such as adding a package for scanning.
@@ -79,7 +84,19 @@ to `INFO` to see the deprecation details.
 |===
 
 
-=== Grails 3
+== Grails 3
+
+=== Installation
+
+[source,indent=0,role="primary",subs='verbatim,attributes']
+.Gradle
+----
+compileOnly 'com.agorapulse:micronaut-grails:{project-version}'
+----
+
+TIP: If you plan to reuse same library for Micronaut and Grails, you can declare the dependency as  `compileOnly`.
+
+=== Usage
 
 Micronaut Grails library helps to use Micronaut beans in the Grails 3 application or any other Spring application.
 There are three additional features which cannot be found the official https://micronaut-projects.github.io/micronaut-spring/latest/guide/[Spring support for Micronaut]:
