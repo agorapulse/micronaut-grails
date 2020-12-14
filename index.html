@@ -24,15 +24,20 @@
 <ul class="sectlevel1">
 <li><a href="#_micronaut_grails">1. Micronaut Grails</a>
 <ul class="sectlevel2">
-<li><a href="#_installation">1.1. Installation</a></li>
-<li><a href="#_usage">1.2. Usage</a>
+<li><a href="#_grails_4">1.1. Grails 4</a>
 <ul class="sectlevel3">
-<li><a href="#_grails_4">1.2.1. Grails 4</a>
+<li><a href="#_installation">1.1.1. Installation</a></li>
+<li><a href="#_usage">1.1.2. Usage</a>
 <ul class="sectlevel4">
 <li><a href="#_compatibility_modes">Compatibility Modes</a></li>
 </ul>
 </li>
-<li><a href="#_grails_3">1.2.2. Grails 3</a></li>
+</ul>
+</li>
+<li><a href="#_grails_3">1.2. Grails 3</a>
+<ul class="sectlevel3">
+<li><a href="#_installation_2">1.2.1. Installation</a></li>
+<li><a href="#_usage_2">1.2.2. Usage</a></li>
 </ul>
 </li>
 </ul>
@@ -75,11 +80,18 @@
 <h2 id="_micronaut_grails"><a class="anchor" href="#_micronaut_grails"></a>1. Micronaut Grails</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_installation"><a class="anchor" href="#_installation"></a>1.1. Installation</h3>
+<h3 id="_grails_4"><a class="anchor" href="#_grails_4"></a>1.1. Grails 4</h3>
+<div class="sect3">
+<h4 id="_installation"><a class="anchor" href="#_installation"></a>1.1.1. Installation</h4>
 <div class="listingblock primary">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="prettyprint highlight"><code>compileOnly 'com.agorapulse:micronaut-grails:3.0.0'</code></pre>
+<pre class="prettyprint highlight"><code>compile 'com.agorapulse:micronaut-grails:3.0.0'
+
+// for Tomcat deployment replace
+// compile 'org.grails:grails-web-boot'
+// with
+compile 'com.agorapulse:micronaut-grails-web-boot:3.0.0'</code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -95,10 +107,8 @@ If you plan to reuse same library for Micronaut and Grails, you can declare the 
 </table>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_usage"><a class="anchor" href="#_usage"></a>1.2. Usage</h3>
 <div class="sect3">
-<h4 id="_grails_4"><a class="anchor" href="#_grails_4"></a>1.2.1. Grails 4</h4>
+<h4 id="_usage"><a class="anchor" href="#_usage"></a>1.1.2. Usage</h4>
 <div class="paragraph">
 <p>Micronaut Grails library helps to use Micronaut beans in the Grails 4 application or any other Spring application.
 The main additional feature is the ability to do more customisation to the Micronaut context such as adding a package for scanning.</p>
@@ -215,8 +225,32 @@ to <code>INFO</code> to see the deprecation details.</p>
 </table>
 </div>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_grails_3"><a class="anchor" href="#_grails_3"></a>1.2. Grails 3</h3>
 <div class="sect3">
-<h4 id="_grails_3"><a class="anchor" href="#_grails_3"></a>1.2.2. Grails 3</h4>
+<h4 id="_installation_2"><a class="anchor" href="#_installation_2"></a>1.2.1. Installation</h4>
+<div class="listingblock primary">
+<div class="title">Gradle</div>
+<div class="content">
+<pre class="prettyprint highlight"><code>compileOnly 'com.agorapulse:micronaut-grails:3.0.0'</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+If you plan to reuse same library for Micronaut and Grails, you can declare the dependency as  <code>compileOnly</code>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_usage_2"><a class="anchor" href="#_usage_2"></a>1.2.2. Usage</h4>
 <div class="paragraph">
 <p>Micronaut Grails library helps to use Micronaut beans in the Grails 3 application or any other Spring application.
 There are three additional features which cannot be found the official <a href="https://micronaut-projects.github.io/micronaut-spring/latest/guide/">Spring support for Micronaut</a>:</p>
@@ -337,7 +371,7 @@ which will automatically load the configuration once the JAR is on classpath.</p
 <div id="footer">
 <div id="footer-text">
 Version 3.0.0<br>
-Last updated 2020-12-13 14:41:32 UTC
+Last updated 2020-12-14 10:22:15 +0100
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
