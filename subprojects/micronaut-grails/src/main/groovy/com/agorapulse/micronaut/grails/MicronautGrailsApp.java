@@ -183,12 +183,6 @@ public class MicronautGrailsApp extends GrailsApp {
     }
 
     @Override
-    public ConfigurableApplicationContext run(String... args) {
-        System.out.println("Running " + getClass() + " using MicronautGrailsApp");
-        return super.run(args);
-    }
-
-    @Override
     protected ConfigurableApplicationContext createApplicationContext() {
         setAllowBeanDefinitionOverriding(true);
 
@@ -229,7 +223,12 @@ public class MicronautGrailsApp extends GrailsApp {
     @Nonnull
     private MicronautGrailsAutoConfiguration getApplication() {
         try {
-            return BeanUtils.instantiateClass(getMainApplicationClass(), MicronautGrailsAutoConfiguration.class);
+            return getAllSources()
+                .stream()
+                .filter(s -> s instanceof Class<?> && MicronautGrailsAutoConfiguration.class.isAssignableFrom((Class<?>)s))
+                .findFirst()
+                .map(s -> BeanUtils.instantiateClass((Class<?>) s, MicronautGrailsAutoConfiguration.class))
+                .orElseGet(MicronautGrailsAutoConfiguration::new);
         } catch (BeanInstantiationException e) {
             LOGGER.error("Failed to instantiate class" + getMainApplicationClass(), e);
             return new MicronautGrailsAutoConfiguration();
