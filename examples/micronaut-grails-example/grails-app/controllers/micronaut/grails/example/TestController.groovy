@@ -61,11 +61,15 @@ class TestController {
                 valueWithMicronautPrefix: someDirectlyInjected?.valueWithMicronautPrefix,
                 valueWithoutPrefix      : someDirectlyInjected?.valueWithoutPrefix,
                 ignoredValue            : someDirectlyInjected?.ignoredValue,
+                pluginValue             : someDirectlyInjected?.pluginValue,
+                configurationPluginValue: someDirectlyInjected?.pluginConfiguration?.stringValue,
             ],
             injectedUsingBridge : [
                 valueWithMicronautPrefix: injectedUsingBridge?.valueWithMicronautPrefix,
                 valueWithoutPrefix      : injectedUsingBridge?.valueWithoutPrefix,
                 ignoredValue            : injectedUsingBridge?.ignoredValue,
+                pluginValue             : injectedUsingBridge?.pluginValue,
+                configurationPluginValue: injectedUsingBridge?.pluginConfiguration?.stringValue,
             ],
         ] as JSON)
     }

@@ -34,13 +34,17 @@ class InjectedUsingBridge {
     private final String valueWithMicronautPrefix
     private final String valueWithoutPrefix
     private final String ignoredvalue
+    private final String pluginValue
+    private final PluginConfiguration pluginConfiguration
 
     InjectedUsingBridge(
         ManagerService managerService,
         ApplicationContext micronautContext,
         @Nullable @Value('${micronaut.foo.bar}') String valueWithMicronautPrefix,
         @Nullable @Value('${bar.foo}') String valueWithoutPrefix,
-        @Nullable @Value('${ex.foo.bar}') String ignoredvalue
+        @Nullable @Value('${ex.foo.bar}') String ignoredvalue,
+        @Nullable @Value('${plugin.string-value}') String pluginValue,
+        @Nullable PluginConfiguration pluginConfiguration
 
     ) {
         this.managerService = managerService
@@ -48,6 +52,8 @@ class InjectedUsingBridge {
         this.valueWithMicronautPrefix = valueWithMicronautPrefix
         this.valueWithoutPrefix = valueWithoutPrefix
         this.ignoredvalue = ignoredvalue
+        this.pluginValue = pluginValue
+        this.pluginConfiguration = pluginConfiguration
     }
 
     Number getManagerCount() {
@@ -68,6 +74,14 @@ class InjectedUsingBridge {
 
     String getIgnoredValue() {
         return ignoredvalue
+    }
+
+    String getPluginValue() {
+        return pluginValue
+    }
+
+    PluginConfiguration getPluginConfiguration() {
+        return pluginConfiguration
     }
 
     @Override

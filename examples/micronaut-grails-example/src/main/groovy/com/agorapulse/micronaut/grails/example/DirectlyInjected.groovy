@@ -35,19 +35,25 @@ class DirectlyInjected {
     private final String valueWithMicronautPrefix
     private final String valueWithoutPrefix
     private final String ignoredValue
+    private final String pluginValue
+    private final PluginConfiguration pluginConfiguration
 
     DirectlyInjected(
         ManagerService managerService,
         ApplicationContext micronautContext,
         @Nullable @Value('${micronaut.foo.bar}') String valueWithMicronautPrefix,
         @Nullable @Value('${bar.foo}') String valueWithoutPrefix,
-        @Nullable @Value('${ex.foo.bar}') String ignoredValue
+        @Nullable @Value('${ex.foo.bar}') String ignoredValue,
+        @Nullable @Value('${plugin.string-value}') String stringValue,
+        @Nullable PluginConfiguration pluginConfiguration
     ) {
         this.ignoredValue = ignoredValue
         this.valueWithoutPrefix = valueWithoutPrefix
         this.valueWithMicronautPrefix = valueWithMicronautPrefix
         this.managerService = managerService
         this.micronautContext = micronautContext
+        this.pluginValue = stringValue
+        this.pluginConfiguration = pluginConfiguration
     }
 
     @Override
@@ -74,5 +80,13 @@ class DirectlyInjected {
 
     String getValueWithoutPrefix() {
         return valueWithoutPrefix
+    }
+
+    String getPluginValue() {
+        return pluginValue
+    }
+
+    PluginConfiguration getPluginConfiguration() {
+        return pluginConfiguration
     }
 }

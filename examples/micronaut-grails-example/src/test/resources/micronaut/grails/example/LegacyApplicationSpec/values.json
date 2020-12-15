@@ -2,11 +2,15 @@
     "someDirectlyInjected": {
         "valueWithMicronautPrefix": null,
         "valueWithoutPrefix": "barfoo",
-        "ignoredValue": null
+        "ignoredValue": null,
+        "pluginValue": "test value",
+        "configurationPluginValue": "test value"
     },
     "injectedUsingBridge": {
         "valueWithMicronautPrefix": "foobar",
         "valueWithoutPrefix": "barfoo",
-        "ignoredValue": null
+        "ignoredValue": null,
+        "pluginValue": "test value",
+        "configurationPluginValue": "test value"
     }
 }

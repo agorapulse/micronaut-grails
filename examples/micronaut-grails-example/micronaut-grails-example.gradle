@@ -45,6 +45,7 @@ apply plugin:"org.grails.grails-gsp"
 
 repositories {
     maven { url "https://repo.grails.org/grails/core" }
+    mavenLocal()
 }
 
 dependencyManagement {
@@ -65,6 +66,9 @@ dependencies {
     compile project(':micronaut-grails')
     compile project(':micronaut-grails-web-boot')
     compile project(':micronaut-grails-domain-library')
+
+    // needs to be published to Maven local as Kordamp and Grails Plugin does not work well together
+    compile 'com.agorapulse:micronaut-grails-plugin:1.0.0'
 
     testCompile 'com.agorapulse:gru-http:0.8.4'
 

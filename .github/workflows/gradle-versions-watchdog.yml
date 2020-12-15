@@ -21,5 +21,9 @@ jobs:
         java-version: 1.8
     - uses: eskatos/gradle-command-action@v1
       with:
+        arguments: publishToMavenLocal
+        build-root-directory: testprojects/micronuat-grails-plugin
+    - uses: eskatos/gradle-command-action@v1
+      with:
         arguments: check --stacktrace
         gradle-version: rc
