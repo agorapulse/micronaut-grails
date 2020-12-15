@@ -56,9 +56,8 @@ public class DefaultGrailsMicronautBeanProcessor implements BeanFactoryPostProce
     private static final String MICRONAUT_QUALIFIER_PROPERTY_NAME = "micronautQualifier";
     private static final String MICRONAUT_SINGLETON_PROPERTY_NAME = "micronautSingleton";
 
-    protected ApplicationContext springContext;
-
     private io.micronaut.context.ApplicationContext micronautContext;
+    private ApplicationContext springContext;
     private final Map<String, TypeAndQualifier<?>> micronautBeanQualifiers;
 
     /**

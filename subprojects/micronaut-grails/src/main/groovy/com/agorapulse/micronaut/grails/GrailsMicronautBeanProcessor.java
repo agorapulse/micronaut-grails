@@ -21,7 +21,6 @@ import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.DefaultApplicationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 
@@ -115,13 +114,6 @@ public class GrailsMicronautBeanProcessor extends DefaultGrailsMicronautBeanProc
         }
 
         DefaultApplicationContext micronautContext = new GrailsPropertyTranslatingApplicationContext(environment, of(collapse(customizers)), expectedMapProperties);
-
-        try {
-            MicronautContextHolder bean = springContext.getBean(MicronautContextHolder.class);
-            bean.getContext().getEnvironment().getPackages().forEach(micronautContext.getEnvironment()::addPackage);
-        } catch (NoSuchBeanDefinitionException ignored) {
-            // not using MicronautGrailsApp
-        }
 
         return micronautContext.start();
     }
