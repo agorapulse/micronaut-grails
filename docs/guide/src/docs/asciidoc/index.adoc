@@ -132,6 +132,27 @@ which will automatically load the configuration once the JAR is on classpath.
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.agorapulse.micronaut.grails.example.GrailsConfig
 ----
 
+== Troubleshooting
+
+=== Dumping Configuration Properties
+
+The configuration properties inside Grails may behave bit differently than inside Micronaut application. If you are using Grails Console plugin then you can dump all the properties available using the following script
+
+[source,groovy,indent=0,options="nowrap"]
+----
+def mc = ctx.getBean(com.agorapulse.micronaut.grails.MicronautContextHolder).context
+def env = mc.environment
+def sources = env.propertySources
+
+
+for (source in sources) {
+    println "$source.name:"
+    for (name in source) {
+        def value = source.get(name)
+        println "  $name (${value?.getClass()}): ${String.valueOf(value)}"   
+    }
+}
+----
 
 = Links
 
