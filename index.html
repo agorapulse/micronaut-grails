@@ -10,14 +10,14 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <link rel="stylesheet" href="./asciidoctor.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="css/docs.css?v=3.0.2" />
+<link rel="stylesheet" href="css/docs.css?v=3.0.3" />
 </head>
 <body class="book toc2 toc-left">
 <div id="header">
 <h1>Grails Integration for Micronaut</h1>
 <div class="details">
 <span id="author" class="author">Vladimir Orany</span><br>
-<span id="revnumber">version 3.0.2</span>
+<span id="revnumber">version 3.0.3</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -38,6 +38,11 @@
 <ul class="sectlevel3">
 <li><a href="#_installation_2">1.2.1. Installation</a></li>
 <li><a href="#_usage_2">1.2.2. Usage</a></li>
+</ul>
+</li>
+<li><a href="#_troubleshooting">1.3. Troubleshooting</a>
+<ul class="sectlevel3">
+<li><a href="#_dumping_configuration_properties">1.3.1. Dumping Configuration Properties</a></li>
 </ul>
 </li>
 </ul>
@@ -86,12 +91,12 @@
 <div class="listingblock primary">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="prettyprint highlight"><code>compile 'com.agorapulse:micronaut-grails:3.0.2'
+<pre class="prettyprint highlight"><code>compile 'com.agorapulse:micronaut-grails:3.0.3'
 
 // for Tomcat deployment replace
 // compile 'org.grails:grails-web-boot'
 // with
-compile 'com.agorapulse:micronaut-grails-web-boot:3.0.2'</code></pre>
+compile 'com.agorapulse:micronaut-grails-web-boot:3.0.3'</code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -233,7 +238,7 @@ to <code>INFO</code> to see the deprecation details.</p>
 <div class="listingblock primary">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="prettyprint highlight"><code>compileOnly 'com.agorapulse:micronaut-grails:3.0.2'</code></pre>
+<pre class="prettyprint highlight"><code>compileOnly 'com.agorapulse:micronaut-grails:3.0.3'</code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -354,6 +359,31 @@ which will automatically load the configuration once the JAR is on classpath.</p
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_troubleshooting"><a class="anchor" href="#_troubleshooting"></a>1.3. Troubleshooting</h3>
+<div class="sect3">
+<h4 id="_dumping_configuration_properties"><a class="anchor" href="#_dumping_configuration_properties"></a>1.3.1. Dumping Configuration Properties</h4>
+<div class="paragraph">
+<p>The configuration properties inside Grails may behave bit differently than inside Micronaut application. If you are using Grails Console plugin then you can dump all the properties available using the following script</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight nowrap"><code data-lang="groovy">def mc = ctx.getBean(com.agorapulse.micronaut.grails.MicronautContextHolder).context
+def env = mc.environment
+def sources = env.propertySources
+
+
+for (source in sources) {
+    println "$source.name:"
+    for (name in source) {
+        def value = source.get(name)
+        println "  $name (${value?.getClass()}): ${String.valueOf(value)}"
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -370,8 +400,8 @@ which will automatically load the configuration once the JAR is on classpath.</p
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 3.0.2<br>
-Last updated 2020-12-15 04:08:29 UTC
+Version 3.0.3<br>
+Last updated 2021-04-13 03:57:47 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
