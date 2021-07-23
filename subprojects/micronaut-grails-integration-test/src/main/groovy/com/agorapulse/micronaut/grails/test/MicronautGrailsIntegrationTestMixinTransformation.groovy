@@ -41,7 +41,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.web.WebAppConfiguration
 
 import java.lang.reflect.Modifier
 /*
@@ -69,6 +68,35 @@ import java.lang.reflect.Modifier
  */
 @CompileStatic
 @GroovyASTTransformation(phase = CompilePhase.CANONICALIZATION)
+@SuppressWarnings([
+    'AbcMetric',
+    'BlockEndsWithBlankLine',
+    'BlockStartsWithBlankLine',
+    'CatchException',
+    'ClassForName',
+    'ConsecutiveBlankLines',
+    'ConsecutiveBlankLines',
+    'DuplicateStringLiteral',
+    'EmptyCatchBlock',
+    'ExplicitCallToEqualsMethod',
+    'GStringExpressionWithinString',
+    'IfStatementBraces',
+    'Instanceof',
+    'LineLength',
+    'MissingBlankLineAfterImports',
+    'MissingBlankLineAfterPackage',
+    'NoDef',
+    'NoWildcardImports',
+    'SpaceAfterCatch',
+    'SpaceAfterIf',
+    'ThrowRuntimeException',
+    'UnnecessaryCast',
+    'UnnecessaryGString',
+    'UnnecessaryGetter',
+    'UnnecessaryPublicModifier',
+    'VariableName',
+    'VariableTypeRequired',
+])
 class MicronautGrailsIntegrationTestMixinTransformation implements ASTTransformation {
 
     static final ClassNode MY_TYPE = new ClassNode(MicronautGrailsIntegration)

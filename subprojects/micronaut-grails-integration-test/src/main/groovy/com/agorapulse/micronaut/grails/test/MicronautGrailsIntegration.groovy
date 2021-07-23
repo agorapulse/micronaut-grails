@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.agorapulse.micronaut.grails.test;
+package com.agorapulse.micronaut.grails.test
 
 import org.codehaus.groovy.transform.GroovyASTTransformationClass
 

@@ -28,6 +28,9 @@ import org.grails.orm.hibernate.cfg.PropertyConfig
 import javax.persistence.EnumType
 import javax.persistence.FetchType
 
+/**
+ * This class unifies access to PersistentProperty, ConstrainedProperty and Property objects which shares some common interactions.
+ */
 @CompileStatic
 @SuppressWarnings('MethodCount')
 class UnifiedProperty {
@@ -104,6 +107,7 @@ class UnifiedProperty {
         return constrainedProperty.notEqual
     }
 
+    @SuppressWarnings('LineLength')
     Integer getMaxSize() {
         return (mappingProperty.maxSize ?: constrainedProperty.maxSize ?: (persistentProperty.type == String && !sqlType?.contains('text') ? 255 : null)) as Integer
     }
@@ -160,12 +164,13 @@ class UnifiedProperty {
 
     EnumType getEnumType() {
         if (!Enum.isAssignableFrom(persistentProperty.type)) {
-            return null;
+            return null
         }
 
         return mappingProperty.enumTypeObject ?: EnumType.STRING
     }
 
+    @SuppressWarnings('Instanceof')
     String getSqlType() {
         if (mappingProperty instanceof PropertyConfig) {
             return mappingProperty.sqlType ?: mappingProperty.type
@@ -173,6 +178,7 @@ class UnifiedProperty {
         return null
     }
 
+    @SuppressWarnings('Instanceof')
     String getSqlColumnName() {
         if (mappingProperty instanceof PropertyConfig && mappingProperty.columns) {
             return mappingProperty.columns.first().name
@@ -180,6 +186,7 @@ class UnifiedProperty {
         return null
     }
 
+    @SuppressWarnings('Instanceof')
     JoinTable getJoinTable() {
         if (mappingProperty instanceof PropertyConfig && mappingProperty.joinTable) {
             return mappingProperty.joinTable
@@ -187,6 +194,7 @@ class UnifiedProperty {
         return null
     }
 
+    @SuppressWarnings('Instanceof')
     String getSort() {
         if (mappingProperty instanceof PropertyConfig && mappingProperty.sort) {
             return mappingProperty.sort
@@ -194,6 +202,7 @@ class UnifiedProperty {
         return null
     }
 
+    @SuppressWarnings('Instanceof')
     String getOrder() {
         if (mappingProperty instanceof PropertyConfig && mappingProperty.order) {
             return mappingProperty.order

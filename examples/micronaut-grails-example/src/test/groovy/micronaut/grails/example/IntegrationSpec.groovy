@@ -38,9 +38,11 @@ class IntegrationSpec extends Specification {
         given:
             File root = initRootDirectory()
         when:
-            generator.generate(root)
+            int generated = generator.generate(root)
         then:
             noExceptionThrown()
+
+            generated == 1
 
             new File(root, 'micronaut/grails/example/User.groovy').exists()
             new File(root, 'micronaut/grails/example/UserRepository.groovy').exists()

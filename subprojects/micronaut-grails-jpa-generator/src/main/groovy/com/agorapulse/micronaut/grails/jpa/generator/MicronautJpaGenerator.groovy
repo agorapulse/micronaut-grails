@@ -38,8 +38,11 @@ import javax.persistence.PrePersist
 import javax.persistence.PreRemove
 import javax.persistence.PreUpdate
 
+/**
+ * Experimental generator of JPA entities based on GORM entities.
+ */
 @CompileStatic
-@SuppressWarnings(['MethodSize'])
+@SuppressWarnings(['MethodSize', 'DuplicateStringLiteral'])
 class MicronautJpaGenerator {
 
     private static final Map<String, Class> GORM_HOOKS_TO_ANNOTATIONS = [
@@ -60,7 +63,8 @@ class MicronautJpaGenerator {
         this.datastore = datastore
     }
 
-    void generate(File root) {
+    @SuppressWarnings('NestedForLoop')
+    int generate(File root) {
         Collection<PersistentEntity> entities = datastore.mappingContext.persistentEntities
         entities.each { PersistentEntity entity ->
             File packageDirectory = new File(root, (entity.javaClass.package.name).replace('.', File.separator))
@@ -82,15 +86,22 @@ class MicronautJpaGenerator {
             }
         }
 
-        requiredEnums.each {
-            copyEnum(root, it)
+        requiredEnums.each { Class enumType ->
+            copyEnum(root, enumType)
         }
 
-
-        println "Generated files for ${entities.size()} entities in ${root.toURI().toURL().toString()}"
+        return entities.size()
     }
 
-    @SuppressWarnings(['AbcMetric', 'UnnecessaryObjectReferences', 'ImplicitClosureParameter', 'Instanceof', 'LineLength', 'MethodSize'])
+    @SuppressWarnings([
+        'AbcMetric',
+        'UnnecessaryObjectReferences',
+        'ImplicitClosureParameter',
+        'Instanceof',
+        'LineLength',
+        'MethodSize',
+        'UnnecessaryCollectCall',
+    ])
     String generateEntity(PersistentEntity entity) {
         List<UnifiedProperty> unifiedProperties = collectUnifiedProperties(entity)
         Set<String> imports = new TreeSet<>(unifiedProperties.collect {
@@ -520,7 +531,6 @@ class MicronautJpaGenerator {
             ${enumValues.join(', ')};
         }
         """.stripIndent().trim()
-
     }
 
     @SuppressWarnings('ImplicitClosureParameter')
