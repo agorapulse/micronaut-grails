@@ -15,6 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+// tag::body[]
 package micronaut.grails.example
 
 import grails.compiler.GrailsCompileStatic
@@ -33,3 +34,4 @@ class User {
     }
 
 }
+// end::body[]

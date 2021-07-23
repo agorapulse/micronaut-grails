@@ -20,19 +20,48 @@ package micronaut.grails.example
 // tag::body[]
 import com.agorapulse.micronaut.grails.jpa.generator.MicronautJpaGenerator
 import com.agorapulse.micronaut.grails.test.MicronautGrailsIntegration
+import com.agorapulse.testing.fixt.Fixt
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Specification
 
 @MicronautGrailsIntegration
-class IntegrationSpec extends Specification {
+class GeneratorSpec extends Specification {
+
+    Fixt fixt = Fixt.create(GeneratorSpec)
 
     @Autowired MicronautJpaGenerator generator
 
-    void 'application started'() {
+    void 'generate domains'() {
+        given:
+            File root = initRootDirectory()
         when:
-            new URL("http://localhost:$serverPort").text
+            int generated = generator.generate(root)
         then:
             noExceptionThrown()
+
+            generated == 1
+
+        when:
+            File entityFile = new File(root, 'micronaut/grails/example/User.groovy')
+            File repositoryFile = new File(root, 'micronaut/grails/example/UserRepository.groovy')
+        then:
+            entityFile.exists()
+            entityFile.text.trim() == fixt.readText('User.groovy.txt').trim()
+
+            repositoryFile.exists()
+            repositoryFile.text.trim() == fixt.readText('UserRepository.groovy.txt').trim()
+    }
+
+    private static File initRootDirectory() {
+        File root = new File(System.getProperty('java.io.tmpdir'), 'micronaut-data-model')
+
+        if (root.exists()) {
+            root.deleteDir()
+        }
+
+        root.mkdirs()
+
+        return root
     }
 
 }

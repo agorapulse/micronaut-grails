@@ -1,0 +1,47 @@
+package micronaut.grails.example
+
+import groovy.transform.CompileStatic
+import javax.persistence.Entity
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
+import javax.persistence.Table
+import javax.persistence.UniqueConstraint
+import javax.persistence.Version
+import javax.validation.constraints.Email
+import javax.validation.constraints.NotBlank
+import javax.validation.constraints.NotNull
+import javax.validation.constraints.Size
+
+@Entity
+@CompileStatic
+@Table(
+    uniqueConstraints = [
+        @UniqueConstraint(columnNames = ['user_name'])
+    ]
+)
+class User {
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id
+
+    @Version
+    Long version
+
+    @NotNull
+    @Email
+    @Size(max = 255)
+    String email
+
+    @NotNull
+    @Size(min = 5, max = 10)
+    @NotBlank
+    @Size(min = 5, max = 10)
+    String password
+
+    @NotNull
+    @NotBlank
+    @Size(max = 255)
+    String userName
+
+}

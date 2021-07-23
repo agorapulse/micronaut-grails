@@ -28,6 +28,7 @@ import javax.inject.Named;
 public class MicronuatJpaGeneratorConfiguration {
 
     @Bean
+    @Named("micronautJpaGenerator")
     public static MicronautJpaGenerator micronautJpaGenerator(
             @Named("hibernateDatastore") Datastore datastore,
             ConstraintsEvaluator constraintsEvaluator
