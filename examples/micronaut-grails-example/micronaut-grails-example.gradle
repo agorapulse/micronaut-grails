@@ -21,7 +21,6 @@ buildscript {
     }
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
-        classpath "gradle.plugin.com.github.erdi.webdriver-binaries:webdriver-binaries-gradle-plugin:2.0"
         classpath "org.grails.plugins:hibernate5:7.0.4"
         classpath "com.bertramlabs.plugins:asset-pipeline-gradle:3.2.4"
     }
@@ -39,7 +38,6 @@ apply plugin:"eclipse"
 apply plugin:"idea"
 apply plugin:"war"
 apply plugin:"org.grails.grails-web"
-apply plugin:"com.github.erdi.webdriver-binaries"
 apply plugin:"com.bertramlabs.asset-pipeline"
 apply plugin:"org.grails.grails-gsp"
 
@@ -98,6 +96,10 @@ dependencies {
     runtime "org.apache.tomcat:tomcat-jdbc"
     runtime "javax.xml.bind:jaxb-api:2.3.1"
     runtime "com.bertramlabs.plugins:asset-pipeline-grails:3.2.4"
+
+    testCompile project(':micronaut-grails-integration-test')
+    testCompile project(':micronaut-grails-jpa-generator')
+
     testCompile "io.micronaut:micronaut-inject-groovy"
     testCompile "org.grails:grails-gorm-testing-support"
     testCompile "org.mockito:mockito-core"
@@ -127,19 +129,6 @@ tasks.withType(GroovyCompile) {
         forkOptions.jvmArgs = ['-Xmx1024m']
     }
 }
-
-webdriverBinaries {
-    chromedriver '2.45.0'
-    geckodriver '0.24.0'
-}
-
-tasks.withType(Test) {
-    systemProperty "geb.env", System.getProperty('geb.env')
-    systemProperty "geb.build.reportsDir", reporting.file("geb/integrationTest")
-    systemProperty "webdriver.chrome.driver", System.getProperty('webdriver.chrome.driver')
-    systemProperty "webdriver.gecko.driver", System.getProperty('webdriver.gecko.driver')
-}
-
 
 assets {
     minifyJs = true
