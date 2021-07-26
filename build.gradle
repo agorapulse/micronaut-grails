@@ -101,6 +101,7 @@ allprojects {
 
     license {
         exclude '**/*.json'
+        exclude '**/*.groovy.txt'
         exclude '***.yml'
     }
 }
