@@ -10,14 +10,14 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <link rel="stylesheet" href="./asciidoctor.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="css/docs.css?v=3.0.3" />
+<link rel="stylesheet" href="css/docs.css?v=3.0.4" />
 </head>
 <body class="book toc2 toc-left">
 <div id="header">
 <h1>Grails Integration for Micronaut</h1>
 <div class="details">
 <span id="author" class="author">Vladimir Orany</span><br>
-<span id="revnumber">version 3.0.3</span>
+<span id="revnumber">version 3.0.4</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -40,9 +40,15 @@
 <li><a href="#_usage_2">1.2.2. Usage</a></li>
 </ul>
 </li>
-<li><a href="#_troubleshooting">1.3. Troubleshooting</a>
+<li><a href="#_integration_tests">1.3. Integration Tests</a></li>
+<li><a href="#_gorm_to_micronaut_data_jpa_generator">1.4. GORM to Micronaut Data JPA Generator</a>
 <ul class="sectlevel3">
-<li><a href="#_dumping_configuration_properties">1.3.1. Dumping Configuration Properties</a></li>
+<li><a href="#_generated_entities_example">1.4.1. Generated Entities Example</a></li>
+</ul>
+</li>
+<li><a href="#_troubleshooting">1.5. Troubleshooting</a>
+<ul class="sectlevel3">
+<li><a href="#_dumping_configuration_properties">1.5.1. Dumping Configuration Properties</a></li>
 </ul>
 </li>
 </ul>
@@ -91,12 +97,12 @@
 <div class="listingblock primary">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="prettyprint highlight"><code>compile 'com.agorapulse:micronaut-grails:3.0.3'
+<pre class="prettyprint highlight"><code>compile 'com.agorapulse:micronaut-grails:3.0.4'
 
 // for Tomcat deployment replace
 // compile 'org.grails:grails-web-boot'
 // with
-compile 'com.agorapulse:micronaut-grails-web-boot:3.0.3'</code></pre>
+compile 'com.agorapulse:micronaut-grails-web-boot:3.0.4'</code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -238,7 +244,7 @@ to <code>INFO</code> to see the deprecation details.</p>
 <div class="listingblock primary">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="prettyprint highlight"><code>compileOnly 'com.agorapulse:micronaut-grails:3.0.3'</code></pre>
+<pre class="prettyprint highlight"><code>compileOnly 'com.agorapulse:micronaut-grails:3.0.4'</code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -360,9 +366,233 @@ which will automatically load the configuration once the JAR is on classpath.</p
 </div>
 </div>
 <div class="sect2">
-<h3 id="_troubleshooting"><a class="anchor" href="#_troubleshooting"></a>1.3. Troubleshooting</h3>
+<h3 id="_integration_tests"><a class="anchor" href="#_integration_tests"></a>1.3. Integration Tests</h3>
+<div class="paragraph">
+<p>If you want to take advantage of additional features provided by <code>MicronautGrailsApp</code> such additional package scanning inside integration tests then you need to use a following extension of the standard testing library:</p>
+</div>
+<div class="listingblock primary">
+<div class="title">Gradle</div>
+<div class="content">
+<pre class="prettyprint highlight"><code>compile 'com.agorapulse:micronaut-grails-integration-test:3.0.4'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Once the library is on the classpath, use <code>@MicronautGrailsIntegration</code> instead of <code>@Inegration</code> annotation to achieve the similar result:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="groovy">import com.agorapulse.micronaut.grails.jpa.generator.MicronautJpaGenerator
+import com.agorapulse.micronaut.grails.test.MicronautGrailsIntegration
+import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.Specification
+
+@MicronautGrailsIntegration
+class IntegrationSpec extends Specification {
+
+    @Autowired MicronautJpaGenerator generator
+
+    void 'application started'() {
+        when:
+            new URL("http://localhost:$serverPort").text
+        then:
+            noExceptionThrown()
+    }
+
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_gorm_to_micronaut_data_jpa_generator"><a class="anchor" href="#_gorm_to_micronaut_data_jpa_generator"></a>1.4. GORM to Micronaut Data JPA Generator</h3>
+<div class="paragraph">
+<p>There is an experimental generator for the JPA entities from GORM domain classes. You can use either from integration test or using Grails Console plugin</p>
+</div>
+<div class="listingblock">
+<div class="title">Integration Test Usage</div>
+<div class="content">
+<pre class="prettyprint highlight nowrap"><code data-lang="groovy">import com.agorapulse.micronaut.grails.jpa.generator.MicronautJpaGenerator
+import com.agorapulse.micronaut.grails.test.MicronautGrailsIntegration
+import com.agorapulse.testing.fixt.Fixt
+import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.Specification
+
+@MicronautGrailsIntegration
+class GeneratorSpec extends Specification {
+
+    Fixt fixt = Fixt.create(GeneratorSpec)
+
+    @Autowired MicronautJpaGenerator generator
+
+    void 'generate domains'() {
+        given:
+            File root = initRootDirectory()
+        when:
+            int generated = generator.generate(root)
+        then:
+            noExceptionThrown()
+
+            generated == 1
+
+        when:
+            File entityFile = new File(root, 'micronaut/grails/example/User.groovy')
+            File repositoryFile = new File(root, 'micronaut/grails/example/UserRepository.groovy')
+        then:
+            entityFile.exists()
+            entityFile.text.trim() == fixt.readText('User.groovy.txt').trim()
+
+            repositoryFile.exists()
+            repositoryFile.text.trim() == fixt.readText('UserRepository.groovy.txt').trim()
+    }
+
+    private static File initRootDirectory() {
+        File root = new File(System.getProperty('java.io.tmpdir'), 'micronaut-data-model')
+
+        if (root.exists()) {
+            root.deleteDir()
+        }
+
+        root.mkdirs()
+
+        return root
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Grails Console Usage</div>
+<div class="content">
+<pre class="prettyprint highlight nowrap"><code data-lang="groovy">ctx.micronautJpaGenerator.generate(new File('/path/to/generated/sources'))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The current generator supports</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Constraints</p>
+</li>
+<li>
+<p>Column mappings</p>
+</li>
+<li>
+<p>One-to-One, One-to-Many and Many-to-One relationships</p>
+</li>
+<li>
+<p>Join Tables</p>
+</li>
+<li>
+<p>Unique and regular indices</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Please, let us know if there is any feature missing!</p>
+</div>
 <div class="sect3">
-<h4 id="_dumping_configuration_properties"><a class="anchor" href="#_dumping_configuration_properties"></a>1.3.1. Dumping Configuration Properties</h4>
+<h4 id="_generated_entities_example"><a class="anchor" href="#_generated_entities_example"></a>1.4.1. Generated Entities Example</h4>
+<div class="paragraph">
+<p>For an <code>User</code> entity such as this one</p>
+</div>
+<div class="listingblock">
+<div class="title">GORM Entity</div>
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="groovy">package micronaut.grails.example
+
+import grails.compiler.GrailsCompileStatic
+
+@GrailsCompileStatic
+class User {
+
+    String userName
+    String password
+    String email
+
+    static constraints = {
+        userName blank: false, unique: true
+        password size: 5..10, blank: false
+        email email: true, blank: true
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The following files are generated</p>
+</div>
+<div class="listingblock">
+<div class="title">Micronaut Data JPA Entity</div>
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="groovy">package micronaut.grails.example
+
+import groovy.transform.CompileStatic
+import javax.persistence.Entity
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
+import javax.persistence.Table
+import javax.persistence.UniqueConstraint
+import javax.persistence.Version
+import javax.validation.constraints.Email
+import javax.validation.constraints.NotBlank
+import javax.validation.constraints.NotNull
+import javax.validation.constraints.Size
+
+@Entity
+@CompileStatic
+@Table(
+    uniqueConstraints = [
+        @UniqueConstraint(columnNames = ['user_name'])
+    ]
+)
+class User {
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id
+
+    @Version
+    Long version
+
+    @NotNull
+    @Email
+    @Size(max = 255)
+    String email
+
+    @NotNull
+    @Size(min = 5, max = 10)
+    @NotBlank
+    @Size(min = 5, max = 10)
+    String password
+
+    @NotNull
+    @NotBlank
+    @Size(max = 255)
+    String userName
+
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Micronaut Data Repository</div>
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="groovy">package micronaut.grails.example
+
+import io.micronaut.data.annotation.Repository
+import io.micronaut.data.repository.CrudRepository
+
+@Repository
+interface UserRepository extends CrudRepository&lt;User, Long&gt; {
+
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_troubleshooting"><a class="anchor" href="#_troubleshooting"></a>1.5. Troubleshooting</h3>
+<div class="sect3">
+<h4 id="_dumping_configuration_properties"><a class="anchor" href="#_dumping_configuration_properties"></a>1.5.1. Dumping Configuration Properties</h4>
 <div class="paragraph">
 <p>The configuration properties inside Grails may behave bit differently than inside Micronaut application. If you are using Grails Console plugin then you can dump all the properties available using the following script</p>
 </div>
@@ -400,8 +630,8 @@ for (source in sources) {
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 3.0.3<br>
-Last updated 2021-04-13 03:57:47 UTC
+Version 3.0.4<br>
+Last updated 2021-07-26 13:06:21 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
