@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 config {
-    bintray {
+    publishing {
         enabled = true
     }
 }
