@@ -1,12 +1,11 @@
 = Agorapulse Micronaut Libraries
 
---
-image::https://api.bintray.com/packages/agorapulse/libs/micronaut-grails/images/download.svg[link="https://bintray.com/agorapulse/libs/micronaut-grails/_latestVersion",float="left"]
+'''
+image::https://img.shields.io/maven-central/v/com.agorapulse/micronaut-grails.svg?label=Maven%20Central[link="https://search.maven.org/search?q=g:%22com.agorapulse%22%20AND%20a:%22micronaut-grails%22",float="left"]
 image::https://github.com/agorapulse/micronaut-grails/workflows/Check/badge.svg["Build Status", link="https://github.com/agorapulse/micronaut-grails/actions?query=workflow%3ACheck"float="left"]
 image::https://coveralls.io/repos/github/agorapulse/micronaut-grails/badge.svg?branch=master[link=https://coveralls.io/github/agorapulse/micronaut-grails?branch=master",float="left"]
---
 
----
+'''
 
 Set of useful libraries for http://micronaut.io[Micronaut]. All of the libraries are available in https://bintray.com/bintray/jcenter[JCenter Maven repository].
 
