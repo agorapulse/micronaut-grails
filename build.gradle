@@ -94,14 +94,14 @@ config {
 
 allprojects {
     repositories {
-        jcenter()
         mavenCentral()
-        maven { url  "https://dl.bintray.com/agorapulse/libs" }
+        maven { url "https://repo.grails.org/artifactory/core" }
         maven { url "https://repo.spring.io/release"  }
     }
 
     license {
         exclude '**/*.json'
+        exclude '**/*.groovy.txt'
         exclude '***.yml'
     }
 }

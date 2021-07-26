@@ -132,6 +132,74 @@ which will automatically load the configuration once the JAR is on classpath.
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.agorapulse.micronaut.grails.example.GrailsConfig
 ----
 
+== Integration Tests
+
+If you want to take advantage of additional features provided by `MicronautGrailsApp` such additional package scanning inside integration tests then you need to use a following extension of the standard testing library:
+
+[source,indent=0,role="primary",subs='verbatim,attributes']
+.Gradle
+----
+compile 'com.agorapulse:micronaut-grails-integration-test:{project-version}'
+----
+
+Once the library is on the classpath, use `@MicronautGrailsIntegration` instead of `@Inegration` annotation to achieve the similar result:
+
+[source,groovy]
+----
+include::{root-dir}/examples/micronaut-grails-example/src/test/groovy/micronaut/grails/example/IntegrationSpec.groovy[tags=body]
+----
+
+== GORM to Micronaut Data JPA Generator
+
+There is an experimental generator for the JPA entities from GORM domain classes. You can use either from integration test or using Grails Console plugin
+
+[source,groovy,indent=0,options="nowrap"]
+.Integration Test Usage
+----
+include::{root-dir}/examples/micronaut-grails-example/src/test/groovy/micronaut/grails/example/GeneratorSpec.groovy[tags=body]
+----
+
+
+[source,groovy,indent=0,options="nowrap"]
+.Grails Console Usage
+----
+ctx.micronautJpaGenerator.generate(new File('/path/to/generated/sources'))
+----
+
+The current generator supports
+
+ * Constraints
+ * Column mappings
+ * One-to-One, One-to-Many and Many-to-One relationships
+ * Join Tables
+ * Unique and regular indices
+
+Please, let us know if there is any feature missing!
+
+=== Generated Entities Example
+
+For an `User` entity such as this one
+
+[source, groovy]
+.GORM Entity
+----
+include::{root-dir}/examples/micronaut-grails-example/grails-app/domain/micronaut/grails/example/User.groovy[tag=body]
+----
+
+The following files are generated
+
+[source, groovy]
+.Micronaut Data JPA Entity
+----
+include::{root-dir}/examples/micronaut-grails-example/src/test/resources/micronaut/grails/example/GeneratorSpec/User.groovy.txt[]
+----
+
+[source, groovy]
+.Micronaut Data Repository
+----
+include::{root-dir}/examples/micronaut-grails-example/src/test/resources/micronaut/grails/example/GeneratorSpec/UserRepository.groovy.txt[]
+----
+
 == Troubleshooting
 
 === Dumping Configuration Properties
@@ -149,7 +217,7 @@ for (source in sources) {
     println "$source.name:"
     for (name in source) {
         def value = source.get(name)
-        println "  $name (${value?.getClass()}): ${String.valueOf(value)}"   
+        println "  $name (${value?.getClass()}): ${String.valueOf(value)}"
     }
 }
 ----

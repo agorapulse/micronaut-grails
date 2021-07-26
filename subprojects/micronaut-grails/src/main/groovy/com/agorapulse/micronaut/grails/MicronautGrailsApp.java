@@ -132,7 +132,7 @@ public class MicronautGrailsApp extends GrailsApp {
     }
 
 
-    protected MicronautGrailsApp(Class... sources) {
+    public MicronautGrailsApp(Class... sources) {
         super(sources);
     }
 
