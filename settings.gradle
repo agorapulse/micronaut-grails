@@ -21,11 +21,12 @@ pluginManagement {
         gradlePluginPortal()
     }
     plugins {
-        id 'org.kordamp.gradle.groovy-project' version kordampVersion
-        id 'org.kordamp.gradle.bintray'        version kordampVersion
-        id 'org.kordamp.gradle.guide'          version kordampVersion
-        id 'com.github.kt3k.coveralls'         version '2.9.0'
-        id 'org.ajoberstar.git-publish'        version '2.1.3'
+        id 'org.kordamp.gradle.groovy-project'          version kordampVersion
+        id 'org.kordamp.gradle.bintray'                 version kordampVersion
+        id 'org.kordamp.gradle.guide'                   version kordampVersion
+        id 'com.github.kt3k.coveralls'                  version '2.9.0'
+        id 'org.ajoberstar.git-publish'                 version '2.1.3'
+        id 'io.github.gradle-nexus.publish-plugin'      version nexusPluginVersion
     }
 }
 

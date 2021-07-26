@@ -15,6 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+config {
+    publishing {
+        enabled = true
+    }
+}
+
 dependencies {
     implementation 'org.grails:grails-datastore-gorm-hibernate5:7.0.4.RELEASE'
 }
