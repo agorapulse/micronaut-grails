@@ -46,4 +46,15 @@ dependencies {
     annotationProcessor "io.micronaut:micronaut-inject-java"
     compile "io.micronaut:micronaut-runtime-groovy"
     compile "io.micronaut:micronaut-validation"
+
+    testCompile project(':micronaut-grails-jpa-generator')
+
+    testCompile 'com.agorapulse.testing:fixt:0.2.1.1'
+
+    testCompile 'io.micronaut:micronaut-inject-groovy'
+    testCompile 'org.mariadb.jdbc:mariadb-java-client:2.7.3'
+    testCompile "org.testcontainers:mariadb:$testcontainersVersion"
+    testCompile 'com.github.docker-java:docker-java-api:3.2.8'
+    testCompile 'com.github.docker-java:docker-java-transport-zerodep:3.2.8'
+    testCompile 'net.java.dev.jna:jna:5.8.0'
 }
