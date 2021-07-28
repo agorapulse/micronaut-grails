@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.agorapulse.micronaut.grails.jpa.generator.MicronuatJpaGeneratorConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.agorapulse.micronaut.grails.jpa.generator.MicronuatDataGeneratorConfiguration

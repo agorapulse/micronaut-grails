@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.inject.Named;
 
 @Configuration
-public class MicronuatJpaGeneratorConfiguration {
+public class MicronuatDataGeneratorConfiguration {
 
     @Bean
     @Named("micronautJpaGenerator")
@@ -34,6 +34,15 @@ public class MicronuatJpaGeneratorConfiguration {
             ConstraintsEvaluator constraintsEvaluator
     ) {
         return new MicronautJpaGenerator(datastore, constraintsEvaluator);
+    }
+
+    @Bean
+    @Named("micronautJdbcGenerator")
+    public static MicronautJdbcGenerator micronautJdbcGenerator(
+            @Named("hibernateDatastore") Datastore datastore,
+            ConstraintsEvaluator constraintsEvaluator
+    ) {
+        return new MicronautJdbcGenerator(datastore, constraintsEvaluator);
     }
 
 }
