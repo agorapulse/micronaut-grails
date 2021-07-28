@@ -1,10 +1,11 @@
-package micronaut.grails.example
+package micronaut.grails.example.model
 
 import groovy.transform.CompileStatic
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
+import javax.persistence.OneToMany
 import javax.persistence.Table
 import javax.persistence.UniqueConstraint
 import javax.persistence.Version
@@ -12,6 +13,7 @@ import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
+import micronaut.grails.example.other.model.Vehicle
 
 @Entity
 @CompileStatic
@@ -43,5 +45,8 @@ class User {
     @NotBlank
     @Size(max = 255)
     String userName
+
+    @OneToMany
+    Set<Vehicle> vehicles
 
 }

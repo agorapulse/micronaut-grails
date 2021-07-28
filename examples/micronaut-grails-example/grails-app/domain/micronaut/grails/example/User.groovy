@@ -19,6 +19,7 @@
 package micronaut.grails.example
 
 import grails.compiler.GrailsCompileStatic
+import micronaut.grails.example.other.Vehicle
 
 @GrailsCompileStatic
 class User {
@@ -26,6 +27,8 @@ class User {
     String userName
     String password
     String email
+
+    static hasMany = [vehicles: Vehicle]
 
     static constraints = {
         userName blank: false, unique: true

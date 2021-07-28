@@ -1,4 +1,4 @@
-package com.agorapulse.micronaut.grails.domain
+package com.agorapulse.micronaut.grails.domain.model
 
 import io.micronaut.data.annotation.Repository
 import io.micronaut.data.repository.CrudRepository

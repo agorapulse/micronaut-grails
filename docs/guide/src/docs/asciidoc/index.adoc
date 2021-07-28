@@ -9,12 +9,9 @@
 [.ribbon]
 image::ribbon.png[link={project-url}]
 
---
-image::https://api.bintray.com/packages/agorapulse/libs/{project-name]/images/download.svg[link="https://bintray.com/agorapulse/libs/{project-name}/_latestVersion",float="left"]
-image::https://github.com/{project-slug}/workflows/Check/badge.svg["Build Status", link="https://github.com/{project-slug}/actions?query=workflow%3ACheck"float="left"]
-image::https://coveralls.io/repos/github/{project-slug}/badge.svg?branch=master[link=https://coveralls.io/github/{project-slug}?branch=master",float="left"]
---
-
+image::https://img.shields.io/maven-central/v/com.agorapulse/micronaut-grails.svg?label=Maven%20Central[link="https://search.maven.org/search?q=g:%22com.agorapulse%22%20AND%20a:%22micronaut-grails%22",float="left"]
+image::https://github.com/agorapulse/micronaut-grails/workflows/Check/badge.svg["Build Status", link="https://github.com/agorapulse/micronaut-grails/actions?query=workflow%3ACheck"float="left"]
+image::https://coveralls.io/repos/github/agorapulse/micronaut-grails/badge.svg?branch=master[link=https://coveralls.io/github/agorapulse/micronaut-grails?branch=master",float="left"]
 ---
 
 = Micronaut Grails
@@ -155,26 +152,37 @@ There is an experimental generator for the JPA entities from GORM domain classes
 
 TIP: You can use `MicronautJdbcGenrator` instead of `MicronautJpaGenerator` to generate JDBC repositories instead of generic ones.
 
-[source,groovy,indent=0,options="nowrap"]
-.Integration Test Usage
+[source,groovy,indent=0,options="nowrap",role="primary"]
+.Grails Integration Test Usage
 ----
 include::{root-dir}/examples/micronaut-grails-example/src/test/groovy/micronaut/grails/example/GeneratorSpec.groovy[tags=body]
 ----
 
-[source,groovy,indent=0,options="nowrap"]
-.Micronaut Usage
+[source,groovy,indent=0,options="nowrap",role="secondary"]
+.Micronaut Test Usage
 ----
 include::{root-dir}/examples/micronaut-grails-domain-library/src/test/groovy/com/agorapulse/micronaut/grails/domain/MicronautGeneratorSpec.groovy[tags=body]
 ----
 
 
-[source,groovy,indent=0,options="nowrap"]
+[source,groovy,indent=0,options="nowrap",role="secondary"]
 .Grails Console Usage
 ----
 ctx.micronautJpaGenerator.generate(new File('/path/to/generated/sources'))
 ----
 
+[source,groovy,indent=0,options="nowrap",role="secondary"]
+.Micronaut Console Usage
+----
+import com.agorapulse.micronaut.grails.jpa.generator.MicronautJpaGenerator
+import org.grails.datastore.gorm.validation.constraints.eval.DefaultConstraintEvaluator
+import org.grails.orm.hibernate.HibernateDatastore
 
+new MicronautJpaGenerator(
+    ctx.getBean(HibernateDatastore),
+    new DefaultConstraintEvaluator()
+).generate(new File('/path/to/generated/sources'))
+----
 
 The current generator supports
 
@@ -185,6 +193,8 @@ The current generator supports
  * Unique and regular indices
 
 Please, let us know if there is any feature missing!
+
+The new entities are generated to the packages with suffix which defaults to `.model`.
 
 === Generated Entities Example
 

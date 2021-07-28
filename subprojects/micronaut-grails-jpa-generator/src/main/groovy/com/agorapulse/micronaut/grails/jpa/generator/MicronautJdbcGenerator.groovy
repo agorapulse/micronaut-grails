@@ -34,9 +34,9 @@ class MicronautJdbcGenerator extends MicronautDataGenerator {
 
     @Override
     @SuppressWarnings('LineLength')
-    protected String generateRepository(PersistentEntity entity) {
+    protected String generateRepository(PersistentEntity entity, String packageSuffix) {
         return """
-        package $entity.javaClass.package.name
+        package $entity.javaClass.package.name$packageSuffix
 
         import io.micronaut.data.jdbc.annotation.JdbcRepository
         import io.micronaut.data.model.query.builder.sql.Dialect
