@@ -10,14 +10,14 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <link rel="stylesheet" href="./asciidoctor.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="css/docs.css?v=3.0.4" />
+<link rel="stylesheet" href="css/docs.css?v=3.0.5" />
 </head>
 <body class="book toc2 toc-left">
 <div id="header">
 <h1>Grails Integration for Micronaut</h1>
 <div class="details">
 <span id="author" class="author">Vladimir Orany</span><br>
-<span id="revnumber">version 3.0.4</span>
+<span id="revnumber">version 3.0.5</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -97,12 +97,12 @@
 <div class="listingblock primary">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="prettyprint highlight"><code>compile 'com.agorapulse:micronaut-grails:3.0.4'
+<pre class="prettyprint highlight"><code>compile 'com.agorapulse:micronaut-grails:3.0.5'
 
 // for Tomcat deployment replace
 // compile 'org.grails:grails-web-boot'
 // with
-compile 'com.agorapulse:micronaut-grails-web-boot:3.0.4'</code></pre>
+compile 'com.agorapulse:micronaut-grails-web-boot:3.0.5'</code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -244,7 +244,7 @@ to <code>INFO</code> to see the deprecation details.</p>
 <div class="listingblock primary">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="prettyprint highlight"><code>compileOnly 'com.agorapulse:micronaut-grails:3.0.4'</code></pre>
+<pre class="prettyprint highlight"><code>compileOnly 'com.agorapulse:micronaut-grails:3.0.5'</code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -373,7 +373,7 @@ which will automatically load the configuration once the JAR is on classpath.</p
 <div class="listingblock primary">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="prettyprint highlight"><code>compile 'com.agorapulse:micronaut-grails-integration-test:3.0.4'</code></pre>
+<pre class="prettyprint highlight"><code>compile 'com.agorapulse:micronaut-grails-integration-test:3.0.5'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -407,6 +407,18 @@ class IntegrationSpec extends Specification {
 <div class="paragraph">
 <p>There is an experimental generator for the JPA entities from GORM domain classes. You can use either from integration test or using Grails Console plugin</p>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+You can use <code>MicronautJdbcGenrator</code> instead of <code>MicronautJpaGenerator</code> to generate JDBC repositories instead of generic ones.
+</td>
+</tr>
+</table>
+</div>
 <div class="listingblock">
 <div class="title">Integration Test Usage</div>
 <div class="content">
@@ -427,11 +439,9 @@ class GeneratorSpec extends Specification {
         given:
             File root = initRootDirectory()
         when:
-            int generated = generator.generate(root)
+            generator.generate(root)
         then:
             noExceptionThrown()
-
-            generated == 1
 
         when:
             File entityFile = new File(root, 'micronaut/grails/example/User.groovy')
@@ -630,8 +640,8 @@ for (source in sources) {
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 3.0.4<br>
-Last updated 2021-07-26 13:06:21 UTC
+Version 3.0.5<br>
+Last updated 2021-07-28 10:04:09 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
