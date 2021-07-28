@@ -194,7 +194,7 @@ The current generator supports
 
 Please, let us know if there is any feature missing!
 
-The new entities are generated to the packages with suffix which defaults to `.model`.
+NOTE: The new entities are generated it to the packages with suffix `.model`.
 
 === Generated Entities Example
 
