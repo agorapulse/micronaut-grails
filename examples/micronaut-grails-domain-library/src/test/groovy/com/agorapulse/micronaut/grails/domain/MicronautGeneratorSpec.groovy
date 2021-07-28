@@ -26,6 +26,9 @@ import org.grails.orm.hibernate.HibernateDatastore
 import spock.lang.AutoCleanup
 import spock.lang.Specification
 
+/**
+ * Example specification generating JPA entities from GORM entities.
+ */
 class MicronautGeneratorSpec extends Specification {
 
     Fixt fixt = Fixt.create(MicronautGeneratorSpec)
