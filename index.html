@@ -10,14 +10,90 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <link rel="stylesheet" href="./asciidoctor.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="css/docs.css?v=3.0.5" />
+<link rel="stylesheet" href="css/docs.css?v=3.0.6" />
+<style>
+.hidden {
+    display: none;
+}
+
+.switch {
+    border-width: 1px 1px 0 1px;
+    border-style: solid;
+    border-color: #7a2518;
+    display: inline-block;
+}
+
+.switch--item {
+    padding: 10px;
+    background-color: #ffffff;
+    color: #7a2518;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.switch--item.selected {
+    background-color: #7a2519;
+    color: #ffffff;
+}
+
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+<script type="text/javascript">
+function addBlockSwitches() {
+    $('.primary').each(function() {
+        primary = $(this);
+        createSwitchItem(primary, createBlockSwitch(primary)).item.addClass("selected");
+        primary.children('.title').remove();
+    });
+    $('.secondary').each(function(idx, node) {
+        secondary = $(node);
+        primary = findPrimary(secondary);
+        switchItem = createSwitchItem(secondary, primary.children('.switch'));
+        switchItem.content.addClass('hidden');
+        findPrimary(secondary).append(switchItem.content);
+        secondary.remove();
+    });
+}
+
+function createBlockSwitch(primary) {
+    blockSwitch = $('<div class="switch"></div>');
+    primary.prepend(blockSwitch);
+    return blockSwitch;
+}
+
+function findPrimary(secondary) {
+    candidate = secondary.prev();
+    while (!candidate.is('.primary')) {
+        candidate = candidate.prev();
+    }
+    return candidate;
+}
+
+function createSwitchItem(block, blockSwitch) {
+    blockName = block.children('.title').text();
+    content = block.children('.content').first().append(block.next('.colist'));
+    item = $('<div class="switch--item">' + blockName + '</div>');
+    item.on('click', '', content, function(e) {
+        $(this).addClass('selected');
+        $(this).siblings().removeClass('selected');
+        e.data.siblings('.content').addClass('hidden');
+        e.data.removeClass('hidden');
+    });
+    blockSwitch.append(item);
+    return {'item': item, 'content': content};
+}
+
+$(addBlockSwitches);
+
+</script>
+
 </head>
 <body class="book toc2 toc-left">
 <div id="header">
 <h1>Grails Integration for Micronaut</h1>
 <div class="details">
 <span id="author" class="author">Vladimir Orany</span><br>
-<span id="revnumber">version 3.0.5</span>
+<span id="revnumber">version 3.0.6</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -65,11 +141,9 @@
 <a class="image" href="https://github.com/agorapulse/micronaut-grails"><img src="images/ribbon.png" alt="ribbon"></a>
 </div>
 </div>
-<div class="openblock">
-<div class="content">
 <div class="imageblock left">
 <div class="content">
-<a class="image" href="https://bintray.com/agorapulse/libs/micronaut-grails-root/_latestVersion"><img src="https://api.bintray.com/packages/agorapulse/libs/{project-name]/images/download.svg" alt="download"></a>
+<a class="image" href="https://search.maven.org/search?q=g:%22com.agorapulse%22%20AND%20a:%22micronaut-grails%22"><img src="https://img.shields.io/maven-central/v/com.agorapulse/micronaut-grails.svg?label=Maven%20Central" alt="micronaut grails"></a>
 </div>
 </div>
 <div class="imageblock left">
@@ -80,8 +154,6 @@
 <div class="imageblock left">
 <div class="content">
 <a class="image" href="https://coveralls.io/github/agorapulse/micronaut-grails?branch=master""><img src="https://coveralls.io/repos/github/agorapulse/micronaut-grails/badge.svg?branch=master" alt="badge"></a>
-</div>
-</div>
 </div>
 </div>
 <hr>
@@ -97,12 +169,12 @@
 <div class="listingblock primary">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="prettyprint highlight"><code>compile 'com.agorapulse:micronaut-grails:3.0.5'
+<pre class="prettyprint highlight"><code>compile 'com.agorapulse:micronaut-grails:3.0.6'
 
 // for Tomcat deployment replace
 // compile 'org.grails:grails-web-boot'
 // with
-compile 'com.agorapulse:micronaut-grails-web-boot:3.0.5'</code></pre>
+compile 'com.agorapulse:micronaut-grails-web-boot:3.0.6'</code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -244,7 +316,7 @@ to <code>INFO</code> to see the deprecation details.</p>
 <div class="listingblock primary">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="prettyprint highlight"><code>compileOnly 'com.agorapulse:micronaut-grails:3.0.5'</code></pre>
+<pre class="prettyprint highlight"><code>compileOnly 'com.agorapulse:micronaut-grails:3.0.6'</code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -373,7 +445,7 @@ which will automatically load the configuration once the JAR is on classpath.</p
 <div class="listingblock primary">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="prettyprint highlight"><code>compile 'com.agorapulse:micronaut-grails-integration-test:3.0.5'</code></pre>
+<pre class="prettyprint highlight"><code>compile 'com.agorapulse:micronaut-grails-integration-test:3.0.6'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -419,8 +491,8 @@ You can use <code>MicronautJdbcGenrator</code> instead of <code>MicronautJpaGene
 </tr>
 </table>
 </div>
-<div class="listingblock">
-<div class="title">Integration Test Usage</div>
+<div class="listingblock primary">
+<div class="title">Grails Integration Test Usage</div>
 <div class="content">
 <pre class="prettyprint highlight nowrap"><code data-lang="groovy">import com.agorapulse.micronaut.grails.jpa.generator.MicronautJpaGenerator
 import com.agorapulse.micronaut.grails.test.MicronautGrailsIntegration
@@ -444,8 +516,8 @@ class GeneratorSpec extends Specification {
             noExceptionThrown()
 
         when:
-            File entityFile = new File(root, 'micronaut/grails/example/User.groovy')
-            File repositoryFile = new File(root, 'micronaut/grails/example/UserRepository.groovy')
+            File entityFile = new File(root, 'micronaut/grails/example/model/User.groovy')
+            File repositoryFile = new File(root, 'micronaut/grails/example/model/UserRepository.groovy')
         then:
             entityFile.exists()
             entityFile.text.trim() == fixt.readText('User.groovy.txt').trim()
@@ -469,10 +541,82 @@ class GeneratorSpec extends Specification {
 }</code></pre>
 </div>
 </div>
-<div class="listingblock">
+<div class="listingblock secondary">
+<div class="title">Micronaut Test Usage</div>
+<div class="content">
+<pre class="prettyprint highlight nowrap"><code data-lang="groovy">import com.agorapulse.micronaut.grails.jpa.generator.MicronautJpaGenerator
+import com.agorapulse.testing.fixt.Fixt
+import io.micronaut.context.ApplicationContext
+import org.grails.datastore.gorm.validation.constraints.eval.DefaultConstraintEvaluator
+import org.grails.orm.hibernate.HibernateDatastore
+import spock.lang.AutoCleanup
+import spock.lang.Specification
+
+/**
+ * Example specification generating JPA entities from GORM entities.
+ */
+class MicronautGeneratorSpec extends Specification {
+
+    Fixt fixt = Fixt.create(MicronautGeneratorSpec)
+
+    @AutoCleanup ApplicationContext context = ApplicationContext.run()
+
+    MicronautJpaGenerator generator = new MicronautJpaGenerator(
+        context.getBean(HibernateDatastore),
+        new DefaultConstraintEvaluator()
+    )
+
+    void 'generate domains'() {
+        given:
+            File root = initRootDirectory()
+        when:
+            generator.generate(root)
+        then:
+            noExceptionThrown()
+
+        when:
+            File entityFile = new File(root, 'com/agorapulse/micronaut/grails/domain/model/Manager.groovy')
+            File repositoryFile = new File(root, 'com/agorapulse/micronaut/grails/domain/model/ManagerRepository.groovy')
+        then:
+            entityFile.exists()
+            entityFile.text.trim() == fixt.readText('Manager.groovy.txt').trim()
+
+            repositoryFile.exists()
+            repositoryFile.text.trim() == fixt.readText('ManagerRepository.groovy.txt').trim()
+    }
+
+    private static File initRootDirectory() {
+        File root = new File(System.getProperty('java.io.tmpdir'), 'micronaut-data-model')
+
+        if (root.exists()) {
+            root.deleteDir()
+        }
+
+        root.mkdirs()
+
+        return root
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
 <div class="title">Grails Console Usage</div>
 <div class="content">
 <pre class="prettyprint highlight nowrap"><code data-lang="groovy">ctx.micronautJpaGenerator.generate(new File('/path/to/generated/sources'))</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Micronaut Console Usage</div>
+<div class="content">
+<pre class="prettyprint highlight nowrap"><code data-lang="groovy">import com.agorapulse.micronaut.grails.jpa.generator.MicronautJpaGenerator
+import org.grails.datastore.gorm.validation.constraints.eval.DefaultConstraintEvaluator
+import org.grails.orm.hibernate.HibernateDatastore
+
+new MicronautJpaGenerator(
+    ctx.getBean(HibernateDatastore),
+    new DefaultConstraintEvaluator()
+).generate(new File('/path/to/generated/sources'))</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -500,6 +644,18 @@ class GeneratorSpec extends Specification {
 <div class="paragraph">
 <p>Please, let us know if there is any feature missing!</p>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The new entities are generated it to the packages with suffix <code>.model</code>.
+</td>
+</tr>
+</table>
+</div>
 <div class="sect3">
 <h4 id="_generated_entities_example"><a class="anchor" href="#_generated_entities_example"></a>1.4.1. Generated Entities Example</h4>
 <div class="paragraph">
@@ -511,6 +667,7 @@ class GeneratorSpec extends Specification {
 <pre class="prettyprint highlight"><code data-lang="groovy">package micronaut.grails.example
 
 import grails.compiler.GrailsCompileStatic
+import micronaut.grails.example.other.Vehicle
 
 @GrailsCompileStatic
 class User {
@@ -518,6 +675,8 @@ class User {
     String userName
     String password
     String email
+
+    static hasMany = [vehicles: Vehicle]
 
     static constraints = {
         userName blank: false, unique: true
@@ -534,13 +693,14 @@ class User {
 <div class="listingblock">
 <div class="title">Micronaut Data JPA Entity</div>
 <div class="content">
-<pre class="prettyprint highlight"><code data-lang="groovy">package micronaut.grails.example
+<pre class="prettyprint highlight"><code data-lang="groovy">package micronaut.grails.example.model
 
 import groovy.transform.CompileStatic
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
+import javax.persistence.OneToMany
 import javax.persistence.Table
 import javax.persistence.UniqueConstraint
 import javax.persistence.Version
@@ -548,6 +708,7 @@ import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
+import micronaut.grails.example.other.model.Vehicle
 
 @Entity
 @CompileStatic
@@ -580,13 +741,16 @@ class User {
     @Size(max = 255)
     String userName
 
+    @OneToMany
+    Set&lt;Vehicle&gt; vehicles
+
 }</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Micronaut Data Repository</div>
 <div class="content">
-<pre class="prettyprint highlight"><code data-lang="groovy">package micronaut.grails.example
+<pre class="prettyprint highlight"><code data-lang="groovy">package micronaut.grails.example.model
 
 import io.micronaut.data.annotation.Repository
 import io.micronaut.data.repository.CrudRepository
@@ -640,8 +804,8 @@ for (source in sources) {
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 3.0.5<br>
-Last updated 2021-07-28 10:04:09 UTC
+Version 3.0.6<br>
+Last updated 2021-07-28 14:18:04 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
