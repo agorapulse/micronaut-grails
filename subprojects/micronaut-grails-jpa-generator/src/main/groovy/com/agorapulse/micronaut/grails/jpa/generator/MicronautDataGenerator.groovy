@@ -64,17 +64,18 @@ abstract class MicronautDataGenerator {
     }
 
     @SuppressWarnings('NestedForLoop')
-    int generate(File root) {
+    int generate(File root, String packageSuffix = '.model') {
         Collection<PersistentEntity> entities = datastore.mappingContext.persistentEntities
+        Collection<Class> entityClasses = entities*.javaClass
         entities.each { PersistentEntity entity ->
-            File packageDirectory = new File(root, (entity.javaClass.package.name).replace('.', File.separator))
+            File packageDirectory = new File(root, (entity.javaClass.package.name + packageSuffix).replace('.', File.separator))
             packageDirectory.mkdirs()
 
             File entityFile = new File(packageDirectory, "${entity.javaClass.simpleName}.groovy")
-            entityFile.text = generateEntity(entity)
+            entityFile.text = generateEntity(entity, entityClasses, packageSuffix)
 
             File repositoryFile = new File(packageDirectory, "${entity.javaClass.simpleName}Repository.groovy")
-            repositoryFile.text = generateRepository(entity)
+            repositoryFile.text = generateRepository(entity, packageSuffix)
         }
 
         List<Class> requiredEnums = []
@@ -101,8 +102,9 @@ abstract class MicronautDataGenerator {
         'LineLength',
         'MethodSize',
         'UnnecessaryCollectCall',
+        'CyclomaticComplexity',
     ])
-    String generateEntity(PersistentEntity entity) {
+    String generateEntity(PersistentEntity entity, Collection<Class> persistentEntitiesTypes, String packageSuffix) {
         List<UnifiedProperty> unifiedProperties = collectUnifiedProperties(entity)
         Set<String> imports = new TreeSet<>(unifiedProperties.collect {
             if (it.persistentProperty instanceof OneToMany) {
@@ -112,7 +114,10 @@ abstract class MicronautDataGenerator {
         }.findAll {
             it && !it.primitive && it.package && it.package != entity.javaClass.package && it.package.name != 'java.util' && it.package.name != 'java.lang'
         }.collect {
-            it.name
+            if (it in persistentEntitiesTypes) {
+                return it.package.name + packageSuffix + '.' + it.simpleName
+            }
+            return it.name
         })
 
         StringWriter bodyStringWriter = new StringWriter()
@@ -205,7 +210,7 @@ abstract class MicronautDataGenerator {
 
         StringWriter finalWriter = new StringWriter()
         PrintWriter finalPrintWriter = new PrintWriter(finalWriter)
-        finalPrintWriter.println "package $entity.javaClass.package.name"
+        finalPrintWriter.println "package $entity.javaClass.package.name$packageSuffix"
         finalPrintWriter.println()
 
         imports.each { String imported ->
@@ -489,7 +494,7 @@ abstract class MicronautDataGenerator {
     }
 
     @SuppressWarnings('LineLength')
-    protected abstract String generateRepository(PersistentEntity entity)
+    protected abstract String generateRepository(PersistentEntity entity, String packageSuffix)
 
     private static void copyEnum(File root, Class enumType) {
         if (!enumType.enum) {

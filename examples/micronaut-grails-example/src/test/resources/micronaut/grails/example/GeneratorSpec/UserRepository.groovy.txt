@@ -1,4 +1,4 @@
-package micronaut.grails.example
+package micronaut.grails.example.model
 
 import io.micronaut.data.annotation.Repository
 import io.micronaut.data.repository.CrudRepository

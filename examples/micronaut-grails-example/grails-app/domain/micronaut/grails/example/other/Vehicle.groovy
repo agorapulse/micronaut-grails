@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package micronaut.grails.example
+package micronaut.grails.example.other
 
 class Vehicle {
 

@@ -40,8 +40,8 @@ class GeneratorSpec extends Specification {
             noExceptionThrown()
 
         when:
-            File entityFile = new File(root, 'micronaut/grails/example/User.groovy')
-            File repositoryFile = new File(root, 'micronaut/grails/example/UserRepository.groovy')
+            File entityFile = new File(root, 'micronaut/grails/example/model/User.groovy')
+            File repositoryFile = new File(root, 'micronaut/grails/example/model/UserRepository.groovy')
         then:
             entityFile.exists()
             entityFile.text.trim() == fixt.readText('User.groovy.txt').trim()

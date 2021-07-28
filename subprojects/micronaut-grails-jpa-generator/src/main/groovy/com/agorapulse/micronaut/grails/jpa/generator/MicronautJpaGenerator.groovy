@@ -34,7 +34,7 @@ class MicronautJpaGenerator extends MicronautDataGenerator {
 
     @Override
     @SuppressWarnings('LineLength')
-    protected String generateRepository(PersistentEntity entity) {
+    protected String generateRepository(PersistentEntity entity, String packageSuffix) {
         String datasourceDefinition = ''
 
         if (entity.mapping.mappedForm.datasources) {
@@ -45,7 +45,7 @@ class MicronautJpaGenerator extends MicronautDataGenerator {
         }
 
         return """
-        package $entity.javaClass.package.name
+        package $entity.javaClass.package.name$packageSuffix
 
         import io.micronaut.data.annotation.Repository
         import io.micronaut.data.repository.CrudRepository

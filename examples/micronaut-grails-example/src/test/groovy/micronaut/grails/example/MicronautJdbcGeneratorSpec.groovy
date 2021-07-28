@@ -40,8 +40,8 @@ class MicronautJdbcGeneratorSpec extends Specification {
             noExceptionThrown()
 
         when:
-            File entityFile = new File(root, 'micronaut/grails/example/Vehicle.groovy')
-            File repositoryFile = new File(root, 'micronaut/grails/example/VehicleRepository.groovy')
+            File entityFile = new File(root, 'micronaut/grails/example/other/model/Vehicle.groovy')
+            File repositoryFile = new File(root, 'micronaut/grails/example/other/model/VehicleRepository.groovy')
         then:
             entityFile.exists()
             entityFile.text.trim() == fixt.readText('Vehicle.groovy.txt').trim()

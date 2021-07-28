@@ -49,8 +49,8 @@ class MicronautGeneratorSpec extends Specification {
             noExceptionThrown()
 
         when:
-            File entityFile = new File(root, 'com/agorapulse/micronaut/grails/domain/Manager.groovy')
-            File repositoryFile = new File(root, 'com/agorapulse/micronaut/grails/domain/ManagerRepository.groovy')
+            File entityFile = new File(root, 'com/agorapulse/micronaut/grails/domain/model/Manager.groovy')
+            File repositoryFile = new File(root, 'com/agorapulse/micronaut/grails/domain/model/ManagerRepository.groovy')
         then:
             entityFile.exists()
             entityFile.text.trim() == fixt.readText('Manager.groovy.txt').trim()
