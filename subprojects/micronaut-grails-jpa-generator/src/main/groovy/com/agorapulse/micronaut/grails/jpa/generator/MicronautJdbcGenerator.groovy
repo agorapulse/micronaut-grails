@@ -23,34 +23,26 @@ import org.grails.datastore.mapping.core.Datastore
 import org.grails.datastore.mapping.model.PersistentEntity
 
 /**
- * Experimental generator of JPA entities based on GORM entities.
+ * Experimental generator of Micronaut DATA JDBC entities based on GORM entities.
  */
 @CompileStatic
-class MicronautJpaGenerator extends MicronautDataGenerator {
+class MicronautJdbcGenerator extends MicronautDataGenerator {
 
-    MicronautJpaGenerator(Datastore datastore, ConstraintsEvaluator constraintsEvaluator) {
+    MicronautJdbcGenerator(Datastore datastore, ConstraintsEvaluator constraintsEvaluator) {
         super(datastore, constraintsEvaluator)
     }
 
     @Override
     @SuppressWarnings('LineLength')
     protected String generateRepository(PersistentEntity entity) {
-        String datasourceDefinition = ''
-
-        if (entity.mapping.mappedForm.datasources) {
-            String datasource = entity.mapping.mappedForm.datasources.first()
-            if (datasource != 'DEFAULT') {
-                datasourceDefinition = "('$datasource')"
-            }
-        }
-
         return """
         package $entity.javaClass.package.name
 
-        import io.micronaut.data.annotation.Repository
+        import io.micronaut.data.jdbc.annotation.JdbcRepository
+        import io.micronaut.data.model.query.builder.sql.Dialect
         import io.micronaut.data.repository.CrudRepository
 
-        @Repository$datasourceDefinition
+        @JdbcRepository(dialect = Dialect.MYSQL)
         interface ${entity.javaClass.simpleName}Repository extends CrudRepository<${entity.javaClass.simpleName}, ${entity.identity.type.simpleName}> {
 
         }

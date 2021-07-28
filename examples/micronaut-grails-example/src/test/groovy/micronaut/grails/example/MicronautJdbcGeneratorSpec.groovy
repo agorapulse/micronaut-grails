@@ -18,18 +18,18 @@
 package micronaut.grails.example
 
 // tag::body[]
-import com.agorapulse.micronaut.grails.jpa.generator.MicronautJpaGenerator
+import com.agorapulse.micronaut.grails.jpa.generator.MicronautJdbcGenerator
 import com.agorapulse.micronaut.grails.test.MicronautGrailsIntegration
 import com.agorapulse.testing.fixt.Fixt
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Specification
 
 @MicronautGrailsIntegration
-class GeneratorSpec extends Specification {
+class MicronautJdbcGeneratorSpec extends Specification {
 
-    Fixt fixt = Fixt.create(GeneratorSpec)
+    Fixt fixt = Fixt.create(MicronautJdbcGeneratorSpec)
 
-    @Autowired MicronautJpaGenerator generator
+    @Autowired MicronautJdbcGenerator generator
 
     void 'generate domains'() {
         given:
@@ -40,14 +40,14 @@ class GeneratorSpec extends Specification {
             noExceptionThrown()
 
         when:
-            File entityFile = new File(root, 'micronaut/grails/example/User.groovy')
-            File repositoryFile = new File(root, 'micronaut/grails/example/UserRepository.groovy')
+            File entityFile = new File(root, 'micronaut/grails/example/Vehicle.groovy')
+            File repositoryFile = new File(root, 'micronaut/grails/example/VehicleRepository.groovy')
         then:
             entityFile.exists()
-            entityFile.text.trim() == fixt.readText('User.groovy.txt').trim()
+            entityFile.text.trim() == fixt.readText('Vehicle.groovy.txt').trim()
 
             repositoryFile.exists()
-            repositoryFile.text.trim() == fixt.readText('UserRepository.groovy.txt').trim()
+            repositoryFile.text.trim() == fixt.readText('VehicleRepository.groovy.txt').trim()
     }
 
     private static File initRootDirectory() {
