@@ -161,12 +161,20 @@ TIP: You can use `MicronautJdbcGenrator` instead of `MicronautJpaGenerator` to g
 include::{root-dir}/examples/micronaut-grails-example/src/test/groovy/micronaut/grails/example/GeneratorSpec.groovy[tags=body]
 ----
 
+[source,groovy,indent=0,options="nowrap"]
+.Micronaut Usage
+----
+include::{root-dir}/examples/micronaut-grails-domain-library/src/test/groovy/com/agorapulse/micronaut/grails/domain/MicronautGeneratorSpec.groovy[tags=body]
+----
+
 
 [source,groovy,indent=0,options="nowrap"]
 .Grails Console Usage
 ----
 ctx.micronautJpaGenerator.generate(new File('/path/to/generated/sources'))
 ----
+
+
 
 The current generator supports
 

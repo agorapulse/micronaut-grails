@@ -1,0 +1,7 @@
+dataSource:
+  dbCreate: "create-drop"
+  url: "jdbc:tc:mariadb:10.5.10:///test?useSSL=false"
+  driverClassName: "org.testcontainers.jdbc.ContainerDatabaseDriver"
+  dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+  username: "username"
+  password: "password"
