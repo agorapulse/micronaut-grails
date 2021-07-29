@@ -64,7 +64,7 @@ abstract class MicronautDataGenerator {
     }
 
     @SuppressWarnings('NestedForLoop')
-    int generate(File root, String packageSuffix = '.model') {
+    int generate(File root, String packageSuffix = '.model', boolean generateEnums = false) {
         Collection<PersistentEntity> entities = datastore.mappingContext.persistentEntities
         Collection<Class> entityClasses = entities*.javaClass
         entities.each { PersistentEntity entity ->
@@ -78,17 +78,19 @@ abstract class MicronautDataGenerator {
             repositoryFile.text = generateRepository(entity, packageSuffix)
         }
 
-        List<Class> requiredEnums = []
-        for (PersistentEntity entity in datastore.mappingContext.persistentEntities) {
-            for (PersistentProperty property in entity.persistentProperties) {
-                if (property.type.enum) {
-                    requiredEnums.add(property.type)
+        if (generateEnums) {
+            List<Class> requiredEnums = []
+            for (PersistentEntity entity in datastore.mappingContext.persistentEntities) {
+                for (PersistentProperty property in entity.persistentProperties) {
+                    if (property.type.enum) {
+                        requiredEnums.add(property.type)
+                    }
                 }
             }
-        }
 
-        requiredEnums.each { Class enumType ->
-            copyEnum(root, enumType)
+            requiredEnums.each { Class enumType ->
+                copyEnum(root, enumType)
+            }
         }
 
         return entities.size()
