@@ -148,6 +148,16 @@ include::{root-dir}/examples/micronaut-grails-example/src/test/groovy/micronaut/
 
 == GORM to Micronaut Data JPA Generator
 
+=== Installation
+
+[source,indent=0,role="primary",subs='verbatim,attributes']
+.Gradle
+----
+testImplementation 'com.agorapulse:micronaut-grails-jpa-generator:{project-version}'
+----
+
+=== Usage
+
 There is an experimental generator for the JPA entities from GORM domain classes. You can use either from integration test or using Grails Console plugin
 
 TIP: You can use `MicronautJdbcGenrator` instead of `MicronautJpaGenerator` to generate JDBC repositories instead of generic ones.
