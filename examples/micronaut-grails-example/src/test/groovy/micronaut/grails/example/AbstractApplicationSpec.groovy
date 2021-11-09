@@ -22,8 +22,8 @@ import com.agorapulse.gru.http.Http
 import com.agorapulse.micronaut.grails.domain.ManagerService
 import com.agorapulse.micronaut.grails.example.DirectlyInjected
 import com.agorapulse.micronaut.grails.example.InjectedUsingBridge
-import org.junit.Rule
 import org.springframework.context.ConfigurableApplicationContext
+import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -31,7 +31,7 @@ abstract class AbstractApplicationSpec extends Specification {
 
     @Shared ConfigurableApplicationContext context
 
-    @Rule Gru gru = Gru.equip(Http.steal(this)).prepare('http://localhost:9999')
+    @AutoCleanup Gru gru = Gru.equip(Http.steal(this)).prepare('http://localhost:9999')
 
     abstract Class<?> getApplicationClass()
 
