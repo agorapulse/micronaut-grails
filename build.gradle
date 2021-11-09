@@ -169,6 +169,7 @@ subprojects { Project subproject ->
     compileTestJava.options.compilerArgs += '-parameters'
 
     test {
+        useJUnitPlatform()
         environment 'AWS_CBOR_DISABLE', 'true'
         systemProperty 'TEST_RESOURCES_FOLDER', new File(subproject.projectDir, 'src/test/resources').canonicalPath
         systemProperty 'user.timezone', 'UTC'
