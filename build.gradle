@@ -156,9 +156,12 @@ subprojects { Project subproject ->
 
         testCompile "io.micronaut:micronaut-inject-groovy"
 
-        testCompile("org.spockframework:spock-core:$spockVersion") {
-            exclude group: "org.codehaus.groovy", module: "groovy-all"
-        }
+
+        testCompile platform("org.junit:junit-bom:$junitVersion")
+        testCompile "org.junit.jupiter:junit-jupiter-engine"
+        testCompile "org.junit.jupiter:junit-jupiter-api"
+
+        testCompile("org.spockframework:spock-core:$spockVersion")
         testCompile 'cglib:cglib-nodep:3.2.0'
         testCompile 'org.objenesis:objenesis:1.2'
 
@@ -169,6 +172,7 @@ subprojects { Project subproject ->
     compileTestJava.options.compilerArgs += '-parameters'
 
     test {
+        useJUnitPlatform()
         environment 'AWS_CBOR_DISABLE', 'true'
         systemProperty 'TEST_RESOURCES_FOLDER', new File(subproject.projectDir, 'src/test/resources').canonicalPath
         systemProperty 'user.timezone', 'UTC'

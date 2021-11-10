@@ -49,6 +49,7 @@ dependencyManagement {
     imports {
         mavenBom "io.micronaut:micronaut-bom:$micronautVersion"
         mavenBom "org.grails:grails-bom:${grailsVersion}"
+        mavenBom  "org.junit:junit-bom:$junitVersion"
     }
 }
 
@@ -64,7 +65,7 @@ dependencies {
     compile project(':micronaut-grails-web-boot')
     compile project(':micronaut-grails-domain-library')
 
-    testCompile 'com.agorapulse:gru-http:0.8.4'
+    testCompile "com.agorapulse:gru-http:$gruVersion"
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     compile "org.springframework.boot:spring-boot-starter-logging"
