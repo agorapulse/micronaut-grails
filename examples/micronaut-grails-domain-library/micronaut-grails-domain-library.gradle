@@ -54,7 +54,7 @@ dependencies {
     testCompile 'io.micronaut:micronaut-inject-groovy'
     testCompile 'org.mariadb.jdbc:mariadb-java-client:2.7.3'
     testCompile "org.testcontainers:mariadb:$testcontainersVersion"
-    testCompile 'com.github.docker-java:docker-java-api:3.2.8'
-    testCompile 'com.github.docker-java:docker-java-transport-zerodep:3.2.8'
+    testCompile "com.github.docker-java:docker-java-api:$dockerApiVersion"
+    testCompile "com.github.docker-java:docker-java-transport-zerodep:$dockerApiVersion"
     testCompile 'net.java.dev.jna:jna:5.8.0'
 }
