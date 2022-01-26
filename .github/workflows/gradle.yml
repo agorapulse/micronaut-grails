@@ -1,6 +1,6 @@
 name: Check
 
-on: [push, pull_request]
+on: [ push, pull_request ]
 jobs:
   check:
     name: Check
@@ -9,19 +9,26 @@ jobs:
       GRADLE_OPTS: "-Xmx6g -Xms4g"
       CI: true
       COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-
+    strategy:
+      fail-fast: false
+      matrix:
+        versions:
+          - 'check coveralls -PmicronautVersion=1.3.7 -PspockVersion=2.0-groovy-2.5 -PgroovyVersion=2.5.15'
+          - 'check -PmicronautVersion=2.5.13 -PspockVersion=2.0-groovy-3.0 -PgroovyVersion=3.0.9'
+          - 'migrateImports check -PmicronautVersion=3.2.1 -PspockVersion=2.0-groovy-3.0 -PgroovyVersion=3.0.9'
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK 1.8
-      uses: actions/setup-java@v1
-      with:
-        java-version: 1.8
-    - uses: eskatos/gradle-command-action@v1
-      with:
-        arguments: check aggregateTestReports coveralls --stacktrace
-    - name: Show Reports
-      uses: actions/upload-artifact@v1
-      if: failure()
-      with:
-         name: reports
-         path: build/reports/
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: zulu
+          cache: 'gradle'
+      - uses: eskatos/gradle-command-action@v2
+        with:
+          arguments: ${{ matrix.versions }}
+      - name: Show Reports
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: reports
+          path: build/reports/

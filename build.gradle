@@ -124,6 +124,7 @@ subprojects { Project subproject ->
     apply plugin: 'groovy'
     apply plugin: 'checkstyle'
     apply plugin: 'codenarc'
+    apply plugin: 'micronaut-compatibility'
 
     configurations {
         optional.extendsFrom compile
