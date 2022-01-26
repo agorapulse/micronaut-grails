@@ -96,7 +96,7 @@ public class MicronautGrailsApp extends GrailsApp {
         @Override
         @Nonnull
         protected DefaultEnvironment createEnvironment(@Nonnull ApplicationContextConfiguration c) {
-            DefaultEnvironment environment = super.createEnvironment(c);
+            DefaultEnvironment environment = (DefaultEnvironment) super.createEnvironment(c);
             ((MicronautGrailsAppContextConfiguration)c).getConfiguration().configureEnvironment(environment);
             return environment;
         }

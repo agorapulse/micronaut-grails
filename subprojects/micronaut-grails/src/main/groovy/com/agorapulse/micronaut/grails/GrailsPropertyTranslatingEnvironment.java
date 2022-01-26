@@ -17,6 +17,7 @@
  */
 package com.agorapulse.micronaut.grails;
 
+import io.micronaut.context.ApplicationContextConfiguration;
 import io.micronaut.context.env.DefaultEnvironment;
 import io.micronaut.core.convert.ArgumentConversionContext;
 import io.micronaut.core.convert.ConversionService;
@@ -27,6 +28,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.PropertySource;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
@@ -38,7 +40,13 @@ class GrailsPropertyTranslatingEnvironment extends DefaultEnvironment {
     private final PropertyTranslatingCustomizer customizer;
 
     GrailsPropertyTranslatingEnvironment(Environment environment, PropertyTranslatingCustomizer customizer, List<String> expectedMapProperties) {
-        super(environment.getActiveProfiles());
+        super(new ApplicationContextConfiguration() {
+            @Nonnull
+            @Override
+            public List<String> getEnvironments() {
+                return Arrays.asList(environment.getActiveProfiles());
+            }
+        });
         this.environment = environment;
         this.customizer = customizer;
 

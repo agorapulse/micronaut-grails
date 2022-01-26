@@ -145,7 +145,7 @@ subprojects { Project subproject ->
         // Groovy
         compile "org.codehaus.groovy:groovy:$groovyVersion"
 
-        compile "io.micronaut:micronaut-runtime-groovy"
+        compile micronautMigratedDependency('micronaut-runtime-groovy')
         compile "io.micronaut:micronaut-inject"
         compile "io.micronaut:micronaut-runtime"
 

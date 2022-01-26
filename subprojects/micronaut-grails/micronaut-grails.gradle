@@ -22,7 +22,7 @@ config {
 }
 
 dependencies {
-    api 'io.micronaut:micronaut-spring'
+    api micronautMigratedDependency('micronaut-spring')
 
     compileOnly "org.grails:grails-core:$grailsVersion"
 
