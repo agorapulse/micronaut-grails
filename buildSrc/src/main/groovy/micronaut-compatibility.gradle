@@ -25,6 +25,7 @@ import groovy.transform.Field
     'micronaut-security': 'io.micronaut',
     'micronaut-security-jwt': 'io.micronaut',
     'micronaut-jdbc-tomcat': 'io.micronaut.configuration',
+    'micronaut-hibernate-gorm': 'io.micronaut.configuration',
 ]
 
 @Field static final Map<String, String> MICRONAUT_2 = [
@@ -35,6 +36,7 @@ import groovy.transform.Field
     'micronaut-security': 'io.micronaut.security',
     'micronaut-security-jwt': 'io.micronaut.security',
     'micronaut-jdbc-tomcat': 'io.micronaut.sql',
+    'micronaut-hibernate-gorm': 'io.micronaut.groovy',
 ]
 
 @Field static final Map<String, Object> IMPORTS = [
