@@ -31,6 +31,6 @@ dependencies {
         exclude group: "org.codehaus.groovy", module: "groovy-all"
     }
 
-    testImplementation group: 'com.agorapulse', name: 'micronaut-aws-sdk-sns', version: "1.6.1-micronaut-${micronautVersion[0]}.0"
-    testImplementation group: 'com.agorapulse', name: 'micronaut-aws-sdk-sqs', version: "1.6.1-micronaut-${micronautVersion[0]}.0"
+    testImplementation group: 'com.agorapulse', name: 'micronaut-amazon-awssdk-sns', version: "1.6.1-micronaut-${micronautVersion[0]}.0"
+    testImplementation group: 'com.agorapulse', name: 'micronaut-amazon-awssdk-sqs', version: "1.6.1-micronaut-${micronautVersion[0]}.0"
 }

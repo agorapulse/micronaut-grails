@@ -17,9 +17,9 @@
  */
 package com.agorapulse.micronaut.grails
 
-import com.agorapulse.micronaut.aws.sns.SimpleNotificationService
-import com.agorapulse.micronaut.aws.sns.SimpleNotificationServiceConfiguration
-import com.agorapulse.micronaut.aws.sqs.SimpleQueueService
+import com.agorapulse.micronaut.amazon.awssdk.sns.SimpleNotificationService
+import com.agorapulse.micronaut.amazon.awssdk.sns.SimpleNotificationServiceConfiguration
+import com.agorapulse.micronaut.amazon.awssdk.sqs.SimpleQueueService
 import groovy.transform.CompileStatic
 import io.micronaut.inject.qualifiers.Qualifiers
 import org.springframework.beans.factory.annotation.Autowired

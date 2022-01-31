@@ -38,6 +38,7 @@ class GrailsPropertyTranslatingEnvironment extends DefaultEnvironment {
 
     private final Environment environment;
     private final PropertyTranslatingCustomizer customizer;
+    private final Map<String, Object> multilayer = new LinkedHashMap<>();
 
     GrailsPropertyTranslatingEnvironment(Environment environment, PropertyTranslatingCustomizer customizer, List<String> expectedMapProperties) {
         super(new ApplicationContextConfiguration() {
@@ -51,7 +52,6 @@ class GrailsPropertyTranslatingEnvironment extends DefaultEnvironment {
         this.customizer = customizer;
 
         if (environment instanceof AbstractEnvironment) {
-            Map<String, Object> multilayer = new LinkedHashMap<>();
             AbstractEnvironment abEnv = (AbstractEnvironment) environment;
             for (PropertySource<?> source : abEnv.getPropertySources()) {
                 if (source instanceof MapPropertySource) {
@@ -134,6 +134,15 @@ class GrailsPropertyTranslatingEnvironment extends DefaultEnvironment {
     @Override
     public boolean containsProperties(@Nullable String name) {
         return containsProperty(name);
+    }
+
+    @Override
+    public Collection<String> getPropertyEntries(String name) {
+        if (multilayer.containsKey(name)) {
+            Map<String, Object> value = (Map<String, Object>) multilayer.get(name);
+            return value.keySet();
+        }
+        return super.getPropertyEntries(name);
     }
 
     @Override
