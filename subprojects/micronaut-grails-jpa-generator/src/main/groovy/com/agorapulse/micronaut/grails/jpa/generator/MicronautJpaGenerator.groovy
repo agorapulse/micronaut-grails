@@ -56,4 +56,5 @@ class MicronautJpaGenerator extends MicronautDataGenerator {
         }
         """.stripIndent().trim()
     }
+
 }

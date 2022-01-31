@@ -23,5 +23,6 @@ config {
 
 dependencies {
     api project(':micronaut-grails')
-    api 'org.grails:grails-testing-support:2.1.2'
+    api "org.grails:grails-testing-support:$grailsTestingSupportVersion"
+    implementation 'org.opentest4j:opentest4j:1.2.0'
 }

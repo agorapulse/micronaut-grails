@@ -48,4 +48,5 @@ class MicronautJdbcGenerator extends MicronautDataGenerator {
         }
         """.stripIndent().trim()
     }
+
 }

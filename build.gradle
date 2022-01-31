@@ -124,6 +124,7 @@ subprojects { Project subproject ->
     apply plugin: 'groovy'
     apply plugin: 'checkstyle'
     apply plugin: 'codenarc'
+    apply plugin: 'micronaut-compatibility'
 
     configurations {
         optional.extendsFrom compile
@@ -144,7 +145,7 @@ subprojects { Project subproject ->
         // Groovy
         compile "org.codehaus.groovy:groovy:$groovyVersion"
 
-        compile "io.micronaut:micronaut-runtime-groovy"
+        compile micronautMigratedDependency('micronaut-runtime-groovy')
         compile "io.micronaut:micronaut-inject"
         compile "io.micronaut:micronaut-runtime"
 
@@ -192,7 +193,7 @@ subprojects { Project subproject ->
     }
 
     codenarc {
-        toolVersion = '1.2.1'
+        toolVersion = '2.1.0'
     }
 
     config {
