@@ -31,6 +31,7 @@ import io.micronaut.core.annotation.Introspected
     'GrailsDomainHasEquals',
     'GrailsDomainHasToString',
     'FieldTypeRequired',
+    'NoDef',
 ])
 class Manager {
 

@@ -17,11 +17,13 @@
  */
 package com.agorapulse.micronaut.grails
 
+import groovy.transform.CompileDynamic
 import spock.lang.Specification
 
 /**
  * Tests for property translating customizer.
  */
+@CompileDynamic
 class PropertyTranslatingCustomizerSpec extends Specification {
 
     void 'custom replacements works'() {
@@ -36,10 +38,10 @@ class PropertyTranslatingCustomizerSpec extends Specification {
                 .build()
 
         then:
-            customizer.getAlternativeNames(null).isEmpty()
-            customizer.getAlternativeNames('').isEmpty()
-            customizer.getAlternativeNames('foo.bar').isEmpty()
-            customizer.getAlternativeNames('foo.gar').isEmpty()
+            customizer.getAlternativeNames(null).empty
+            customizer.getAlternativeNames('').empty
+            customizer.getAlternativeNames('foo.bar').empty
+            customizer.getAlternativeNames('foo.gar').empty
             customizer.getAlternativeNames('foo.baz') == ['bar.baz', 'baz'] as Set<String>
             customizer.getAlternativeNames('baz') == ['foo.baz'] as Set<String>
     }
@@ -49,9 +51,9 @@ class PropertyTranslatingCustomizerSpec extends Specification {
             PropertyTranslatingCustomizer customizer = PropertyTranslatingCustomizer.none()
 
         then:
-            customizer.getAlternativeNames('foo.bar').isEmpty()
-            customizer.getAlternativeNames('foo.baz').isEmpty()
-            customizer.getAlternativeNames('baz').isEmpty()
+            customizer.getAlternativeNames('foo.bar').empty
+            customizer.getAlternativeNames('foo.baz').empty
+            customizer.getAlternativeNames('baz').empty
     }
 
     void 'standard replacements works'() {
@@ -62,7 +64,7 @@ class PropertyTranslatingCustomizerSpec extends Specification {
                 .build()
 
         then:
-            customizer.getAlternativeNames('redis.timeout').isEmpty()
+            customizer.getAlternativeNames('redis.timeout').empty
             customizer.getAlternativeNames('redis.port') == ['grails.redis.port'] as Set<String>
             customizer.getAlternativeNames('micronaut.redis.port') == ['grails.redis.port', 'grails.micronaut.redis.port'] as Set<String>
             customizer.getAlternativeNames('micronaut.server.url') == ['grails.server.url', 'grails.micronaut.server.url'] as Set<String>

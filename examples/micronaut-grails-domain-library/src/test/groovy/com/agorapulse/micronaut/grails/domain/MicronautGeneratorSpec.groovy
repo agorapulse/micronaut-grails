@@ -20,6 +20,7 @@ package com.agorapulse.micronaut.grails.domain
 // tag::body[]
 import com.agorapulse.micronaut.grails.jpa.generator.MicronautJpaGenerator
 import com.agorapulse.testing.fixt.Fixt
+import groovy.transform.CompileDynamic
 import io.micronaut.context.ApplicationContext
 import org.grails.datastore.gorm.validation.constraints.eval.DefaultConstraintEvaluator
 import org.grails.orm.hibernate.HibernateDatastore
@@ -29,6 +30,7 @@ import spock.lang.Specification
 /**
  * Example specification generating JPA entities from GORM entities.
  */
+@CompileDynamic
 class MicronautGeneratorSpec extends Specification {
 
     Fixt fixt = Fixt.create(MicronautGeneratorSpec)

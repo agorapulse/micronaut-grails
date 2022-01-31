@@ -193,7 +193,7 @@ subprojects { Project subproject ->
     }
 
     codenarc {
-        toolVersion = '1.2.1'
+        toolVersion = '2.1.0'
     }
 
     config {

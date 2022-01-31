@@ -17,6 +17,7 @@
  */
 package com.agorapulse.micronaut.grails
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import io.micronaut.inject.qualifiers.Qualifiers
 import org.springframework.beans.factory.annotation.Autowired
@@ -31,6 +32,7 @@ import spock.lang.Specification
 /**
  * Tests for micronaut Spring bean processor.
  */
+@CompileDynamic
 @ContextConfiguration(classes = [GrailsLegacyConfig])
 @TestPropertySource('classpath:com/agorapulse/micronaut/grails/GrailsMicronautBeanProcessorSpec.properties')
 class LegacyGrailsMicronautBeanProcessorSpec extends Specification {
@@ -67,6 +69,7 @@ class LegacyGrailsMicronautBeanProcessorSpec extends Specification {
             prototypeBean.redisPort == REDIS_PORT
             prototypeBean.redisTimeout == REDIS_TIMEOUT
     }
+
 }
 
 // tag::configuration[]
@@ -76,7 +79,7 @@ class GrailsLegacyConfig {
 
     @Bean
     GrailsMicronautBeanProcessor widgetProcessor() {
-        GrailsMicronautBeanProcessor
+        return GrailsMicronautBeanProcessor
             .builder()
             .addByType(Widget)
             .addByType('someInterface', SomeInterface)

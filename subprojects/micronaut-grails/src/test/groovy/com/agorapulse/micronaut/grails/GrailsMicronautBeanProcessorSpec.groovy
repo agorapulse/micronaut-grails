@@ -17,6 +17,7 @@
  */
 package com.agorapulse.micronaut.grails
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import io.micronaut.context.annotation.Factory
 import io.micronaut.context.annotation.Primary
@@ -43,6 +44,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME
 /**
  * Tests for micronaut Spring bean processor.
  */
+@CompileDynamic
 @ContextConfiguration(classes = [GrailsConfig, MicronautGrailsConfiguration])
 @TestPropertySource('classpath:com/agorapulse/micronaut/grails/GrailsMicronautBeanProcessorSpec.properties')
 class GrailsMicronautBeanProcessorSpec extends Specification {
@@ -98,6 +100,7 @@ class GrailsMicronautBeanProcessorSpec extends Specification {
             !translatingEnvironment.containsProperty('redis.host')
             !translatingEnvironment.getProperty('redis.host', String).present
     }
+
 }
 
 // tag::configuration[]
@@ -107,7 +110,7 @@ class GrailsConfig {
 
     @Bean
     MicronautBeanImporter myImporter() {                                                // <2>
-        MicronautBeanImporter.create()
+        return MicronautBeanImporter.create()
             .addByType(Widget)                                                          // <3>
             .addByType('someInterface', SomeInterface)                                  // <4>
             .addByStereotype('custom', SomeCustomScope)                                 // <5>
@@ -124,20 +127,30 @@ class GrailsConfig {
 }
 // end::configuration[]
 
-interface SomeInterface { }
+@CompileStatic
+interface SomeInterface {
+
+}
 
 @Singleton
-class SomeImplementation implements SomeInterface { }
+@CompileStatic
+class SomeImplementation implements SomeInterface {
 
+}
+
+@CompileStatic
 class SomeNamed {
+
     final String name
 
     SomeNamed(String name) {
         this.name = name
     }
+
 }
 
 @Factory
+@CompileStatic
 class SomeNamedFactory {
 
     @io.micronaut.context.annotation.Bean
@@ -158,20 +171,32 @@ class SomeNamedFactory {
 
 @Primary
 @Singleton
-class Widget { }
+@CompileStatic
+class Widget {
+
+}
 
 @Singleton
+@CompileStatic
 @Requires(notEnv = 'test')
-class TestWidget extends Widget { }
+class TestWidget extends Widget {
 
-interface Minion { }
+}
+
+interface Minion {
+
+}
 
 @Documented
 @Retention(RUNTIME)
 @Scope
+@CompileStatic
 @io.micronaut.context.annotation.Bean
-@interface SomeCustomScope { }
+@interface SomeCustomScope {
 
+}
+
+@CompileStatic
 @SomeCustomScope
 class CustomBean {
 
@@ -188,15 +213,25 @@ class CustomBean {
         this.redisPort = redisPort
         this.redisTimeout = redisTimeout
     }
+
 }
 
 @Singleton
+@CompileStatic
 @Named('gadget')
-class SomeGadget { }
+class SomeGadget {
+
+}
 
 @Singleton
+@CompileStatic
 @Named('other')
-class OtherMinion implements Minion { }
+class OtherMinion implements Minion {
+
+}
 
 @Singleton
-class NormalMinion implements Minion { }
+@CompileStatic
+class NormalMinion implements Minion {
+
+}

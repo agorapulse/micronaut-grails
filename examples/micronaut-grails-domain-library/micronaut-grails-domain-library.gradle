@@ -49,7 +49,7 @@ dependencies {
 
     testCompile project(':micronaut-grails-jpa-generator')
 
-    testCompile 'com.agorapulse.testing:fixt:0.2.1.1'
+    testCompile 'com.agorapulse.testing:fixt:0.2.3'
 
     testCompile 'io.micronaut:micronaut-inject-groovy'
     testCompile 'org.mariadb.jdbc:mariadb-java-client:2.7.3'

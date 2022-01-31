@@ -188,7 +188,7 @@ class MicronautGrailsIntegrationTestMixinTransformation implements ASTTransforma
 
         if (servletApi != null) {
 
-            if( GrailsASTUtils.findAnnotation(classNode, SpringBootTest) == null) {
+            if (GrailsASTUtils.findAnnotation(classNode, SpringBootTest) == null) {
                 AnnotationNode webIntegrationTestAnnotation = GrailsASTUtils.addAnnotationOrGetExisting(classNode, SpringBootTest)
                 webIntegrationTestAnnotation.addMember("webEnvironment", propX(classX(SpringBootTest.WebEnvironment), "RANDOM_PORT"))
                 if(classNode.getProperty("serverPort") == null) {
@@ -198,7 +198,7 @@ class MicronautGrailsIntegrationTestMixinTransformation implements ASTTransforma
                     valueAnnotation.setMember("value", new ConstantExpression('${local.server.port}'))
                     serverPortField.addAnnotation(valueAnnotation)
 
-                    classNode.addProperty(new PropertyNode(serverPortField, Modifier.PUBLIC, null, null ))
+                    classNode.addProperty(new PropertyNode(serverPortField, Modifier.PUBLIC, null, null))
                 }
             }
         } else {
@@ -256,4 +256,5 @@ class MicronautGrailsIntegrationTestMixinTransformation implements ASTTransforma
             classNode.addMethod(method)
         }
     }
+
 }

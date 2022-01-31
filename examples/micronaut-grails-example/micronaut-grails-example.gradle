@@ -112,7 +112,7 @@ dependencies {
     testRuntime "org.seleniumhq.selenium:selenium-chrome-driver:3.14.0"
     testRuntime "org.seleniumhq.selenium:selenium-firefox-driver:3.14.0"
 
-    testCompile 'com.agorapulse.testing:fixt:0.2.1.1'
+    testCompile 'com.agorapulse.testing:fixt:0.2.3'
 }
 
 bootRun {

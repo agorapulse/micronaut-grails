@@ -20,6 +20,7 @@ package com.agorapulse.micronaut.grails
 import com.agorapulse.micronaut.amazon.awssdk.sns.SimpleNotificationService
 import com.agorapulse.micronaut.amazon.awssdk.sns.SimpleNotificationServiceConfiguration
 import com.agorapulse.micronaut.amazon.awssdk.sqs.SimpleQueueService
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import io.micronaut.inject.qualifiers.Qualifiers
 import org.springframework.beans.factory.annotation.Autowired
@@ -33,6 +34,7 @@ import spock.lang.Specification
 /**
  * Tests for micronaut Spring bean processor.
  */
+@CompileDynamic
 @ContextConfiguration(classes = [GrailsSimpleNotificationServiceConfig, MicronautGrailsConfiguration])
 @TestPropertySource('classpath:com/agorapulse/micronaut/grails/SimpleNotificationServiceConfigurationSpec.properties')
 class SimpleNotificationServiceConfigurationSpec extends Specification {
@@ -52,6 +54,7 @@ class SimpleNotificationServiceConfigurationSpec extends Specification {
             configuration.android
             configuration.android.arn == ARN
     }
+
 }
 
 @CompileStatic
@@ -60,7 +63,7 @@ class GrailsSimpleNotificationServiceConfig {
 
     @Bean
     MicronautBeanImporter myImporter() {
-        MicronautBeanImporter.create()
+        return MicronautBeanImporter.create()
             .customize(PropertyTranslatingCustomizer
                 .builder()
                 .replacePrefix('aws.sns', 'grails.plugin.awssdk.sns')
