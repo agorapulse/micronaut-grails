@@ -29,10 +29,8 @@ class IntegrationSpec extends Specification {
     @Autowired MicronautJpaGenerator generator
 
     void 'application started'() {
-        when:
-            new URL("http://localhost:$serverPort/test/health").text
-        then:
-            noExceptionThrown()
+        expect:
+            new URL("http://localhost:$serverPort/test/health").text == 'OK'
     }
 
 }
