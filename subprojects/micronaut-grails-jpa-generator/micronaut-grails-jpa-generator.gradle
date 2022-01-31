@@ -22,5 +22,6 @@ config {
 }
 
 dependencies {
-    implementation 'org.grails:grails-datastore-gorm-hibernate5:7.0.4.RELEASE'
+    implementation platform("org.grails:grails-bom:${grailsVersion}")
+    implementation 'org.grails:grails-datastore-gorm-hibernate5'
 }
