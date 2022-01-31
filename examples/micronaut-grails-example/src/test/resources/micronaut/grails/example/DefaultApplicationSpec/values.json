@@ -1,12 +1,12 @@
 {
     "someDirectlyInjected": {
-        "valueWithMicronautPrefix": null,
+        "valueWithMicronautPrefix": "",
         "valueWithoutPrefix": "barfoo",
-        "ignoredValue": null
+        "ignoredValue": ""
     },
     "injectedUsingBridge": {
         "valueWithMicronautPrefix": "foobar",
         "valueWithoutPrefix": "barfoo",
-        "ignoredValue": null
+        "ignoredValue": ""
     }
 }

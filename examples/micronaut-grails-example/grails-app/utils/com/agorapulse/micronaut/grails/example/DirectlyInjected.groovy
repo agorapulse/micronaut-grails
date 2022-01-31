@@ -18,38 +18,43 @@
 package com.agorapulse.micronaut.grails.example
 
 import com.agorapulse.micronaut.grails.domain.ManagerService
+import grails.gorm.transactions.ReadOnly
 import groovy.transform.CompileStatic
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.annotation.Value
 
-import javax.annotation.Nullable
 import javax.inject.Singleton
 
 @Singleton
 @CompileStatic
-class InjectedUsingBridge {
+class DirectlyInjected {
 
     private final ManagerService managerService
     private final ApplicationContext micronautContext
     private final String valueWithMicronautPrefix
     private final String valueWithoutPrefix
-    private final String ignoredvalue
+    private final String ignoredValue
 
-    InjectedUsingBridge(
+    DirectlyInjected(
         ManagerService managerService,
         ApplicationContext micronautContext,
-        @Nullable @Value('${micronaut.foo.bar}') String valueWithMicronautPrefix,
-        @Nullable @Value('${bar.foo}') String valueWithoutPrefix,
-        @Nullable @Value('${ex.foo.bar}') String ignoredvalue
-
+        @Value('${micronaut.foo.bar:}') String valueWithMicronautPrefix,
+        @Value('${bar.foo:}') String valueWithoutPrefix,
+        @Value('${ex.foo.bar:}') String ignoredValue
     ) {
+        this.ignoredValue = ignoredValue
+        this.valueWithoutPrefix = valueWithoutPrefix
+        this.valueWithMicronautPrefix = valueWithMicronautPrefix
         this.managerService = managerService
         this.micronautContext = micronautContext
-        this.valueWithMicronautPrefix = valueWithMicronautPrefix
-        this.valueWithoutPrefix = valueWithoutPrefix
-        this.ignoredvalue = ignoredvalue
     }
 
+    @Override
+    String toString() {
+        return "DirectlyInjected"
+    }
+
+    @ReadOnly
     Number getManagerCount() {
         return managerService?.count()
     }
@@ -62,17 +67,11 @@ class InjectedUsingBridge {
         return valueWithMicronautPrefix
     }
 
+    String getIgnoredValue() {
+        return ignoredValue
+    }
+
     String getValueWithoutPrefix() {
         return valueWithoutPrefix
     }
-
-    String getIgnoredValue() {
-        return ignoredvalue
-    }
-
-    @Override
-    public String toString() {
-        return "InjectedUsingBridge";
-    }
-
 }

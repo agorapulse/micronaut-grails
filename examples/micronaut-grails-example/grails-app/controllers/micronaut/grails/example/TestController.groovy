@@ -39,6 +39,10 @@ class TestController {
     InjectedUsingBridge injectedUsingBridge
     InjectedUsingBridgeWithDifferentName otherInjected
 
+    def health() {
+        render "OK"
+    }
+
     def index() {
         render([
             someDirectlyInjected     : someDirectlyInjected?.toString(),

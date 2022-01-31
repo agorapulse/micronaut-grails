@@ -69,12 +69,15 @@ pluginManager.withPlugin('java') {
         File javaTestSources = project.file('src/test/java')
         File groovySources = project.file('src/main/groovy')
         File groovyTestSources = project.file('src/test/groovy')
-        File grailsControllers = project.file('grails-app/controllers')
-        File grailsDomain = project.file('grails-app/domain')
-        File grailsInit = project.file('grails-app/init')
-        File grailsServices = project.file('grails-app/services')
+        File testResources = project.file('src/test/resources')
 
-        List<File> dirs = [javaSources, javaTestSources, groovySources, groovyTestSources, grailsControllers, grailsDomain, grailsInit, grailsServices]
+        List<File> dirs = [
+            javaSources,
+            javaTestSources,
+            groovySources,
+            groovyTestSources,
+            testResources,
+        ]
 
         for (File dir in dirs) {
             if (dir.exists()) {
