@@ -17,6 +17,7 @@
  */
 package micronaut.grails.example
 
+import com.agorapulse.micronaut.grails.domain.Manager
 import com.agorapulse.micronaut.grails.example.DirectlyInjected
 import com.agorapulse.micronaut.grails.example.InjectedUsingBridge
 import com.agorapulse.micronaut.grails.example.InjectedUsingBridgeWithDifferentName
@@ -75,10 +76,12 @@ class TestController {
     }
 
     def managers() {
-        render([
-            someDirectlyInjected: someDirectlyInjected?.managerCount,
-            injectedUsingBridge : injectedUsingBridge?.managerCount,
-        ] as JSON)
+        render(Manager.withNewSession {
+            [
+                someDirectlyInjected: someDirectlyInjected?.managerCount,
+                injectedUsingBridge : injectedUsingBridge?.managerCount,
+            ]
+        } as JSON)
     }
 
     def profiles() {

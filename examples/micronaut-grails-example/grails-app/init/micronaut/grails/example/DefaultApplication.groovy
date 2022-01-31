@@ -40,8 +40,6 @@ import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.core.env.PropertyResolver
 import org.springframework.core.io.ResourceLoader
 
-import io.micronaut.core.annotation.NonNull
-
 class DefaultApplication extends GrailsAutoConfiguration {
 
     static ConfigurableApplicationContext context
@@ -174,7 +172,7 @@ class DefaultApplication extends GrailsAutoConfiguration {
             def micronautContext = new DefaultApplicationContext(micronautConfiguration) {
 
                 @Override
-                protected DefaultEnvironment createEnvironment(@NonNull ApplicationContextConfiguration configuration) {
+                protected DefaultEnvironment createEnvironment(ApplicationContextConfiguration configuration) {
                     return configureMicronautEnvironment.call(super.createEnvironment(configuration)) as DefaultEnvironment
                 }
             }
