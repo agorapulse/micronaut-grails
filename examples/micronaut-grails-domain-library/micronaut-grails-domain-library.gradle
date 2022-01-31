@@ -44,7 +44,7 @@ dependencies {
     compile "org.grails:grails-bootstrap:$grailsVersion"
 
     annotationProcessor "io.micronaut:micronaut-inject-java"
-    compile "io.micronaut:micronaut-runtime-groovy"
+    compile micronautMigratedDependency('micronaut-runtime-groovy')
     compile "io.micronaut:micronaut-validation"
 
     testCompile project(':micronaut-grails-jpa-generator')
