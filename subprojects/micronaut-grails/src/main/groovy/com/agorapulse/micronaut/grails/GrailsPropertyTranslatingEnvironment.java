@@ -21,6 +21,7 @@ import io.micronaut.context.ApplicationContextConfiguration;
 import io.micronaut.context.env.DefaultEnvironment;
 import io.micronaut.core.convert.ArgumentConversionContext;
 import io.micronaut.core.convert.ConversionService;
+import io.micronaut.core.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.AbstractEnvironment;
@@ -30,7 +31,15 @@ import org.springframework.core.env.PropertySource;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 class GrailsPropertyTranslatingEnvironment extends DefaultEnvironment {
 
@@ -143,7 +152,26 @@ class GrailsPropertyTranslatingEnvironment extends DefaultEnvironment {
             Map<String, Object> value = (Map<String, Object>) multilayer.get(name);
             return value.keySet();
         }
-        return super.getPropertyEntries(name);
+
+        // taken from PropertySourcePropertyResolver 2.x
+        if (!StringUtils.isEmpty(name)) {
+            // Cannot use PropertyCatalog.NORMALIZED as it does not exist in 1.x
+            Map<String, Object> entries = resolveEntriesForKey(name, false);
+            if (entries != null) {
+                String prefix = name + '.';
+                return entries.keySet().stream().filter(k -> k.startsWith(prefix))
+                    .map(k -> {
+                        String withoutPrefix = k.substring(prefix.length());
+                        int i = withoutPrefix.indexOf('.');
+                        if (i > -1) {
+                            return withoutPrefix.substring(0, i);
+                        }
+                        return withoutPrefix;
+                    })
+                    .collect(Collectors.toSet());
+            }
+        }
+        return Collections.emptySet();
     }
 
     @Override

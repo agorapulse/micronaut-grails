@@ -48,6 +48,29 @@ public class MicronautGrailsApp extends GrailsApp {
     public static final String ENVIRONMENT_LEGACY = "micronaut-grails-legacy";
     public static final String ENVIRONMENT = "micronaut-grails";
 
+
+    // removed from the latest SpringApplication
+    /**
+     * The class name of application context that will be used by default for non-web
+     * environments.
+     */
+    public static final String DEFAULT_CONTEXT_CLASS = "org.springframework.context."
+        + "annotation.AnnotationConfigApplicationContext";
+
+    /**
+     * The class name of application context that will be used by default for web
+     * environments.
+     */
+    public static final String DEFAULT_SERVLET_WEB_CONTEXT_CLASS = "org.springframework.boot."
+        + "web.servlet.context.AnnotationConfigServletWebServerApplicationContext";
+
+    /**
+     * The class name of application context that will be used by default for reactive web
+     * environments.
+     */
+    public static final String DEFAULT_REACTIVE_WEB_CONTEXT_CLASS = "org.springframework."
+        + "boot.web.reactive.context.AnnotationConfigReactiveWebServerApplicationContext";
+
     private class MicronautGrailsAppContextConfiguration implements ApplicationContextConfiguration {
         private final ClassLoader applicationClassLoader;
         private final MicronautGrailsAutoConfiguration configuration;
