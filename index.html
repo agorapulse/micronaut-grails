@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <link rel="stylesheet" href="./asciidoctor.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="css/docs.css?v=3.0.7" />
+<link rel="stylesheet" href="css/docs.css?v=3.1.0-micronaut-3.0" />
 <style>
 .hidden {
     display: none;
@@ -93,7 +93,7 @@ $(addBlockSwitches);
 <h1>Grails Integration for Micronaut</h1>
 <div class="details">
 <span id="author" class="author">Vladimir Orany</span><br>
-<span id="revnumber">version 3.0.7</span>
+<span id="revnumber">version 3.1.0-micronaut-3.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -119,7 +119,9 @@ $(addBlockSwitches);
 <li><a href="#_integration_tests">1.3. Integration Tests</a></li>
 <li><a href="#_gorm_to_micronaut_data_jpa_generator">1.4. GORM to Micronaut Data JPA Generator</a>
 <ul class="sectlevel3">
-<li><a href="#_generated_entities_example">1.4.1. Generated Entities Example</a></li>
+<li><a href="#_installation_3">1.4.1. Installation</a></li>
+<li><a href="#_usage_3">1.4.2. Usage</a></li>
+<li><a href="#_generated_entities_example">1.4.3. Generated Entities Example</a></li>
 </ul>
 </li>
 <li><a href="#_troubleshooting">1.5. Troubleshooting</a>
@@ -169,12 +171,12 @@ $(addBlockSwitches);
 <div class="listingblock primary">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="prettyprint highlight"><code>compile 'com.agorapulse:micronaut-grails:3.0.7'
+<pre class="prettyprint highlight"><code>compile 'com.agorapulse:micronaut-grails:3.1.0-micronaut-3.0'
 
 // for Tomcat deployment replace
 // compile 'org.grails:grails-web-boot'
 // with
-compile 'com.agorapulse:micronaut-grails-web-boot:3.0.7'</code></pre>
+compile 'com.agorapulse:micronaut-grails-web-boot:3.1.0-micronaut-3.0'</code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -316,7 +318,7 @@ to <code>INFO</code> to see the deprecation details.</p>
 <div class="listingblock primary">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="prettyprint highlight"><code>compileOnly 'com.agorapulse:micronaut-grails:3.0.7'</code></pre>
+<pre class="prettyprint highlight"><code>compileOnly 'com.agorapulse:micronaut-grails:3.1.0-micronaut-3.0'</code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -364,7 +366,7 @@ class GrailsConfig {
 
     @Bean
     MicronautBeanImporter myImporter() {                                                <i class="conum" data-value="2"></i><b>(2)</b>
-        MicronautBeanImporter.create()
+        return MicronautBeanImporter.create()
             .addByType(Widget)                                                          <i class="conum" data-value="3"></i><b>(3)</b>
             .addByType('someInterface', SomeInterface)                                  <i class="conum" data-value="4"></i><b>(4)</b>
             .addByStereotype('custom', SomeCustomScope)                                 <i class="conum" data-value="5"></i><b>(5)</b>
@@ -445,7 +447,7 @@ which will automatically load the configuration once the JAR is on classpath.</p
 <div class="listingblock primary">
 <div class="title">Gradle</div>
 <div class="content">
-<pre class="prettyprint highlight"><code>compile 'com.agorapulse:micronaut-grails-integration-test:3.0.7'</code></pre>
+<pre class="prettyprint highlight"><code>compile 'com.agorapulse:micronaut-grails-integration-test:3.1.0-micronaut-3.0'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -464,10 +466,8 @@ class IntegrationSpec extends Specification {
     @Autowired MicronautJpaGenerator generator
 
     void 'application started'() {
-        when:
-            new URL("http://localhost:$serverPort").text
-        then:
-            noExceptionThrown()
+        expect:
+            new URL("http://localhost:$serverPort/test/health").text == 'OK'
     }
 
 }</code></pre>
@@ -476,6 +476,17 @@ class IntegrationSpec extends Specification {
 </div>
 <div class="sect2">
 <h3 id="_gorm_to_micronaut_data_jpa_generator"><a class="anchor" href="#_gorm_to_micronaut_data_jpa_generator"></a>1.4. GORM to Micronaut Data JPA Generator</h3>
+<div class="sect3">
+<h4 id="_installation_3"><a class="anchor" href="#_installation_3"></a>1.4.1. Installation</h4>
+<div class="listingblock primary">
+<div class="title">Gradle</div>
+<div class="content">
+<pre class="prettyprint highlight"><code>testImplementation 'com.agorapulse:micronaut-grails-jpa-generator:3.1.0-micronaut-3.0'</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_usage_3"><a class="anchor" href="#_usage_3"></a>1.4.2. Usage</h4>
 <div class="paragraph">
 <p>There is an experimental generator for the JPA entities from GORM domain classes. You can use either from integration test or using Grails Console plugin</p>
 </div>
@@ -546,6 +557,7 @@ class GeneratorSpec extends Specification {
 <div class="content">
 <pre class="prettyprint highlight nowrap"><code data-lang="groovy">import com.agorapulse.micronaut.grails.jpa.generator.MicronautJpaGenerator
 import com.agorapulse.testing.fixt.Fixt
+import groovy.transform.CompileDynamic
 import io.micronaut.context.ApplicationContext
 import org.grails.datastore.gorm.validation.constraints.eval.DefaultConstraintEvaluator
 import org.grails.orm.hibernate.HibernateDatastore
@@ -555,6 +567,7 @@ import spock.lang.Specification
 /**
  * Example specification generating JPA entities from GORM entities.
  */
+@CompileDynamic
 class MicronautGeneratorSpec extends Specification {
 
     Fixt fixt = Fixt.create(MicronautGeneratorSpec)
@@ -656,8 +669,9 @@ The new entities are generated it to the packages with suffix <code>.model</code
 </tr>
 </table>
 </div>
+</div>
 <div class="sect3">
-<h4 id="_generated_entities_example"><a class="anchor" href="#_generated_entities_example"></a>1.4.1. Generated Entities Example</h4>
+<h4 id="_generated_entities_example"><a class="anchor" href="#_generated_entities_example"></a>1.4.3. Generated Entities Example</h4>
 <div class="paragraph">
 <p>For an <code>User</code> entity such as this one</p>
 </div>
@@ -804,8 +818,8 @@ for (source in sources) {
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 3.0.7<br>
-Last updated 2021-07-29 10:10:21 UTC
+Version 3.1.0-micronaut-3.0<br>
+Last updated 2022-01-31 16:36:42 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">

@@ -55,7 +55,7 @@ GrailsMicronautBeanProcessor.java
 <a name="24"><font color="#808080">024</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">org.springframework.context.EnvironmentAware;</font><br />
 <a name="25"><font color="#808080">025</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">org.springframework.core.env.Environment;</font><br />
 <a name="26"><font color="#808080">026</font>&nbsp;</a><font color="#ffffff"></font><br />
-<a name="27"><font color="#808080">027</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">javax.annotation.Nonnull;</font><br />
+<a name="27"><font color="#808080">027</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">io.micronaut.core.annotation.NonNull;</font><br />
 <a name="28"><font color="#808080">028</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">java.util.List;</font><br />
 <a name="29"><font color="#808080">029</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">java.util.Map;</font><br />
 <a name="30"><font color="#808080">030</font>&nbsp;</a><font color="#ffffff"></font><br />
@@ -150,7 +150,7 @@ GrailsMicronautBeanProcessor.java
 <a name="119"><font color="#808080">119</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
 <a name="120"><font color="#808080">120</font>&nbsp;</a><font color="#ffffff"></font><br />
 <a name="121"><font color="#808080">121</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#646464">@Override</font><br />
-<a name="122"><font color="#808080">122</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000c0"><b>public&nbsp;</b></font><font color="#c00000"><b>void&nbsp;</b></font><font color="#000000">setEnvironment</font><font color="#000000">(</font><font color="#646464">@Nonnull&nbsp;</font><font color="#000000">Environment&nbsp;environment</font><font color="#000000">)&nbsp;{</font><br />
+<a name="122"><font color="#808080">122</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000c0"><b>public&nbsp;</b></font><font color="#c00000"><b>void&nbsp;</b></font><font color="#000000">setEnvironment</font><font color="#000000">(</font><font color="#646464">@NonNull&nbsp;</font><font color="#000000">Environment&nbsp;environment</font><font color="#000000">)&nbsp;{</font><br />
 <a name="123"><font color="#808080">123</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000c0"><b>this</b></font><font color="#000000">.environment&nbsp;=&nbsp;environment;</font><br />
 <a name="124"><font color="#808080">124</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
 <a name="125"><font color="#808080">125</font>&nbsp;</a><font color="#ffffff"></font><br />
