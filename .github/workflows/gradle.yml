@@ -14,7 +14,7 @@ jobs:
       matrix:
         versions:
           - 'check coveralls -PmicronautVersion=1.3.7 -PspockVersion=2.0-groovy-2.5 -PgroovyVersion=2.5.15 -PgrailsVersion=4.0.4'
-          - 'check -PmicronautVersion=2.5.13 -PspockVersion=2.0-groovy-3.0 -PgroovyVersion=3.0.9 -PgrailsVersion=5.1.1'
+          - 'check -x :micronaut-grails-domain-library:check -x :micronaut-grails-example:check -PmicronautVersion=2.5.13 -PspockVersion=2.0-groovy-3.0 -PgroovyVersion=3.0.9 -PgrailsVersion=5.1.1'
           - 'migrateImports check -PmicronautVersion=3.2.1 -PspockVersion=2.0-groovy-3.0 -PgroovyVersion=3.0.9 -PgrailsVersion=5.1.1'
     steps:
       - uses: actions/checkout@v2
