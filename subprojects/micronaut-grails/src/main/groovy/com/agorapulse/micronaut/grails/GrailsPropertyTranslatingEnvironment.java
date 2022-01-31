@@ -136,7 +136,8 @@ class GrailsPropertyTranslatingEnvironment extends DefaultEnvironment {
         return containsProperty(name);
     }
 
-    @Override
+    // Added at MN 2.x
+    // @Override
     public Collection<String> getPropertyEntries(String name) {
         if (multilayer.containsKey(name)) {
             Map<String, Object> value = (Map<String, Object>) multilayer.get(name);
