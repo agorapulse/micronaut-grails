@@ -30,7 +30,7 @@ class IntegrationSpec extends Specification {
 
     void 'application started'() {
         when:
-            new URL("http://localhost:$serverPort").text
+            new URL("http://localhost:$serverPort/test").text
         then:
             noExceptionThrown()
     }

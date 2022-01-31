@@ -17,6 +17,7 @@
  */
 package micronaut.grails.example
 
+import com.agorapulse.micronaut.grails.MicronautGrailsApp
 import com.agorapulse.micronaut.grails.domain.Manager
 import grails.boot.GrailsApp
 import grails.boot.config.GrailsAutoConfiguration
@@ -39,7 +40,7 @@ import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.core.env.PropertyResolver
 import org.springframework.core.io.ResourceLoader
 
-import javax.annotation.Nonnull
+import io.micronaut.core.annotation.NonNull
 
 class DefaultApplication extends GrailsAutoConfiguration {
 
@@ -116,13 +117,13 @@ class DefaultApplication extends GrailsAutoConfiguration {
             try {
                 switch (this.webApplicationType) {
                     case WebApplicationType.SERVLET:
-                        contextClass = Class.forName(DEFAULT_SERVLET_WEB_CONTEXT_CLASS)
+                        contextClass = Class.forName(MicronautGrailsApp.DEFAULT_SERVLET_WEB_CONTEXT_CLASS)
                         break
                     case WebApplicationType.REACTIVE:
-                        contextClass = Class.forName(DEFAULT_REACTIVE_WEB_CONTEXT_CLASS)
+                        contextClass = Class.forName(MicronautGrailsApp.DEFAULT_REACTIVE_WEB_CONTEXT_CLASS)
                         break
                     default:
-                        contextClass = Class.forName(DEFAULT_CONTEXT_CLASS)
+                        contextClass = Class.forName(MicronautGrailsApp.DEFAULT_CONTEXT_CLASS)
                 }
             }
             catch (ClassNotFoundException ex) {
@@ -173,7 +174,7 @@ class DefaultApplication extends GrailsAutoConfiguration {
             def micronautContext = new DefaultApplicationContext(micronautConfiguration) {
 
                 @Override
-                protected DefaultEnvironment createEnvironment(@Nonnull ApplicationContextConfiguration configuration) {
+                protected DefaultEnvironment createEnvironment(@NonNull ApplicationContextConfiguration configuration) {
                     return configureMicronautEnvironment.call(super.createEnvironment(configuration)) as DefaultEnvironment
                 }
             }
