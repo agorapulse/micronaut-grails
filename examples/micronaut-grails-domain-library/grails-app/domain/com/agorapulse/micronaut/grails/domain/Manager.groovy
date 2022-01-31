@@ -19,11 +19,13 @@ package com.agorapulse.micronaut.grails.domain
 
 import grails.compiler.GrailsCompileStatic
 import grails.gorm.annotation.Entity
+import io.micronaut.core.annotation.Introspected
 
 /**
  * Test entity.
  */
 @Entity
+@Introspected
 @GrailsCompileStatic
 @SuppressWarnings([
     'GrailsDomainHasEquals',
