@@ -68,4 +68,4 @@ jobs:
           token: ${{ secrets.AGORAPULSE_BOT_PERSONAL_TOKEN }}
           repository: ${{ matrix.repository }}
           event-type: ap-new-version-released-event
-          client-payload: '{ "group": "com.agorapulse", "module": "micronaut-grails", "version": "${{ steps.version.outputs.tag }}-micronaut-1.0", "property" : "micronaut.newrelic.version", "github" : ${{ toJson(github) }} }'
+          client-payload: '{ "group": "com.agorapulse", "module": "micronaut-grails", "version": "${{ steps.version.outputs.tag }}-micronaut-1.0", "property" : "micronaut.grails.version", "github" : ${{ toJson(github) }} }'
