@@ -55,7 +55,7 @@ public abstract class MicronautGrailsAppServletInitializer extends SpringBootSer
             builder.initializers(new ParentContextApplicationContextInitializer(parent));
         }
         builder.initializers(new ServletContextApplicationContextInitializer(servletContext));
-        builder.contextFactory(webApplicationType -> new AnnotationConfigServletWebServerApplicationContext());
+        builder.application().setApplicationContextClass(AnnotationConfigServletWebServerApplicationContext.class);
         builder = configure(builder);
         SpringApplication application = builder.build();
         if (application.getAllSources().isEmpty() && AnnotationUtils.findAnnotation(getClass(), Configuration.class) != null) {
