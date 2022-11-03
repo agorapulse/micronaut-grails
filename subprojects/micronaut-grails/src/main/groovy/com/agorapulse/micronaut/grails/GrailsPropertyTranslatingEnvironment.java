@@ -86,7 +86,7 @@ class GrailsPropertyTranslatingEnvironment extends DefaultEnvironment {
 
                                 Object currentOrNewMap;
                                 if (expectedPrefix.get().equals(currentKey)) {
-                                    currentOrNewMap = new LinkedHashMap<>();
+                                    currentOrNewMap = multilayer.computeIfAbsent(currentKey, key -> new LinkedHashMap<>());
                                     multilayer.put(currentKey, currentOrNewMap);
                                 } else {
                                     currentOrNewMap = currentLevelMap.computeIfAbsent(part, key -> new LinkedHashMap<>());
