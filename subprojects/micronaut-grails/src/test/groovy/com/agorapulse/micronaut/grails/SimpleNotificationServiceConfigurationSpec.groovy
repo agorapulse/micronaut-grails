@@ -71,6 +71,7 @@ class GrailsSimpleNotificationServiceConfig {
             .addByType(SimpleNotificationService)
             .addByType(SimpleNotificationServiceConfiguration)
             .addByQualifiers('notificationsQueueService', SimpleQueueService, Qualifiers.byName('notifications'))
+            .addByQualifiers('syncQueueService', SimpleQueueService, Qualifiers.byName('notification-manager-device-sync'))
             .createMapForPropertiesStarting('aws.sqs.queues')
     }
 
