@@ -35,6 +35,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 
 import javax.annotation.Nonnull;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -208,6 +209,7 @@ public class MicronautGrailsApp extends GrailsApp {
     @Override
     protected ConfigurableApplicationContext createApplicationContext() {
         setAllowBeanDefinitionOverriding(true);
+        enableCircularReferencesIfSupported();
 
         ConfigurableApplicationContext applicationContext = createSpringApplicationContext();
 
@@ -258,4 +260,16 @@ public class MicronautGrailsApp extends GrailsApp {
         }
     }
 
+
+    public void enableCircularReferencesIfSupported() {
+        try {
+            // Get the setAllowCircularReferences method by reflection
+            Method method = GrailsApp.class.getMethod("setAllowCircularReferences", boolean.class);
+            method.invoke(this, true);  // "this" is the current instance of YourClass
+        } catch (NoSuchMethodException e) {
+            LOGGER.info("setAllowCircularReferences method is not present in the current version of the library. Skipping the setup.");
+        } catch (Exception e) {
+            LOGGER.error("Failed to invoke setAllowCircularReferences method", e);
+        }
+    }
 }
