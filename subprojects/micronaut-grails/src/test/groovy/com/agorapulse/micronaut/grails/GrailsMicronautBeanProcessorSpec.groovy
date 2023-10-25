@@ -33,9 +33,9 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
 import spock.lang.Specification
 
-import javax.inject.Named
-import javax.inject.Scope
-import javax.inject.Singleton
+import jakarta.inject.Named
+import jakarta.inject.Scope
+import jakarta.inject.Singleton
 import java.lang.annotation.Documented
 import java.lang.annotation.Retention
 

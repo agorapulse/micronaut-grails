@@ -29,8 +29,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.PropertySource;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +51,7 @@ class GrailsPropertyTranslatingEnvironment extends DefaultEnvironment {
 
     GrailsPropertyTranslatingEnvironment(Environment environment, PropertyTranslatingCustomizer customizer, List<String> expectedMapProperties) {
         super(new ApplicationContextConfiguration() {
-            @Nonnull
+            @NonNull
             @Override
             public List<String> getEnvironments() {
                 return Arrays.asList(environment.getActiveProfiles());

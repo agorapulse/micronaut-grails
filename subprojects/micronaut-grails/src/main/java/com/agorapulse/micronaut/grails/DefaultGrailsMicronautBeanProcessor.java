@@ -30,7 +30,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import javax.annotation.Nonnull;
+import io.micronaut.core.annotation.NonNull;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.Collection;
@@ -147,7 +147,7 @@ public class DefaultGrailsMicronautBeanProcessor implements BeanFactoryPostProce
     }
 
     @Override
-    public void setApplicationContext(@Nonnull ApplicationContext applicationContext) throws BeansException {
+    public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
         this.springContext = applicationContext;
     }
 }

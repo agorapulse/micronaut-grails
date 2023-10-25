@@ -34,7 +34,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 
-import javax.annotation.Nonnull;
+import io.micronaut.core.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -84,7 +84,7 @@ public class MicronautGrailsApp extends GrailsApp {
         }
 
         @Override
-        @Nonnull
+        @NonNull
         public List<String> getEnvironments() {
             List<String> environments = new ArrayList<>();
             environments.add(ENVIRONMENT);
@@ -100,7 +100,7 @@ public class MicronautGrailsApp extends GrailsApp {
             return Optional.of(false);
         }
 
-        @Override @Nonnull
+        @Override @NonNull
         public ClassLoader getClassLoader() {
             return applicationClassLoader;
         }
@@ -117,8 +117,8 @@ public class MicronautGrailsApp extends GrailsApp {
         }
 
         @Override
-        @Nonnull
-        protected DefaultEnvironment createEnvironment(@Nonnull ApplicationContextConfiguration c) {
+        @NonNull
+        protected DefaultEnvironment createEnvironment(@NonNull ApplicationContextConfiguration c) {
             DefaultEnvironment environment = (DefaultEnvironment) super.createEnvironment(c);
             ((MicronautGrailsAppContextConfiguration)c).getConfiguration().configureEnvironment(environment);
             return environment;
@@ -208,6 +208,8 @@ public class MicronautGrailsApp extends GrailsApp {
     @Override
     protected ConfigurableApplicationContext createApplicationContext() {
         setAllowBeanDefinitionOverriding(true);
+        setAllowCircularReferences(true);
+
 
         ConfigurableApplicationContext applicationContext = createSpringApplicationContext();
 
@@ -243,7 +245,7 @@ public class MicronautGrailsApp extends GrailsApp {
         return applicationContext;
     }
 
-    @Nonnull
+    @NonNull
     private MicronautGrailsAutoConfiguration getApplication() {
         try {
             return getAllSources()

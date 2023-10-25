@@ -19,8 +19,8 @@ package com.agorapulse.micronaut.grails;
 
 import io.micronaut.context.ApplicationContext;
 
-import javax.annotation.Nonnull;
-import javax.inject.Singleton;
+import io.micronaut.core.annotation.NonNull;
+import jakarta.inject.Singleton;
 
 @Singleton
 public class MicronautContextHolder {
@@ -31,7 +31,7 @@ public class MicronautContextHolder {
         this.context = context;
     }
 
-    @Nonnull
+    @NonNull
     public ApplicationContext getContext() {
         return context;
     }

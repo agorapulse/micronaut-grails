@@ -335,7 +335,7 @@ abstract class MicronautDataGenerator {
             Set<String> imports
     ) {
         if (unified.nullable) {
-            imports.add('javax.annotation.Nullable')
+            imports.add('io.micronaut.core.annotation.Nullable')
             writer.println('    @Nullable')
         } else if (!unified.persistentProperty.type.primitive) {
             imports.add('javax.validation.constraints.NotNull')

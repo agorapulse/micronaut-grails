@@ -23,7 +23,7 @@ import groovy.transform.CompileStatic
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.annotation.Value
 
-import javax.inject.Singleton
+import jakarta.inject.Singleton
 
 @Singleton
 @CompileStatic

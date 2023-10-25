@@ -25,8 +25,8 @@ import com.agorapulse.micronaut.grails.example.InjectedWithQualifier
 import grails.compiler.GrailsCompileStatic
 import grails.converters.JSON
 
-import javax.inject.Inject
-import javax.inject.Named
+import jakarta.inject.Inject
+import jakarta.inject.Named
 
 @GrailsCompileStatic
 class TestController {

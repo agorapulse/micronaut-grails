@@ -195,10 +195,4 @@ subprojects { Project subproject ->
     codenarc {
         toolVersion = '2.1.0'
     }
-
-    config {
-        bintray {
-            name = subproject.name
-        }
-    }
 }

@@ -22,7 +22,7 @@ import org.grails.datastore.mapping.core.Datastore;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 
 @Configuration
 public class MicronuatDataGeneratorConfiguration {

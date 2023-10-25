@@ -19,7 +19,7 @@ package com.agorapulse.micronaut.grails;
 
 import io.micronaut.context.Qualifier;
 
-import javax.annotation.Nullable;
+import io.micronaut.core.annotation.Nullable;
 
 public class TypeAndQualifier<T> {
 

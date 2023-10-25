@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 
-import javax.annotation.Nonnull;
+import io.micronaut.core.annotation.NonNull;
 import java.util.List;
 import java.util.Map;
 
@@ -119,7 +119,7 @@ public class GrailsMicronautBeanProcessor extends DefaultGrailsMicronautBeanProc
     }
 
     @Override
-    public void setEnvironment(@Nonnull Environment environment) {
+    public void setEnvironment(@NonNull Environment environment) {
         this.environment = environment;
     }
 
