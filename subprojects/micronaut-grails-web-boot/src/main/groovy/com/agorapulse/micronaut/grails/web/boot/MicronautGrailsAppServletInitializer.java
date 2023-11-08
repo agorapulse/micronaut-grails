@@ -18,20 +18,8 @@
 package com.agorapulse.micronaut.grails.web.boot;
 
 import com.agorapulse.micronaut.grails.MicronautGrailsAppBuilder;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.builder.ParentContextApplicationContextInitializer;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext;
-import org.springframework.boot.web.servlet.support.ErrorPageFilter;
-import org.springframework.boot.web.servlet.support.ServletContextApplicationContextInitializer;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.util.Assert;
-import org.springframework.web.context.WebApplicationContext;
-
-import javax.servlet.ServletContext;
 
 /**
  * Ensure a {@link com.agorapulse.micronaut.grails.MicronautGrailsApp} in constructed during servlet initialization.
@@ -41,40 +29,9 @@ import javax.servlet.ServletContext;
  */
 public abstract class MicronautGrailsAppServletInitializer extends SpringBootServletInitializer {
 
-    /*
-     * TODO: Replace with createSpringApplicationBuilder() override when upgrading to Spring Boot 1.3 M4 and delete this method
-     */
-
-    protected WebApplicationContext createRootApplicationContext(ServletContext servletContext) {
-        SpringApplicationBuilder builder = new MicronautGrailsAppBuilder();
-        builder.main(getClass());
-        ApplicationContext parent = getExistingRootWebApplicationContext(servletContext);
-        if (parent != null) {
-            this.logger.info("Root context already created (using as parent).");
-            servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, null);
-            builder.initializers(new ParentContextApplicationContextInitializer(parent));
-        }
-        builder.initializers(new ServletContextApplicationContextInitializer(servletContext));
-        builder.application().setApplicationContextClass(AnnotationConfigServletWebServerApplicationContext.class);
-        builder = configure(builder);
-        SpringApplication application = builder.build();
-        if (application.getAllSources().isEmpty() && AnnotationUtils.findAnnotation(getClass(), Configuration.class) != null) {
-            application.getSources().add(getClass().getName());
-        }
-        Assert.state(
-            application.getAllSources().size() > 0,
-            "No SpringApplication sources have been defined. Either override the configure method or add an @Configuration annotation"
-        );
-        // Ensure error pages are registered
-        application.getSources().add(ErrorPageFilter.class.getName());
-        return run(application);
+    @Override
+    protected SpringApplicationBuilder createSpringApplicationBuilder() {
+        return new MicronautGrailsAppBuilder();
     }
 
-    private ApplicationContext getExistingRootWebApplicationContext(ServletContext servletContext) {
-        Object context = servletContext.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
-        if (context instanceof ApplicationContext) {
-            return (ApplicationContext) context;
-        }
-        return null;
-    }
 }
