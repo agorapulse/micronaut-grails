@@ -33,6 +33,7 @@ import org.springframework.beans.BeanInstantiationException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.io.ResourceLoader;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Method;
@@ -160,6 +161,9 @@ public class MicronautGrailsApp extends GrailsApp {
         super(sources);
     }
 
+    public MicronautGrailsApp(ResourceLoader resourceLoader, Class<?>... sources) {
+        super(resourceLoader, sources);
+    }
 
     /**
      * Strategy method used to create the {@link org.springframework.context.ApplicationContext}. By default this
