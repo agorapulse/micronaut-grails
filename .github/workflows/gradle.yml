@@ -23,7 +23,7 @@ jobs:
           java-version: '8'
           distribution: zulu
           cache: 'gradle'
-      - uses: eskatos/gradle-command-action@v2
+      - uses: gradle/gradle-command-action@v2
         with:
           arguments: ${{ matrix.versions }}
       - name: Show Reports
